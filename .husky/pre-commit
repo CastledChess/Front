@@ -1,0 +1,27 @@
+# On vérifie les fichiers modifiés avant et après l'exécution d
+MODIFIED_FILES_BEFORE=$(git diff --name-only)
+
+# On exécute le linter et le formateur de code
+npm run lint
+npm run format
+
+# On vérifie les fichiers modifiés après l'exécution des formateurs de code
+MODIFIED_FILES_AFTER=$(git diff --name-only)
+
+# Utilisation de fichiers temporaires pour stocker les listes de fichiers
+TMP_BEFORE=$(mktemp)
+TMP_AFTER=$(mktemp)
+echo "$MODIFIED_FILES_BEFORE" | sort > "$TMP_BEFORE"
+echo "$MODIFIED_FILES_AFTER" | sort > "$TMP_AFTER"
+
+# On compare les fichiers modifiés avant et après l'exécution des formateurs de code
+FILES_TO_ADD=$(comm -13 "$TMP_BEFORE" "$TMP_AFTER")
+
+# Suppression des fichiers temporaires
+rm "$TMP_BEFORE" "$TMP_AFTER"
+
+# On ajoute les fichiers modifiés par les formateurs de code à la liste des fichiers à commiter
+if [ -n "$FILES_TO_ADD" ]; then
+    echo "Les fichiers suivants ont été modifiés par les formateurs de code et seront ajoutés à la liste des fichiers à commiter :"
+    echo "$FILES_TO_ADD" | xargs git add
+fi
