@@ -1,3 +1,4 @@
+import React from 'react';
 import HeroSection from '../components/Sections/HeroSection/HeroSection';
 
 const Home = () => {
