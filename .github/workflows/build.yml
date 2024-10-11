@@ -2,10 +2,10 @@ name: Build test
 
 on:
   push:
-    branches: [main, dev, 'fix/**', 'hotfix/**']
+    branches: [main, staging, develop, 'fix/**', 'hotfix/**']
 
   pull_request:
-    branches: [main, dev, 'fix/**', 'hotfix/**', 'feat/**']
+    branches: [main, staging, develop, 'fix/**', 'hotfix/**', 'feat/**']
 
 jobs:
   build:
