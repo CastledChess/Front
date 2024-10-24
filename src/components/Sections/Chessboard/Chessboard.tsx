@@ -1,7 +1,8 @@
 import { Chessground } from 'chessground';
 import { useLayoutEffect, useMemo, useRef } from 'react';
 import { Api } from 'chessground/api';
-import { Chess } from 'chess.js';
+import { Chess, Square } from 'chess.js';
+import { Key } from 'chessground/types';
 import { Config } from 'chessground/config';
 
 import './base.css';
@@ -22,28 +23,58 @@ export const Chessboard = () => {
       });
     } catch (err) {
       console.error(err);
-      chessGround.current?.cancelMove();
-      chessGround.current?.set({
-        fen: chess.current.fen(),
-      });
     }
+  };
+
+  const onSelect = (square: string) => {
+    computeDestinations(square);
+  };
+
+  const computeDestinations = (square: string) => {
+    const moves = chess.current.moves({
+      square: square as Square,
+      verbose: true,
+    });
+
+    if (moves.length === 0) return;
+
+    const destinations = new Map<Key, Key[]>();
+
+    moves.forEach((move) => {
+      if (!destinations.has(move.from)) {
+        destinations.set(move.from, []);
+      }
+
+      destinations.get(move.from)?.push(move.to);
+    });
+
+    chessGround.current?.set({
+      movable: {
+        free: false,
+        dests: destinations,
+      },
+    });
   };
 
   const CHESSGROUND_CONFIG: Config = useMemo(
     () => ({
       fen: chess.current.fen(),
+      movable: {
+        free: false,
+      },
       events: {
         move: onMove,
+        select: onSelect,
       },
     }),
-    [],
+    [chess],
   );
 
   useLayoutEffect(() => {
     if (!chessGroundRef.current) return;
 
     chessGround.current = Chessground(chessGroundRef.current, CHESSGROUND_CONFIG);
-  }, []);
+  }, [CHESSGROUND_CONFIG, chessGroundRef]);
 
   return <div ref={chessGroundRef} className="w-full h-full aspect-square" />;
 };
