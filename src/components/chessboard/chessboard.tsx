@@ -5,10 +5,10 @@ import { Key } from 'chessground/types';
 import { Config } from 'chessground/config';
 import { analysisContext } from '@/contexts/analysisContext.tsx';
 
-import 'src/components/Chessboard/base.css';
-import 'src/components/Chessboard/brown.css';
-import 'src/components/Chessboard/cburnett.css';
-import 'src/components/Chessboard/3d.css';
+import '@/components/chessboard/base.css';
+import '@/components/chessboard/brown.css';
+import '@/components/chessboard/cburnett.css';
+import '@/components/chessboard/3d.css';
 
 type ChessboardProps = {
   onAfterChange: () => void;

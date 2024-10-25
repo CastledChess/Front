@@ -1,24 +1,19 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+import { Navbar } from '@/components/navbar/navbar.tsx';
+import { StartAnalysis } from '@/pages/analysis/start-analysis';
+import { Home } from '@/pages/home.tsx';
+import { AnalysisContextProvider } from '@/contexts/analysisContext.tsx';
+import { Analysis } from '@/pages/analysis/analysis.tsx';
+import { Documentation } from '@/pages/documentation.tsx';
+import { Register } from '@/pages/register.tsx';
+import { Login } from '@/pages/login.tsx';
+import { Logout } from '@/pages/logout.tsx';
+import { Dashboard } from '@/pages/dashboard.tsx';
+import { NotFound } from '@/pages/not-found.tsx';
+
 import './styles/font.css';
 import './styles/index.css';
-
-// Global
-import Home from './pages/Home';
-import Analysis from './pages/Analysis/Analysis.tsx';
-import Documentation from './pages/Documentation';
-import NotFound from './pages/NotFound';
-
-// Authentication
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Logout from './pages/Logout';
-
-// Connected
-import Dashboard from './pages/Dashboard';
-import { Navbar } from './components/Navbar/Navbar.tsx';
-import { AnalysisContextProvider } from './contexts/analysisContext.tsx';
-import { StartAnalysis } from '@/pages/Analysis/StartAnalysis.tsx';
 
 function App() {
   return (
@@ -49,10 +44,6 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
 
             {/* 404 */}
-            {/* Ne fonctionnera pas totalement, il faut adapter la config en fonction d'ou on héberge le site */}
-            <Route path="/404" element={<NotFound />} />
-            <Route path="/not-found" element={<NotFound />} />
-            <Route path="/notfound" element={<NotFound />} />
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </Router>

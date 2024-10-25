@@ -1,5 +1,3 @@
-const Documentation = () => {
+export const Documentation = () => {
   return <>Page Documentation</>;
 };
-
-export default Documentation;
