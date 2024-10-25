@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Register = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -9,6 +7,7 @@ const Register = () => {
         </h2>
 
         <form>
+          {/* Champ pour l'e-mail */}
           <div className="mb-4">
             <label className="block text-gray-300 mb-2" htmlFor="email"></label>
             <input
@@ -19,6 +18,20 @@ const Register = () => {
               style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
             />
           </div>
+
+          {/* Champ pour le nom d'utilisateur */}
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="username"></label>
+            <input
+              type="text"
+              id="username"
+              className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Nom d'utilisateur"
+              style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
+            />
+          </div>
+
+          {/* Champ pour le mot de passe */}
           <div className="mb-4">
             <label className="block text-gray-300 mb-2" htmlFor="password"></label>
             <input
@@ -26,6 +39,18 @@ const Register = () => {
               id="password"
               className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Mot de passe"
+              style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
+            />
+          </div>
+
+          {/* Champ pour la confirmation du mot de passe */}
+          <div className="mb-4">
+            <label className="block text-gray-300 mb-2" htmlFor="confirmPassword"></label>
+            <input
+              type="password"
+              id="confirmPassword"
+              className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Confirmer le mot de passe"
               style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
             />
           </div>
@@ -48,18 +73,18 @@ const Register = () => {
           </div>
 
           <p className="text-gray-400 text-xs mt-4">
-            <p>
-              En vous inscrivant, vous acceptez les Conditions d&apos;utilisation et la Politique de confidentialité,
-              notamment l&apos;utilisation des cookies.
-            </p>
+            En vous inscrivant, vous acceptez les Conditions d&apos;utilisation et la Politique de confidentialité,
+            notamment l&apos;utilisation des cookies.
           </p>
         </form>
+
         <div className="mt-6 text-center text-white">
           Déjà inscrit ?{' '}
           <a href="/login" className="text-white underline hover:text-orange-600">
             Connexion
           </a>
         </div>
+
         <div className="flex items-center justify-center mt-6">
           <div className="flex-grow border-t border-white"></div>
           <span className="text-white mx-4">ou avec</span>

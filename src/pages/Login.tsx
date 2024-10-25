@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen w-full max-w-xs sm:max-w-md md:max-w-lg lg:max-w-[449px]">
