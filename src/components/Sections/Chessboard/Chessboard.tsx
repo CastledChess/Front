@@ -10,7 +10,11 @@ import './brown.css';
 import './cburnett.css';
 import './3d.css';
 
-export const Chessboard = () => {
+type ChessboardProps = {
+  onAfterChange: () => void;
+};
+
+export const Chessboard = ({ onAfterChange }: ChessboardProps) => {
   const { chess, chessGround, chessGroundRef } = useContext(analysisContext);
 
   const onMove = (origin: string, destination: string) => {
@@ -61,6 +65,7 @@ export const Chessboard = () => {
         free: false,
       },
       events: {
+        change: onAfterChange,
         move: onMove,
         select: onSelect,
       },

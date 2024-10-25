@@ -1,6 +1,7 @@
-import { createContext, MutableRefObject, useRef, useState } from 'react';
+import { createContext, Dispatch, MutableRefObject, ReactNode, SetStateAction, useRef, useState } from 'react';
 import { Chess } from 'chess.js';
 import { Api } from 'chessground/api';
+import { SearchResults } from 'src/types/analysis.ts';
 
 export type AnalysisContextProps = {
   pgn: string;
@@ -12,12 +13,14 @@ export type AnalysisContextProps = {
   setLoadedMoves: (moves: string[]) => void;
   setCurrentMove: (move: number) => void;
   setPgn: (pgn: string) => void;
+  searchResults: SearchResults | null;
+  setSearchResults: Dispatch<SetStateAction<SearchResults | null>>;
 };
 
 export const analysisContext = createContext<AnalysisContextProps>({} as AnalysisContextProps);
 
 type AnalysisContextProviderProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const AnalysisContextProvider = ({ children }: AnalysisContextProviderProps) => {
@@ -26,6 +29,7 @@ export const AnalysisContextProvider = ({ children }: AnalysisContextProviderPro
   const chessGround = useRef<Api>(null);
   const [loadedMoves, setLoadedMoves] = useState<string[]>([]);
   const [currentMove, setCurrentMove] = useState(0);
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [pgn, setPgn] = useState('');
 
   return (
@@ -40,6 +44,8 @@ export const AnalysisContextProvider = ({ children }: AnalysisContextProviderPro
         setLoadedMoves,
         currentMove,
         setCurrentMove,
+        setSearchResults,
+        searchResults,
       }}
     >
       {children}

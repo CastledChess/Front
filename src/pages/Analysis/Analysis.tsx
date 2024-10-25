@@ -1,10 +1,21 @@
 import { Chessboard } from '../../components/Sections/Chessboard/Chessboard.tsx';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { analysisContext } from '../../contexts/analysisContext.tsx';
+import { DrawShape } from 'chessground/draw';
+import { SearchResults } from 'src/types/analysis.ts';
 
 const Analysis = () => {
-  const { setPgn, setCurrentMove, setLoadedMoves, chessGround, loadedMoves, chess, currentMove } =
-    useContext(analysisContext);
+  const {
+    setPgn,
+    setCurrentMove,
+    setLoadedMoves,
+    setSearchResults,
+    searchResults,
+    chessGround,
+    loadedMoves,
+    chess,
+    currentMove,
+  } = useContext(analysisContext);
 
   const importPgn = () => {
     const promptedPgn = prompt('Import a pgn');
@@ -28,6 +39,7 @@ const Analysis = () => {
     if (currentMove >= loadedMoves.length) return;
 
     setCurrentMove(currentMove + 1);
+
     chess.current.move(loadedMoves[currentMove]);
     chessGround.current?.set({
       fen: chess.current.fen(),
@@ -38,16 +50,56 @@ const Analysis = () => {
     if (currentMove <= 0) return;
 
     setCurrentMove(currentMove - 1);
+
     chess.current.undo();
     chessGround.current?.set({
       fen: chess.current.fen(),
     });
   };
 
+  const handleRequest = () => {
+    const socket = new WebSocket('wss://chess-api.com/v1');
+
+    socket.addEventListener('open', () => {
+      socket.send(
+        JSON.stringify({
+          variants: 1,
+          fen: chess.current.fen(),
+        }),
+      );
+    });
+
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+
+      if (['info', 'log'].includes(data.type)) return;
+
+      setSearchResults(data as SearchResults);
+    });
+  };
+
+  useEffect(() => {
+    if (!searchResults) return;
+
+    console.log('RESULTS', searchResults);
+
+    chessGround.current?.set({
+      drawable: {
+        shapes: [
+          {
+            orig: searchResults.from,
+            dest: searchResults.to,
+            brush: 'green',
+          },
+        ] as DrawShape[],
+      },
+    });
+  }, [searchResults]);
+
   return (
     <div className="w-full h-full flex gap-20">
       <div className="h-full">
-        <Chessboard />
+        <Chessboard onAfterChange={handleRequest} />
       </div>
 
       <button type="button" onClick={importPgn}>
@@ -60,6 +112,8 @@ const Analysis = () => {
       <button type="button" onClick={handleNextMove}>
         Next
       </button>
+
+      <button onClick={handleRequest}>analy</button>
     </div>
   );
 };
