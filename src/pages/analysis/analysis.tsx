@@ -1,11 +1,11 @@
-import { Chessboard } from '@/components/Chessboard/Chessboard.tsx';
+import { Chessboard } from '@/components/chessboard/chessboard.tsx';
 import { useContext, useEffect, useMemo } from 'react';
 import { analysisContext } from '../../contexts/analysisContext.tsx';
 import { DrawShape } from 'chessground/draw';
 import { SearchResults } from 'src/types/analysis.ts';
-import { PlayerInfo } from '@/components/Chessboard/PlayerInfo.tsx';
+import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 
-const Analysis = () => {
+export const Analysis = () => {
   const {
     setPgn,
     setCurrentMove,
@@ -110,8 +110,6 @@ const Analysis = () => {
     [header],
   );
 
-  console.log(whitePlayer, header);
-
   return (
     <div className="w-full h-full flex gap-20">
       <div className="h-full">
@@ -135,5 +133,3 @@ const Analysis = () => {
     </div>
   );
 };
-
-export default Analysis;
