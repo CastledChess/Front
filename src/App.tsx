@@ -32,7 +32,7 @@ function App() {
               path="/analysis"
               element={
                 <AnalysisContextProvider>
-                  <Analysis />{' '}
+                  <Analysis />
                 </AnalysisContextProvider>
               }
             />
