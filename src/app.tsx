@@ -19,7 +19,7 @@ function App() {
   return (
     <main>
       <Navbar />
-      <div className="h-[calc(100vh-3.5rem)] p-20">
+      <div className="h-[calc(100vh-4rem)] p-20">
         <Router>
           <Routes>
             {/* Global */}

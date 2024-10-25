@@ -8,8 +8,12 @@ export default [
   { languageOptions: { globals: { ...globals.browser, React: 'writable' } } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
+
   {
     ...pluginReact.configs.flat.recommended,
+    rules: {
+      'react/prop-types': 'off',
+    },
     settings: {
       react: {
         version: 'detect',
