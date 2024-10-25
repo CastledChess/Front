@@ -3,12 +3,12 @@ import { useContext, useLayoutEffect, useMemo } from 'react';
 import { Square } from 'chess.js';
 import { Key } from 'chessground/types';
 import { Config } from 'chessground/config';
-import { analysisContext } from '../../../contexts/analysisContext.tsx';
+import { analysisContext } from '@/contexts/analysisContext.tsx';
 
-import './base.css';
-import './brown.css';
-import './cburnett.css';
-import './3d.css';
+import 'src/components/Chessboard/base.css';
+import 'src/components/Chessboard/brown.css';
+import 'src/components/Chessboard/cburnett.css';
+import 'src/components/Chessboard/3d.css';
 
 type ChessboardProps = {
   onAfterChange: () => void;

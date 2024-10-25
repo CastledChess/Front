@@ -1,8 +1,9 @@
-import { Chessboard } from '../../components/Sections/Chessboard/Chessboard.tsx';
-import { useContext, useEffect } from 'react';
+import { Chessboard } from '@/components/Chessboard/Chessboard.tsx';
+import { useContext, useEffect, useMemo } from 'react';
 import { analysisContext } from '../../contexts/analysisContext.tsx';
 import { DrawShape } from 'chessground/draw';
 import { SearchResults } from 'src/types/analysis.ts';
+import { PlayerInfo } from '@/components/Chessboard/PlayerInfo.tsx';
 
 const Analysis = () => {
   const {
@@ -14,6 +15,7 @@ const Analysis = () => {
     chessGround,
     loadedMoves,
     chess,
+    pgn,
     currentMove,
   } = useContext(analysisContext);
 
@@ -31,8 +33,6 @@ const Analysis = () => {
     while (chess.current.history().length > 0) {
       chess.current.undo();
     }
-
-    setCurrentMove(0);
   };
 
   const handleNextMove = () => {
@@ -56,8 +56,6 @@ const Analysis = () => {
       fen: chess.current.fen(),
     });
   };
-
-  console.log(searchResults);
 
   const handleRequest = () => {
     const socket = new WebSocket('wss://chess-api.com/v1');
@@ -96,10 +94,30 @@ const Analysis = () => {
     });
   }, [searchResults]);
 
+  const header = useMemo(() => chess.current.header(), [pgn]);
+  const blackPlayer = useMemo(
+    () => ({
+      username: header.Black,
+      elo: header.BlackElo,
+    }),
+    [header],
+  );
+  const whitePlayer = useMemo(
+    () => ({
+      username: header.White,
+      elo: header.WhiteElo,
+    }),
+    [header],
+  );
+
+  console.log(whitePlayer, header);
+
   return (
     <div className="w-full h-full flex gap-20">
       <div className="h-full">
+        <PlayerInfo player={blackPlayer} />
         <Chessboard onAfterChange={handleRequest} />
+        <PlayerInfo player={whitePlayer} />
       </div>
 
       <div className="flex flex-col gap-10">

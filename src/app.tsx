@@ -18,6 +18,7 @@ import Logout from './pages/Logout';
 import Dashboard from './pages/Dashboard';
 import { Navbar } from './components/Navbar/Navbar.tsx';
 import { AnalysisContextProvider } from './contexts/analysisContext.tsx';
+import { StartAnalysis } from '@/pages/Analysis/StartAnalysis.tsx';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Routes>
             {/* Global */}
             <Route path="/" element={<Home />} />
+            <Route path="start-analysis" element={<StartAnalysis />} />
             <Route
               path="/analysis"
               element={
