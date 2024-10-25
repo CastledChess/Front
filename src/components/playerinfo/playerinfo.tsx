@@ -1,13 +1,12 @@
 type PlayerInfoProps = {
-  username: string;
-  elo: string;
+  player: { username: string; elo: string };
 };
 
-export const PlayerInfo = ({ elo, username }: PlayerInfoProps) => {
+export const PlayerInfo = ({ player }: PlayerInfoProps) => {
   return (
     <div className="flex gap-10">
-      <span>{username}</span>
-      <span>{elo}</span>
+      <span>{player.username}</span>
+      <span>{player.elo}</span>
     </div>
   );
 };

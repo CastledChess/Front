@@ -11,6 +11,7 @@ import { Login } from '@/pages/login.tsx';
 import { Logout } from '@/pages/logout.tsx';
 import { Dashboard } from '@/pages/dashboard.tsx';
 import { NotFound } from '@/pages/not-found.tsx';
+import { Toaster } from '@/components/ui/sonner.tsx';
 
 import './styles/font.css';
 import './styles/index.css';
@@ -18,34 +19,30 @@ import './styles/index.css';
 function App() {
   return (
     <main>
+      <Toaster />
       <Navbar />
       <div className="h-[calc(100vh-4rem)] p-20">
         <Router>
-          <Routes>
-            {/* Global */}
-            <Route path="/" element={<Home />} />
-            <Route path="start-analysis" element={<StartAnalysis />} />
-            <Route
-              path="/analysis"
-              element={
-                <AnalysisContextProvider>
-                  <Analysis />
-                </AnalysisContextProvider>
-              }
-            />
-            <Route path="/documentation" element={<Documentation />} />
+          <AnalysisContextProvider>
+            <Routes>
+              {/* Global */}
+              <Route path="/" element={<Home />} />
+              <Route path="start-analysis" element={<StartAnalysis />} />
+              <Route path="/analysis" element={<Analysis />} />
+              <Route path="/documentation" element={<Documentation />} />
 
-            {/* Authentication */}
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout />} />
+              {/* Authentication */}
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/logout" element={<Logout />} />
 
-            {/* Connected */}
-            <Route path="/dashboard" element={<Dashboard />} />
+              {/* Connected */}
+              <Route path="/dashboard" element={<Dashboard />} />
 
-            {/* 404 */}
-            <Route path="/*" element={<NotFound />} />
-          </Routes>
+              {/* 404 */}
+              <Route path="/*" element={<NotFound />} />
+            </Routes>
+          </AnalysisContextProvider>
         </Router>
       </div>
     </main>

@@ -6,34 +6,8 @@ import { SearchResults } from 'src/types/analysis.ts';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 
 export const Analysis = () => {
-  const {
-    setPgn,
-    setCurrentMove,
-    setLoadedMoves,
-    setSearchResults,
-    searchResults,
-    chessGround,
-    loadedMoves,
-    chess,
-    pgn,
-    currentMove,
-  } = useContext(analysisContext);
-
-  const importPgn = () => {
-    const promptedPgn = prompt('Import a pgn');
-
-    if (!promptedPgn) return;
-
-    setPgn(promptedPgn);
-
-    chess.current.loadPgn(promptedPgn);
-
-    setLoadedMoves(chess.current.history());
-
-    while (chess.current.history().length > 0) {
-      chess.current.undo();
-    }
-  };
+  const { setCurrentMove, setSearchResults, searchResults, chessGround, loadedMoves, chess, pgn, currentMove } =
+    useContext(analysisContext);
 
   const handleNextMove = () => {
     if (currentMove >= loadedMoves.length) return;
@@ -119,10 +93,6 @@ export const Analysis = () => {
       </div>
 
       <div className="flex flex-col gap-10">
-        <button type="button" onClick={importPgn}>
-          Import PGN
-        </button>
-
         <button type="button" onClick={handlePrevMove}>
           Prev
         </button>
