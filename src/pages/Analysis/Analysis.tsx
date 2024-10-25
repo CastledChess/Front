@@ -81,8 +81,6 @@ const Analysis = () => {
   useEffect(() => {
     if (!searchResults) return;
 
-    console.log('RESULTS', searchResults);
-
     chessGround.current?.set({
       drawable: {
         shapes: [
@@ -102,18 +100,18 @@ const Analysis = () => {
         <Chessboard onAfterChange={handleRequest} />
       </div>
 
-      <button type="button" onClick={importPgn}>
-        Import PGN
-      </button>
+      <div className="flex flex-col gap-10">
+        <button type="button" onClick={importPgn}>
+          Import PGN
+        </button>
 
-      <button type="button" onClick={handlePrevMove}>
-        Prev
-      </button>
-      <button type="button" onClick={handleNextMove}>
-        Next
-      </button>
-
-      <button onClick={handleRequest}>analy</button>
+        <button type="button" onClick={handlePrevMove}>
+          Prev
+        </button>
+        <button type="button" onClick={handleNextMove}>
+          Next
+        </button>
+      </div>
     </div>
   );
 };
