@@ -57,6 +57,8 @@ const Analysis = () => {
     });
   };
 
+  console.log(searchResults);
+
   const handleRequest = () => {
     const socket = new WebSocket('wss://chess-api.com/v1');
 
