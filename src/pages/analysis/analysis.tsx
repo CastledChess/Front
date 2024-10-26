@@ -1,95 +1,60 @@
 import { Chessboard } from '@/components/chessboard/chessboard.tsx';
-import { useContext, useEffect, useMemo } from 'react';
-import { analysisContext } from '../../contexts/analysisContext.tsx';
+import { useEffect, useState } from 'react';
 import { DrawShape } from 'chessground/draw';
-import { SearchResults } from 'src/types/analysis.ts';
-import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
+import { useAnalysisStore } from '@/store/analysis.ts';
+import { useNavigate } from 'react-router-dom';
 
 export const Analysis = () => {
-  const { setCurrentMove, setSearchResults, searchResults, chessGround, loadedMoves, chess, pgn, currentMove } =
-    useContext(analysisContext);
+  const navigate = useNavigate();
+  const { analysis, chess, chessGround } = useAnalysisStore();
+  const [current, setCurrent] = useState(0);
 
   const handleNextMove = () => {
-    if (currentMove >= loadedMoves.length) return;
+    if (current >= analysis!.moves.length) return;
 
-    setCurrentMove(currentMove + 1);
-
-    chess.current.move(loadedMoves[currentMove]);
-    chessGround.current?.set({
-      fen: chess.current.fen(),
+    chess.move(analysis!.moves[current].move);
+    chessGround?.set({
+      fen: chess.fen(),
     });
+
+    setCurrent(current + 1);
   };
 
   const handlePrevMove = () => {
-    if (currentMove <= 0) return;
+    if (current <= 0) return;
 
-    setCurrentMove(currentMove - 1);
-
-    chess.current.undo();
-    chessGround.current?.set({
-      fen: chess.current.fen(),
-    });
-  };
-
-  const handleRequest = () => {
-    const socket = new WebSocket('wss://chess-api.com/v1');
-
-    socket.addEventListener('open', () => {
-      socket.send(
-        JSON.stringify({
-          variants: 1,
-          fen: chess.current.fen(),
-        }),
-      );
+    chess.undo();
+    chessGround?.set({
+      fen: chess.fen(),
     });
 
-    socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-
-      if (['info', 'log'].includes(data.type)) return;
-
-      setSearchResults(data as SearchResults);
-    });
+    setCurrent(current - 1);
   };
 
   useEffect(() => {
-    if (!searchResults) return;
+    if (!analysis) navigate('/start-analysis');
 
-    chessGround.current?.set({
+    const searchResults = analysis!.moves[current].engineResults;
+
+    chessGround?.set({
       drawable: {
-        shapes: [
+        autoShapes: [
           {
             orig: searchResults.from,
             dest: searchResults.to,
-            brush: 'green',
+            brush: 'blue',
           },
         ] as DrawShape[],
       },
     });
-  }, [searchResults]);
-
-  const header = useMemo(() => chess.current.header(), [pgn]);
-  const blackPlayer = useMemo(
-    () => ({
-      username: header.Black,
-      elo: header.BlackElo,
-    }),
-    [header],
-  );
-  const whitePlayer = useMemo(
-    () => ({
-      username: header.White,
-      elo: header.WhiteElo,
-    }),
-    [header],
-  );
+  }, [current]);
 
   return (
     <div className="w-full h-full flex gap-20 justify-center">
-      <div className="h-full">
-        <PlayerInfo player={blackPlayer} />
-        <Chessboard onAfterChange={handleRequest} />
-        <PlayerInfo player={whitePlayer} />
+      <div className="h-full flex flex-col gaNextp-4 p-4">
+        {/*<PlayerInfo player={blackPlayer} />*/}
+        <Chessboard />
+        {/*<PlayerInfo player={whitePlayer} />*/}
       </div>
 
       <div className="flex flex-col gap-10">

@@ -14,9 +14,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch.tsx';
-import { useContext } from 'react';
-import { analysisContext } from '@/contexts/analysisContext.tsx';
 import { useNavigate } from 'react-router-dom';
+import { Analysis, AnalysisMove, SearchResults } from '@/types/analysis.ts';
+import { useAnalysisStore } from '@/store/analysis.ts';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -41,7 +41,7 @@ const FormSchema = z.object({
 });
 
 export const StartAnalysis = () => {
-  const { setPgn, setLoadedMoves, chess } = useContext(analysisContext);
+  const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -51,22 +51,73 @@ export const StartAnalysis = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast.success('Analysis Created!');
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const analysis = await analyseGame(data);
 
-    chess.current.loadPgn(data.pgn);
+    setAnalysis(analysis);
 
-    setLoadedMoves(chess.current.history());
-    setPgn(data.pgn);
+    console.log(analysis);
 
-    while (chess.current.history().length > 0) {
-      chess.current.undo();
+    toast.success('Analysis Ready!');
+    navigate('/analysis/1');
+  };
+
+  const analyseGame = async (data: z.infer<typeof FormSchema>) => {
+    chess.loadPgn(data.pgn);
+
+    const moveHistory = chess.history();
+    // const moves = moveHistory.map((move) => ({ move, fen: '' }));
+    const moves: { move: string; fen: string }[] = [];
+
+    while (chess.history().length > 0) {
+      chess.undo();
+
+      const fen = chess.fen();
+      const move = moveHistory.pop();
+
+      if (!move) break;
+
+      moves.unshift({ move, fen });
     }
-    navigate('/analysis');
-  }
+
+    const analysis: Analysis = {
+      pgn: data.pgn,
+      moves: await Promise.all(moves.map(async ({ move, fen }) => await analyseMove(fen, move))),
+    };
+
+    return analysis;
+  };
+
+  const analyseMove = (fen: string, move: string): Promise<AnalysisMove> =>
+    new Promise<AnalysisMove>((resolve) => {
+      const socket = new WebSocket('wss://chess-api.com/v1');
+
+      socket.addEventListener('open', () => {
+        socket.send(
+          JSON.stringify({
+            variants: 1,
+            searchMoves: [move],
+            fen,
+          }),
+        );
+      });
+
+      socket.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+
+        if (['info', 'log'].includes(data.type)) return;
+        if (data.depth < 12) return;
+
+        resolve({
+          move,
+          fen,
+          engineResults: data as SearchResults,
+        });
+      });
+    });
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center p-20">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
         <h1 className="text-3xl font-bold my-2">New Analysis</h1>
 

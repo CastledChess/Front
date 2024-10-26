@@ -35,3 +35,14 @@ export type Continuation = {
   fromNumeric: string;
   toNumeric: string;
 };
+
+export type Analysis = {
+  pgn: string;
+  moves: AnalysisMove[];
+};
+
+export type AnalysisMove = {
+  move: string;
+  fen: string;
+  engineResults: SearchResults;
+};
