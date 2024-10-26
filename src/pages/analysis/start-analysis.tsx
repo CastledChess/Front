@@ -79,7 +79,12 @@ export const StartAnalysis = () => {
                 <FormItem>
                   <FormLabel>PGN</FormLabel>
                   <FormControl>
-                    <Textarea placeholder={PGN_PLACEHOLDER} id="pgn" className="h-80 resize-none" {...field} />
+                    <Textarea
+                      placeholder={PGN_PLACEHOLDER}
+                      id="pgn"
+                      className="h-80 resize-none custom-scrollbar"
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     What is a{' '}

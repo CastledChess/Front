@@ -15,6 +15,7 @@ import { Toaster } from '@/components/ui/sonner.tsx';
 
 import './styles/font.css';
 import './styles/index.css';
+import '@/styles/scrollbar.css';
 
 function App() {
   return (
