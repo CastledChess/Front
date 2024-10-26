@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { LoaderButton } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -17,6 +17,7 @@ import { Switch } from '@/components/ui/switch.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Analysis, AnalysisMove, SearchResults } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
+import { useState } from 'react';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -43,6 +44,7 @@ const FormSchema = z.object({
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -52,11 +54,12 @@ export const StartAnalysis = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    setIsLoading(true);
+
     const analysis = await analyseGame(data);
 
+    setIsLoading(false);
     setAnalysis(analysis);
-
-    console.log(analysis);
 
     toast.success('Analysis Ready!');
     navigate('/analysis/1');
@@ -66,7 +69,6 @@ export const StartAnalysis = () => {
     chess.loadPgn(data.pgn);
 
     const moveHistory = chess.history();
-    // const moves = moveHistory.map((move) => ({ move, fen: '' }));
     const moves: { move: string; fen: string }[] = [];
 
     while (chess.history().length > 0) {
@@ -164,9 +166,9 @@ export const StartAnalysis = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="ml-auto flex">
+            <LoaderButton isLoading={isLoading} type="submit" className="ml-auto flex">
               Go!
-            </Button>
+            </LoaderButton>
           </form>
         </Form>
       </div>
