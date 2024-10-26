@@ -79,5 +79,10 @@ export const Chessboard = ({ onAfterChange }: ChessboardProps) => {
     chessGround.current = Chessground(chessGroundRef.current, CHESSGROUND_CONFIG);
   }, [CHESSGROUND_CONFIG, chessGroundRef]);
 
-  return <div ref={chessGroundRef} className="w-full h-full aspect-square" />;
+  return (
+    <div className="w-full h-full aspect-square relative">
+      <div className="chessboard-bg w-full h-full aspect-square absolute rounded-lg" />
+      <div ref={chessGroundRef} className="w-full h-full aspect-square" />
+    </div>
+  );
 };

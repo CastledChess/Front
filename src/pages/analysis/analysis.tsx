@@ -85,7 +85,7 @@ export const Analysis = () => {
   );
 
   return (
-    <div className="w-full h-full flex gap-20">
+    <div className="w-full h-full flex gap-20 justify-center">
       <div className="h-full">
         <PlayerInfo player={blackPlayer} />
         <Chessboard onAfterChange={handleRequest} />
