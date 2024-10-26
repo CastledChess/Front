@@ -9,6 +9,8 @@ export const Analysis = () => {
   const { analysis, chess, chessGround } = useAnalysisStore();
   const [current, setCurrent] = useState(0);
 
+  console.log(analysis, current);
+
   const handleNextMove = () => {
     if (current >= analysis!.moves.length) return;
 
@@ -33,6 +35,7 @@ export const Analysis = () => {
 
   useEffect(() => {
     if (!analysis) navigate('/start-analysis');
+    if (current >= analysis!.moves.length) return;
 
     const searchResults = analysis!.moves[current].engineResults;
 
