@@ -32,7 +32,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/start-analysis" element={<StartAnalysis />} />
             <Route
-              path="/analysis/:id"
+              path="/analysis"
               element={
                 <ProtectedRoute allow={!!analysis} redirect="/start-analysis">
                   <Analysis />

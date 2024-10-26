@@ -79,7 +79,7 @@ export const Chessboard = ({ onAfterChange }: ChessboardProps) => {
   }, [CHESSGROUND_CONFIG, ref]);
 
   return (
-    <div className="w-full h-full aspect-square relative">
+    <div className="h-[calc(100%-7rem)] aspect-square relative">
       <div className="chessboard-bg w-full h-full aspect-square absolute rounded-lg" />
       <div ref={ref} className="w-full h-full aspect-square" />
     </div>

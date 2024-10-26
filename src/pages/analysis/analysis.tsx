@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { DrawShape } from 'chessground/draw';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { useNavigate } from 'react-router-dom';
+import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 export const Analysis = () => {
   const navigate = useNavigate();
@@ -51,20 +54,36 @@ export const Analysis = () => {
   }, [current]);
 
   return (
-    <div className="w-full h-full flex gap-20 justify-center">
-      <div className="h-full flex flex-col gaNextp-4 p-4">
-        {/*<PlayerInfo player={blackPlayer} />*/}
+    <div className="w-full h-full flex gap-6 justify-center p-4">
+      <div className="h-full flex flex-col gap-4">
+        {analysis && (
+          <PlayerInfo
+            player={{
+              username: analysis.header.Black,
+              rating: analysis.header.BlackElo,
+            }}
+          />
+        )}
         <Chessboard />
-        {/*<PlayerInfo player={whitePlayer} />*/}
+        {analysis && (
+          <PlayerInfo
+            player={{
+              username: analysis.header.White,
+              rating: analysis.header.WhiteElo,
+            }}
+          />
+        )}
       </div>
 
-      <div className="flex flex-col gap-10">
-        <button type="button" onClick={handlePrevMove}>
-          Prev
-        </button>
-        <button type="button" onClick={handleNextMove}>
-          Next
-        </button>
+      <div className="flex flex-col gap-10 bg-primary/5 p-6 rounded-lg w-96">
+        <div className="flex gap-6 justify-center mt-auto">
+          <Button onClick={handlePrevMove} variant="ghost">
+            <ArrowLeft />
+          </Button>
+          <Button onClick={handleNextMove} variant="ghost">
+            <ArrowRight />
+          </Button>
+        </div>
       </div>
     </div>
   );
