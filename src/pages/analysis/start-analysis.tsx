@@ -62,7 +62,7 @@ export const StartAnalysis = () => {
     setAnalysis(analysis);
 
     toast.success('Analysis Ready!');
-    navigate('/analysis/1');
+    navigate('/analysis');
   };
 
   const analyseGame = async (data: z.infer<typeof FormSchema>) => {
@@ -84,6 +84,7 @@ export const StartAnalysis = () => {
 
     const analysis: Analysis = {
       pgn: data.pgn,
+      header: chess.header(),
       moves: await Promise.all(moves.map(async ({ move, fen }) => await analyseMove(fen, move))),
     };
 

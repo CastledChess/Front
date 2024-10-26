@@ -17,6 +17,7 @@ export const useAnalysisStore = create<AnalysisState>()(
     (set) => ({
       analysis: null,
       chess: new Chess(),
+      header: null,
       chessGround: null,
       setAnalysis: (analysis) => set({ analysis }),
       setChessGround: (chessGround) => set({ chessGround }),

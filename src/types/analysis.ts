@@ -38,6 +38,7 @@ export type Continuation = {
 
 export type Analysis = {
   pgn: string;
+  header: Record<string, string>;
   moves: AnalysisMove[];
 };
 
