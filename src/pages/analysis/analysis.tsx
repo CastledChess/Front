@@ -9,8 +9,6 @@ export const Analysis = () => {
   const { analysis, chess, chessGround } = useAnalysisStore();
   const [current, setCurrent] = useState(0);
 
-  console.log(analysis, current);
-
   const handleNextMove = () => {
     if (current >= analysis!.moves.length) return;
 
