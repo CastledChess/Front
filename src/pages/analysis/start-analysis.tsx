@@ -55,6 +55,7 @@ export const StartAnalysis = () => {
     defaultValues: {
       classifyMoves: true,
       variants: 1,
+      engineDepth: 12,
     },
   });
 
@@ -155,29 +156,6 @@ export const StartAnalysis = () => {
       });
     });
 
-  const testFen = 'rnbqkb1r/pppp1p2/5n1p/6p1/3PPp2/2N2N1P/PPP3P1/R1BQKB1R b KQkq - 2 6';
-
-  const test = async () => {
-    const socket = new WebSocket('wss://chess-api.com/v1');
-
-    socket.addEventListener('open', () => {
-      socket.send(
-        JSON.stringify({
-          variants: 3,
-          fen: testFen,
-        }),
-      );
-    });
-
-    socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-
-      if (data.depth < 12) return;
-
-      console.log(data);
-    });
-  };
-
   return (
     <div className="flex justify-center p-20">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
@@ -258,8 +236,6 @@ export const StartAnalysis = () => {
             </div>
           </form>
         </Form>
-
-        <button onClick={test}>awdawd</button>
       </div>
     </div>
   );
