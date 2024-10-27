@@ -5,6 +5,7 @@ import { useAnalysisStore } from '@/store/analysis.ts';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 
 export const Analysis = () => {
   const { analysis, chess, chessGround } = useAnalysisStore();
@@ -54,6 +55,10 @@ export const Analysis = () => {
 
   return (
     <div className="w-full h-full flex gap-6 justify-center p-4">
+      <Evalbar
+        winChance={analysis!.moves[current]?.engineResults?.[0]?.winChance ?? 50}
+        evaluation={analysis!.moves[current]?.engineResults?.[0]?.eval ?? 0}
+      />
       <div className="h-full flex flex-col gap-4">
         {analysis && (
           <PlayerInfo
