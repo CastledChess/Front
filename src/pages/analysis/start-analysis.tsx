@@ -125,7 +125,6 @@ export const StartAnalysis = () => {
           socket.send(
             JSON.stringify({
               variants: data.variants,
-              searchMoves: move,
               depth: data.engineDepth,
               fen,
             }),

@@ -12,8 +12,13 @@ export const Evalbar = ({ winChance, evaluation }: EvalbarProps) => {
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <div className="relative flex flex-col h-full overflow-hidden w-10 rounded-lg">
-            <motion.div animate={{ height: `${winChance}%` }} className="w-full bg-white/5" />
-            <div className="w-full flex-1 bg-white" />
+            <motion.div
+              animate={{ height: `${100 - winChance}%` }}
+              initial={{ height: '50%' }}
+              className="w-full bg-white/5"
+            />
+
+            <motion.div animate={{ height: `${winChance}%` }} initial={{ height: '50%' }} className="w-full bg-white" />
           </div>
         </TooltipTrigger>
         <TooltipContent>
