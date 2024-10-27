@@ -91,7 +91,7 @@ export const StartAnalysis = () => {
     const analysis: Analysis = {
       pgn: data.pgn,
       header: chess.header(),
-      moves: classifyMoves(await Promise.all(analyses)),
+      moves: data.classifyMoves ? classifyMoves(await Promise.all(analyses)) : await Promise.all(analyses),
     };
 
     return analysis;
