@@ -69,7 +69,7 @@ export const Analysis = () => {
       },
     })) as DrawShape[];
 
-    if (currentMove.classification !== AnalysisMoveClassification.None) {
+    if (currentMove.classification && currentMove.classification !== AnalysisMoveClassification.None) {
       autoShapes.push({
         orig: previousMove.move.to as Key,
         customSvg: {
