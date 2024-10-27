@@ -41,7 +41,7 @@ const FormSchema = z.object({
   pgn: z.string().min(1, 'PGN is required'),
   classifyMoves: z.boolean().optional(),
   variants: z.number().min(1).max(5).step(1),
-  engineDepth: z.number().min(1, 'Depth must be at least 1').max(18, 'Depth must be at most 18').optional(),
+  engineDepth: z.number().min(1, 'Depth must be at least 1').max(18, 'Depth must be at most 18'),
 });
 
 export const StartAnalysis = () => {
@@ -92,9 +92,7 @@ export const StartAnalysis = () => {
       moves.unshift({ move, fen });
     }
 
-    const analyses = moves.map(async ({ move, fen }, index) => await analyseMove(fen, move, data.variants, index));
-
-    console.log(analyses);
+    const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data));
 
     const analysis: Analysis = {
       pgn: data.pgn,
@@ -105,59 +103,67 @@ export const StartAnalysis = () => {
     return analysis;
   };
 
-  const analyseMove = (fen: string, move: string, variants: number, index: number): Promise<AnalysisMove> =>
+  const analyseMove = (fen: string, move: string, data: z.infer<typeof FormSchema>): Promise<AnalysisMove> =>
     new Promise<AnalysisMove>((resolve) => {
-      const socket = new WebSocket('wss://chess-api.com/v1');
+      try {
+        const socket = new WebSocket('wss://chess-api.com/v1');
 
-      const variantResults: SearchResults[] = [];
-      let timeout: NodeJS.Timeout;
+        const variantResults: SearchResults[] = [];
+        let timeout: NodeJS.Timeout;
 
-      socket.addEventListener('open', () => {
-        timeout = setTimeout(() => {
-          socket.close();
-          setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
-          resolve({
-            move,
-            fen,
-            engineResults: variantResults,
-          });
-        }, 1000);
+        socket.addEventListener('open', () => {
+          timeout = setTimeout(() => {
+            socket.close();
+            setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
+            resolve({
+              move,
+              fen,
+              engineResults: variantResults,
+            });
+          }, 1000);
 
-        socket.send(
-          JSON.stringify({
-            variants: variants,
-            searchMoves: move,
-            depth: 12,
-            fen,
-          }),
-        );
-      });
+          socket.send(
+            JSON.stringify({
+              variants: data.variants,
+              searchMoves: move,
+              depth: data.engineDepth,
+              fen,
+            }),
+          );
+        });
 
-      socket.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
+        socket.addEventListener('message', (event) => {
+          const resultData = JSON.parse(event.data);
 
-        console.log(data, variantResults, index, fen, move, variants);
+          if (['info', 'log'].includes(resultData.type)) return;
+          if (resultData.depth < data.engineDepth) return;
 
-        if (['info', 'log'].includes(data.type)) return;
-        if (data.depth < 12) return;
+          variantResults.push(resultData as SearchResults);
 
-        variantResults.push(data as SearchResults);
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            socket.close();
+            setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
+            resolve({
+              move,
+              fen,
+              engineResults: variantResults,
+            });
+          }, 1000);
+        });
+      } catch (error) {
+        console.error(error);
 
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          socket.close();
-          setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
-          resolve({
-            move,
-            fen,
-            engineResults: variantResults,
-          });
-        }, 1000);
-      });
+        resolve({
+          move,
+          fen,
+          engineResults: [],
+        });
+      }
     });
 
   return (
-    <div className="flex justify-center p-20">
+    <div className="flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
         <h1 className="text-3xl font-bold my-2">New Analysis</h1>
 
@@ -174,7 +180,7 @@ export const StartAnalysis = () => {
                       placeholder={PGN_PLACEHOLDER}
                       spellCheck="false"
                       id="pgn"
-                      className="h-64 resize-none custom-scrollbar"
+                      className="h-56 resize-none custom-scrollbar"
                       {...field}
                     />
                   </FormControl>
@@ -228,6 +234,30 @@ export const StartAnalysis = () => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="engineDepth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between">
+                    Engine Depth<span>{field.value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      step={1}
+                      min={1}
+                      max={18}
+                      value={[field.value]}
+                      onValueChange={(values) => field.onChange(values[0])}
+                    />
+                  </FormControl>
+                  <FormDescription>The depth at which the engine should search</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <div className="flex justify-between gap-6 items-center">
               {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
               <LoaderButton isLoading={isLoading} type="submit" className="ml-auto">
