@@ -2,13 +2,11 @@ import { Chessboard } from '@/components/chessboard/chessboard.tsx';
 import { useEffect, useState } from 'react';
 import { DrawShape } from 'chessground/draw';
 import { useAnalysisStore } from '@/store/analysis.ts';
-import { useNavigate } from 'react-router-dom';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 export const Analysis = () => {
-  const navigate = useNavigate();
   const { analysis, chess, chessGround } = useAnalysisStore();
   const [current, setCurrent] = useState(0);
 
@@ -35,20 +33,21 @@ export const Analysis = () => {
   };
 
   useEffect(() => {
-    if (!analysis) navigate('/start-analysis');
     if (current >= analysis!.moves.length) return;
 
     const searchResults = analysis!.moves[current].engineResults;
 
     chessGround?.set({
       drawable: {
-        autoShapes: [
-          {
-            orig: searchResults.from,
-            dest: searchResults.to,
-            brush: 'blue',
+        autoShapes: searchResults.map((result, index) => ({
+          orig: result.from,
+          dest: result.to,
+          brush: 'blue',
+          modifiers: {
+            lineWidth: 10 + (2.5 * index) / (searchResults.length - 1),
+            opacity: 0.2 + (0.1 * index) / (searchResults.length - 1),
           },
-        ] as DrawShape[],
+        })) as DrawShape[],
       },
     });
   }, [current]);

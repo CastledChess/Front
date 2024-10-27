@@ -18,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import { Analysis, AnalysisMove, SearchResults } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { useState } from 'react';
+import { Slider } from '@/components/ui/slider.tsx';
+import { Progress } from '@/components/ui/progress.tsx';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -38,6 +40,7 @@ f3 Bc8 34. Kf2 Bf5 35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5
 const FormSchema = z.object({
   pgn: z.string().min(1, 'PGN is required'),
   classifyMoves: z.boolean().optional(),
+  variants: z.number().min(1).max(5).step(1),
   engineDepth: z.number().min(1, 'Depth must be at least 1').max(18, 'Depth must be at most 18').optional(),
 });
 
@@ -45,11 +48,13 @@ export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState({ value: 0, max: 0 });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       classifyMoves: true,
+      variants: 1,
     },
   });
 
@@ -65,11 +70,15 @@ export const StartAnalysis = () => {
     navigate('/analysis');
   };
 
+  console.log(progress);
+
   const analyseGame = async (data: z.infer<typeof FormSchema>) => {
     chess.loadPgn(data.pgn);
 
     const moveHistory = chess.history();
     const moves: { move: string; fen: string }[] = [];
+
+    setProgress({ value: 0, max: moveHistory.length });
 
     while (chess.history().length > 0) {
       chess.undo();
@@ -82,24 +91,42 @@ export const StartAnalysis = () => {
       moves.unshift({ move, fen });
     }
 
+    const analyses = moves.map(async ({ move, fen }, index) => await analyseMove(fen, move, data.variants, index));
+
+    console.log(analyses);
+
     const analysis: Analysis = {
       pgn: data.pgn,
       header: chess.header(),
-      moves: await Promise.all(moves.map(async ({ move, fen }) => await analyseMove(fen, move))),
+      moves: await Promise.all(analyses),
     };
 
     return analysis;
   };
 
-  const analyseMove = (fen: string, move: string): Promise<AnalysisMove> =>
+  const analyseMove = (fen: string, move: string, variants: number, index: number): Promise<AnalysisMove> =>
     new Promise<AnalysisMove>((resolve) => {
       const socket = new WebSocket('wss://chess-api.com/v1');
 
+      const variantResults: SearchResults[] = [];
+      let timeout: NodeJS.Timeout;
+
       socket.addEventListener('open', () => {
+        timeout = setTimeout(() => {
+          socket.close();
+          setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
+          resolve({
+            move,
+            fen,
+            engineResults: variantResults,
+          });
+        }, 1000);
+
         socket.send(
           JSON.stringify({
-            variants: 1,
-            searchMoves: [move],
+            variants: variants,
+            searchMoves: move,
+            depth: 12,
             fen,
           }),
         );
@@ -108,16 +135,48 @@ export const StartAnalysis = () => {
       socket.addEventListener('message', (event) => {
         const data = JSON.parse(event.data);
 
+        console.log(data, variantResults, index, fen, move, variants);
+
         if (['info', 'log'].includes(data.type)) return;
         if (data.depth < 12) return;
 
-        resolve({
-          move,
-          fen,
-          engineResults: data as SearchResults,
-        });
+        variantResults.push(data as SearchResults);
+
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          socket.close();
+          setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
+          resolve({
+            move,
+            fen,
+            engineResults: variantResults,
+          });
+        }, 1000);
       });
     });
+
+  const testFen = 'rnbqkb1r/pppp1p2/5n1p/6p1/3PPp2/2N2N1P/PPP3P1/R1BQKB1R b KQkq - 2 6';
+
+  const test = async () => {
+    const socket = new WebSocket('wss://chess-api.com/v1');
+
+    socket.addEventListener('open', () => {
+      socket.send(
+        JSON.stringify({
+          variants: 3,
+          fen: testFen,
+        }),
+      );
+    });
+
+    socket.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.depth < 12) return;
+
+      console.log(data);
+    });
+  };
 
   return (
     <div className="flex justify-center p-20">
@@ -135,8 +194,9 @@ export const StartAnalysis = () => {
                   <FormControl>
                     <Textarea
                       placeholder={PGN_PLACEHOLDER}
+                      spellCheck="false"
                       id="pgn"
-                      className="h-80 resize-none custom-scrollbar"
+                      className="h-64 resize-none custom-scrollbar"
                       {...field}
                     />
                   </FormControl>
@@ -167,11 +227,39 @@ export const StartAnalysis = () => {
                 </FormItem>
               )}
             />
-            <LoaderButton isLoading={isLoading} type="submit" className="ml-auto flex">
-              Go!
-            </LoaderButton>
+
+            <FormField
+              control={form.control}
+              name="variants"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between">
+                    Variants<span>{field.value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      step={1}
+                      min={1}
+                      max={5}
+                      value={[field.value]}
+                      onValueChange={(values) => field.onChange(values[0])}
+                    />
+                  </FormControl>
+                  <FormDescription>The number of lines the engine should compute</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-between gap-6 items-center">
+              {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
+              <LoaderButton isLoading={isLoading} type="submit" className="ml-auto">
+                Go!
+              </LoaderButton>
+            </div>
           </form>
         </Form>
+
+        <button onClick={test}>awdawd</button>
       </div>
     </div>
   );
