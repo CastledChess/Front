@@ -6,6 +6,24 @@ import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
+import { AnalysisMoveClassification } from '@/types/analysis.ts';
+
+import brilliantRaw from '@/assets/icons/analysis/brilliant.svg?raw';
+import goodRaw from '@/assets/icons/analysis/good.svg?raw';
+import interestingRaw from '@/assets/icons/analysis/interesting.svg?raw';
+import inaccuracyRaw from '@/assets/icons/analysis/inaccuracy.svg?raw';
+import mistakeRaw from '@/assets/icons/analysis/mistake.svg?raw';
+import blunderRaw from '@/assets/icons/analysis/blunder.svg?raw';
+import { Key } from 'chessground/types';
+
+const classificationToGlyph = {
+  [AnalysisMoveClassification.Brilliant]: brilliantRaw,
+  [AnalysisMoveClassification.Good]: goodRaw,
+  [AnalysisMoveClassification.Interesting]: interestingRaw,
+  [AnalysisMoveClassification.Inaccuracy]: inaccuracyRaw,
+  [AnalysisMoveClassification.Mistake]: mistakeRaw,
+  [AnalysisMoveClassification.Blunder]: blunderRaw,
+};
 
 export const Analysis = () => {
   const { analysis, chess, chessGround } = useAnalysisStore();
@@ -36,20 +54,32 @@ export const Analysis = () => {
   useEffect(() => {
     if (current >= analysis!.moves.length) return;
 
-    const searchResults = analysis!.moves[current].engineResults;
+    const previousMove = analysis!.moves[current - 1];
+    const currentMove = analysis!.moves[current];
+
+    if (!previousMove) return;
+
+    const autoShapes: DrawShape[] = previousMove.engineResults.map((result, index) => ({
+      orig: result.from,
+      dest: result.to,
+      brush: 'blue',
+      modifiers: {
+        lineWidth: 10 + (2.5 * index) / (previousMove.engineResults.length - 1),
+        opacity: 0.2 + (0.1 * index) / (previousMove.engineResults.length - 1),
+      },
+    })) as DrawShape[];
+
+    if (currentMove.classification !== AnalysisMoveClassification.None) {
+      autoShapes.push({
+        orig: previousMove.move.to as Key,
+        customSvg: {
+          html: classificationToGlyph[currentMove.classification as keyof typeof classificationToGlyph],
+        },
+      });
+    }
 
     chessGround?.set({
-      drawable: {
-        autoShapes: searchResults.map((result, index) => ({
-          orig: result.from,
-          dest: result.to,
-          brush: 'blue',
-          modifiers: {
-            lineWidth: 10 + (2.5 * index) / (searchResults.length - 1),
-            opacity: 0.2 + (0.1 * index) / (searchResults.length - 1),
-          },
-        })) as DrawShape[],
-      },
+      drawable: { autoShapes: autoShapes },
     });
   }, [current]);
 

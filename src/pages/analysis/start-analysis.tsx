@@ -15,11 +15,14 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch.tsx';
 import { useNavigate } from 'react-router-dom';
-import { Analysis, AnalysisMove, SearchResults } from '@/types/analysis.ts';
+import { Analysis } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
+import { analyseMove, classifyMoves } from '@/lib/analysis.ts';
+import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
+import { Move } from 'chess.js';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -37,21 +40,14 @@ Nc4 Nxc4 22. Bxc4 Nb6 23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7
 f3 Bc8 34. Kf2 Bf5 35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5
 40. Rd6 Kc5 41. Ra6 Nf2 42. g4 Bd3 43. Re6 1/2-1/2`;
 
-const FormSchema = z.object({
-  pgn: z.string().min(1, 'PGN is required'),
-  classifyMoves: z.boolean().optional(),
-  variants: z.number().min(1).max(5).step(1),
-  engineDepth: z.number().min(1, 'Depth must be at least 1').max(18, 'Depth must be at most 18'),
-});
-
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState({ value: 0, max: 0 });
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
+    resolver: zodResolver(StartAnalysisFormSchema),
     defaultValues: {
       classifyMoves: true,
       variants: 1,
@@ -59,7 +55,7 @@ export const StartAnalysis = () => {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     setIsLoading(true);
 
     const analysis = await analyseGame(data);
@@ -71,13 +67,11 @@ export const StartAnalysis = () => {
     navigate('/analysis');
   };
 
-  console.log(progress);
-
-  const analyseGame = async (data: z.infer<typeof FormSchema>) => {
+  const analyseGame = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     chess.loadPgn(data.pgn);
 
-    const moveHistory = chess.history();
-    const moves: { move: string; fen: string }[] = [];
+    const moveHistory = chess.history({ verbose: true });
+    const moves: { move: Move; fen: string }[] = [];
 
     setProgress({ value: 0, max: moveHistory.length });
 
@@ -92,74 +86,20 @@ export const StartAnalysis = () => {
       moves.unshift({ move, fen });
     }
 
-    const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data));
+    const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data, reportProgress));
 
     const analysis: Analysis = {
       pgn: data.pgn,
       header: chess.header(),
-      moves: await Promise.all(analyses),
+      moves: classifyMoves(await Promise.all(analyses)),
     };
 
     return analysis;
   };
 
-  const analyseMove = (fen: string, move: string, data: z.infer<typeof FormSchema>): Promise<AnalysisMove> =>
-    new Promise<AnalysisMove>((resolve) => {
-      try {
-        const socket = new WebSocket('wss://chess-api.com/v1');
-
-        const variantResults: SearchResults[] = [];
-        let timeout: NodeJS.Timeout;
-
-        socket.addEventListener('open', () => {
-          timeout = setTimeout(() => {
-            socket.close();
-            setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
-            resolve({
-              move,
-              fen,
-              engineResults: variantResults,
-            });
-          }, 1000);
-
-          socket.send(
-            JSON.stringify({
-              variants: data.variants,
-              depth: data.engineDepth,
-              fen,
-            }),
-          );
-        });
-
-        socket.addEventListener('message', (event) => {
-          const resultData = JSON.parse(event.data);
-
-          if (['info', 'log'].includes(resultData.type)) return;
-          if (resultData.depth < data.engineDepth) return;
-
-          variantResults.push(resultData as SearchResults);
-
-          clearTimeout(timeout);
-          timeout = setTimeout(() => {
-            socket.close();
-            setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
-            resolve({
-              move,
-              fen,
-              engineResults: variantResults,
-            });
-          }, 1000);
-        });
-      } catch (error) {
-        console.error(error);
-
-        resolve({
-          move,
-          fen,
-          engineResults: [],
-        });
-      }
-    });
+  const reportProgress = () => {
+    setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
+  };
 
   return (
     <div className="flex justify-center p-16">
