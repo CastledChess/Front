@@ -45,5 +45,5 @@ export type Analysis = {
 export type AnalysisMove = {
   move: string;
   fen: string;
-  engineResults: SearchResults;
+  engineResults: SearchResults[];
 };
