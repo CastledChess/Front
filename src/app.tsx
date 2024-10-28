@@ -8,7 +8,7 @@ import { Documentation } from '@/pages/documentation.tsx';
 import { Register } from '@/pages/register.tsx';
 import { Login } from '@/pages/login.tsx';
 import { Logout } from '@/pages/logout.tsx';
-import { Dashboard } from '@/pages/dashboard.tsx';
+import { Dashboard } from '@/pages/dashboard/dashboard.tsx';
 import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
 import { ReactNode } from 'react';
