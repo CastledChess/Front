@@ -30,6 +30,7 @@ export const analyseMove = (
         socket.send(
           JSON.stringify({
             variants: data.variants,
+            maxThinkingTime: 100,
             depth: data.engineDepth,
             fen,
           }),
