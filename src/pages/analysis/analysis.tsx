@@ -79,6 +79,12 @@ export const Analysis = () => {
     }
 
     chessGround?.set({
+      highlight: {
+        custom: new Map<Key, string>([
+          [previousMove.move.from as Key, 'orange'],
+          [previousMove.move.to as Key, 'orange'],
+        ]),
+      },
       drawable: { autoShapes: autoShapes },
     });
   }, [current]);
