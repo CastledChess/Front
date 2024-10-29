@@ -15,6 +15,7 @@ import inaccuracyRaw from '@/assets/icons/analysis/inaccuracy.svg?raw';
 import mistakeRaw from '@/assets/icons/analysis/mistake.svg?raw';
 import blunderRaw from '@/assets/icons/analysis/blunder.svg?raw';
 import { Key } from 'chessground/types';
+import { Keys, useHotkey } from '@/hooks/useHotkey.ts';
 
 const classificationToGlyph = {
   [AnalysisMoveClassification.Brilliant]: brilliantRaw,
@@ -88,6 +89,9 @@ export const Analysis = () => {
       drawable: { autoShapes: autoShapes },
     });
   }, [current]);
+
+  useHotkey(Keys.RightArrow, 0, handleNextMove);
+  useHotkey(Keys.LeftArrow, 0, handlePrevMove);
 
   return (
     <div className="w-full h-full flex gap-6 justify-center p-4">
