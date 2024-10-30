@@ -1,10 +1,10 @@
 import { Chessboard } from '@/components/chessboard/chessboard.tsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DrawShape } from 'chessground/draw';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { ArrowLeft, ArrowRight, FlipVertical2, CircleHelp } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FlipVertical2, CircleHelp, Play, Pause } from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import { Key } from 'chessground/types';
@@ -29,6 +29,8 @@ const classificationToGlyph = {
 export const Analysis = () => {
   const { analysis, chess, chessGround } = useAnalysisStore();
   const [current, setCurrent] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
 
   const handleNextMove = () => {
     if (current >= analysis!.moves.length) return;
@@ -38,7 +40,7 @@ export const Analysis = () => {
       fen: chess.fen(),
     });
 
-    setCurrent(current + 1);
+    setCurrent((current) => current + 1);
   };
 
   const handlePrevMove = () => {
@@ -52,9 +54,21 @@ export const Analysis = () => {
     setCurrent(current - 1);
   };
 
+  const handleToggleAutoPlay = () => {
+    setIsAutoPlaying(!isAutoPlaying);
+  };
+
   const handleFlipBoard = () => {
     chessGround?.toggleOrientation();
   };
+
+  useEffect(() => {
+    if (current >= analysis!.moves.length) setIsAutoPlaying(false);
+    if (!isAutoPlaying) clearInterval(autoPlayInterval.current!);
+    else autoPlayInterval.current = setInterval(handleNextMove, 1000);
+
+    return () => clearInterval(autoPlayInterval.current!);
+  }, [isAutoPlaying, current]);
 
   useEffect(() => {
     if (current >= analysis!.moves.length) return;
@@ -97,6 +111,8 @@ export const Analysis = () => {
 
   useHotkey(Keys.RightArrow, 0, handleNextMove);
   useHotkey(Keys.LeftArrow, 0, handlePrevMove);
+  useHotkey(Keys.Space, 0, handleToggleAutoPlay);
+  useHotkey(Keys.F, 0, handleFlipBoard);
 
   return (
     <div className="w-full h-full flex gap-6 justify-center p-4">
@@ -176,6 +192,9 @@ export const Analysis = () => {
         <div className="w-full overflow-hidden flex rounded-lg mt-auto">
           <Button onClick={handlePrevMove} className="flex-1 rounded-none" variant="ghost">
             <ArrowLeft />
+          </Button>
+          <Button className="flex-1 rounded-none" variant="ghost" onClick={handleToggleAutoPlay}>
+            {isAutoPlaying ? <Pause /> : <Play />}
           </Button>
           <Button onClick={handleNextMove} className="flex-1 rounded-none" variant="ghost">
             <ArrowRight />
