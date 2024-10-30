@@ -17,6 +17,9 @@ import goodRaw from '@/assets/icons/analysis/classification-good.svg?raw';
 import inaccuracyRaw from '@/assets/icons/analysis/classification-inaccuracy.svg?raw';
 import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
 import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
+import { findOpening } from '@/lib/opening.ts';
+import { Opening } from '@/types/opening.ts';
+
 const classificationToGlyph = {
   [AnalysisMoveClassification.Best]: bestRaw,
   [AnalysisMoveClassification.Excellent]: excellentRaw,
@@ -31,6 +34,11 @@ export const Analysis = () => {
   const [current, setCurrent] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
+  const [opening, setOpening] = useState<Opening | undefined>(undefined);
+
+  useEffect(() => {
+    findOpening(chess.pgn()).then((opening) => setOpening(opening));
+  }, [current]);
 
   const handleNextMove = () => {
     if (current >= analysis!.moves.length) return;
@@ -187,7 +195,9 @@ export const Analysis = () => {
           </TooltipProvider>
         </div>
 
-        <div className="p-6 flex flex-col gap-10"></div>
+        <div className="p-6 flex flex-col gap-10">
+          <span className="text-sm text-primary/80">{opening?.name}</span>
+        </div>
 
         <div className="w-full overflow-hidden flex rounded-lg mt-auto">
           <Button onClick={handlePrevMove} className="flex-1 rounded-none" variant="ghost">
