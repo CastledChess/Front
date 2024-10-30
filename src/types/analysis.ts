@@ -54,9 +54,10 @@ export type AnalysisMove = {
 export enum AnalysisMoveClassification {
   Brilliant = 'Brilliant',
   Good = 'Good',
-  Interesting = 'Interesting',
   Inaccuracy = 'Inaccuracy',
   Mistake = 'Mistake',
   Blunder = 'Blunder',
   None = 'None',
+  Best = 'Best',
+  Excellent = 'Excellent',
 }

@@ -8,19 +8,19 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 
-import brilliantRaw from '@/assets/icons/analysis/brilliant.svg?raw';
-import goodRaw from '@/assets/icons/analysis/good.svg?raw';
-import interestingRaw from '@/assets/icons/analysis/interesting.svg?raw';
-import inaccuracyRaw from '@/assets/icons/analysis/inaccuracy.svg?raw';
-import mistakeRaw from '@/assets/icons/analysis/mistake.svg?raw';
-import blunderRaw from '@/assets/icons/analysis/blunder.svg?raw';
+import bestRaw from '@/assets/icons/analysis/classification-best.svg?raw';
+import excellentRaw from '@/assets/icons/analysis/classification-excellent.svg?raw';
+import goodRaw from '@/assets/icons/analysis/classification-good.svg?raw';
+import inaccuracyRaw from '@/assets/icons/analysis/classification-inaccuracy.svg?raw';
+import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
+import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
 import { Key } from 'chessground/types';
 import { Keys, useHotkey } from '@/hooks/useHotkey.ts';
 
 const classificationToGlyph = {
-  [AnalysisMoveClassification.Brilliant]: brilliantRaw,
+  [AnalysisMoveClassification.Best]: bestRaw,
+  [AnalysisMoveClassification.Excellent]: excellentRaw,
   [AnalysisMoveClassification.Good]: goodRaw,
-  [AnalysisMoveClassification.Interesting]: interestingRaw,
   [AnalysisMoveClassification.Inaccuracy]: inaccuracyRaw,
   [AnalysisMoveClassification.Mistake]: mistakeRaw,
   [AnalysisMoveClassification.Blunder]: blunderRaw,
