@@ -68,44 +68,32 @@ export const analyseMove = (
   });
 
 export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
-  const classifiedMoves: AnalysisMove[] = [
-    {
-      ...moves[0],
-      classification: AnalysisMoveClassification.Good,
-    },
-  ];
+  return classifyRegular(moves);
+};
 
-  for (let i = 1; i < moves.length; i++) {
-    const currentResult = moves[i].engineResults[0];
-    const previousResult = moves[i - 1].engineResults[0];
+export const classifyRegular = (moves: AnalysisMove[]) => {
+  moves = moves.map((move: AnalysisMove, index: number) => {
+    if (index == 0) return { ...move, classification: AnalysisMoveClassification.None };
 
-    if (!currentResult || !previousResult) {
-      classifiedMoves.push({
-        ...moves[i],
-        classification: AnalysisMoveClassification.Good,
-      });
-      continue;
-    }
+    const previousWinChancePercent = moves[index - 1].engineResults?.[0]?.winChance;
+    const currentWinChancePercent = move.engineResults?.[0]?.winChance;
 
-    const winChanceDelta =
-      currentResult.color === 'white'
-        ? previousResult.winChance - currentResult.winChance
-        : currentResult.winChance - previousResult.winChance;
+    if (!previousWinChancePercent || !currentWinChancePercent)
+      return { ...move, classification: AnalysisMoveClassification.None };
 
-    let classification: AnalysisMoveClassification;
+    const winChanceDelta = Math.round(currentWinChancePercent - previousWinChancePercent) / 100;
 
-    if (winChanceDelta < -15) classification = AnalysisMoveClassification.Blunder;
-    else if (winChanceDelta < -10) classification = AnalysisMoveClassification.Mistake;
-    else if (winChanceDelta < -5) classification = AnalysisMoveClassification.Inaccuracy;
-    else if (winChanceDelta < 10) classification = AnalysisMoveClassification.None;
-    else if (winChanceDelta > 10 && winChanceDelta < 40) classification = AnalysisMoveClassification.Good;
-    else classification = AnalysisMoveClassification.Brilliant;
+    let classification = AnalysisMoveClassification.None;
 
-    classifiedMoves.push({
-      ...moves[i],
-      classification,
-    });
-  }
+    if (winChanceDelta === 0.0) classification = AnalysisMoveClassification.Best;
+    else if (winChanceDelta > 0.0 && winChanceDelta <= 0.02) classification = AnalysisMoveClassification.Excellent;
+    else if (winChanceDelta > 0.02 && winChanceDelta <= 0.05) classification = AnalysisMoveClassification.Good;
+    else if (winChanceDelta > 0.05 && winChanceDelta <= 0.1) classification = AnalysisMoveClassification.Inaccuracy;
+    else if (winChanceDelta > 0.1 && winChanceDelta <= 0.2) classification = AnalysisMoveClassification.Mistake;
+    else if (winChanceDelta > 0.2 && winChanceDelta <= 1) classification = AnalysisMoveClassification.Blunder;
 
-  return classifiedMoves;
+    return { ...move, classification };
+  });
+
+  return moves;
 };
