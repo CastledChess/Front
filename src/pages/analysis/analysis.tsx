@@ -4,9 +4,12 @@ import { DrawShape } from 'chessground/draw';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, FlipVertical2, CircleHelp } from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
+import { Key } from 'chessground/types';
+import { Keys, useHotkey } from '@/hooks/useHotkey.ts';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 
 import bestRaw from '@/assets/icons/analysis/classification-best.svg?raw';
 import excellentRaw from '@/assets/icons/analysis/classification-excellent.svg?raw';
@@ -14,9 +17,6 @@ import goodRaw from '@/assets/icons/analysis/classification-good.svg?raw';
 import inaccuracyRaw from '@/assets/icons/analysis/classification-inaccuracy.svg?raw';
 import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
 import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
-import { Key } from 'chessground/types';
-import { Keys, useHotkey } from '@/hooks/useHotkey.ts';
-
 const classificationToGlyph = {
   [AnalysisMoveClassification.Best]: bestRaw,
   [AnalysisMoveClassification.Excellent]: excellentRaw,
@@ -50,6 +50,10 @@ export const Analysis = () => {
     });
 
     setCurrent(current - 1);
+  };
+
+  const handleFlipBoard = () => {
+    chessGround?.toggleOrientation();
   };
 
   useEffect(() => {
@@ -120,12 +124,60 @@ export const Analysis = () => {
         )}
       </div>
 
-      <div className="flex flex-col gap-10 bg-primary/5 p-6 rounded-lg w-96">
-        <div className="flex gap-6 justify-center mt-auto">
-          <Button onClick={handlePrevMove} variant="ghost">
+      <div className="flex flex-col bg-primary/5 rounded-lg w-96">
+        <div className="w-full overflow-hidden flex rounded-lg">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                  <FlipVertical2 />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Flip board</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                  <CircleHelp />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Other Button 1</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                  <CircleHelp />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Other Button 2</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                  <CircleHelp />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Other Button 3</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        <div className="p-6 flex flex-col gap-10"></div>
+
+        <div className="w-full overflow-hidden flex rounded-lg mt-auto">
+          <Button onClick={handlePrevMove} className="flex-1 rounded-none" variant="ghost">
             <ArrowLeft />
           </Button>
-          <Button onClick={handleNextMove} variant="ghost">
+          <Button onClick={handleNextMove} className="flex-1 rounded-none" variant="ghost">
             <ArrowRight />
           </Button>
         </div>
