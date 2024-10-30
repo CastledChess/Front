@@ -60,14 +60,15 @@ export const Analysis = () => {
 
     if (!previousMove) return;
 
-    const autoShapes: DrawShape[] = previousMove.engineResults.map((result, index) => ({
+    const bestMoves = previousMove.engineResults
+      .sort((a, b) => b.depth - a.depth)
+      .filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
+      .slice(0, analysis?.variants ?? 1);
+
+    const autoShapes: DrawShape[] = bestMoves.map((result) => ({
       orig: result.from,
       dest: result.to,
       brush: 'blue',
-      modifiers: {
-        lineWidth: 10 + (2.5 * index) / (previousMove.engineResults.length - 1),
-        opacity: 0.2 + (0.1 * index) / (previousMove.engineResults.length - 1),
-      },
     })) as DrawShape[];
 
     if (currentMove.classification && currentMove.classification !== AnalysisMoveClassification.None) {

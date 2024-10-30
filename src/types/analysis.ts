@@ -40,6 +40,7 @@ export type Continuation = {
 
 export type Analysis = {
   pgn: string;
+  variants: number;
   header: Record<string, string>;
   moves: AnalysisMove[];
 };
