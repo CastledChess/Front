@@ -32,6 +32,7 @@ const classificationToGlyph = {
 export const Analysis = () => {
   const { analysis, chess, chessGround } = useAnalysisStore();
   const [current, setCurrent] = useState(0);
+  const [orientation, setOrientation] = useState<'white' | 'black'>('white');
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
@@ -67,6 +68,8 @@ export const Analysis = () => {
   };
 
   const handleFlipBoard = () => {
+    setOrientation((orientation) => (orientation === 'white' ? 'black' : 'white'));
+
     chessGround?.toggleOrientation();
   };
 
@@ -82,7 +85,6 @@ export const Analysis = () => {
     if (current >= analysis!.moves.length) return;
 
     const previousMove = analysis!.moves[current - 1];
-    const currentMove = analysis!.moves[current];
 
     if (!previousMove) return;
 
@@ -97,11 +99,11 @@ export const Analysis = () => {
       brush: 'blue',
     })) as DrawShape[];
 
-    if (currentMove.classification && currentMove.classification !== AnalysisMoveClassification.None) {
+    if (previousMove.classification && previousMove.classification !== AnalysisMoveClassification.None) {
       autoShapes.push({
         orig: previousMove.move.to as Key,
         customSvg: {
-          html: classificationToGlyph[currentMove.classification as keyof typeof classificationToGlyph],
+          html: classificationToGlyph[previousMove.classification as keyof typeof classificationToGlyph],
         },
       });
     }
@@ -125,6 +127,7 @@ export const Analysis = () => {
   return (
     <div className="w-full h-full flex gap-6 justify-center p-4">
       <Evalbar
+        orientation={orientation}
         winChance={analysis!.moves[current]?.engineResults?.[0]?.winChance ?? 50}
         evaluation={analysis!.moves[current]?.engineResults?.[0]?.eval ?? 0}
       />
