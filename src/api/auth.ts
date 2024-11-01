@@ -30,3 +30,13 @@ export const register = async (data: z.infer<typeof RegisterSchema>) => {
   useAuthStore.getState().setRefreshToken(refreshToken);
   useAuthStore.getState().setUser(user);
 };
+
+export const refreshTokens = async () => {
+  const refreshToken = useAuthStore.getState().refreshToken;
+
+  if (!refreshToken) {
+    return Promise.reject('No refresh token available');
+  }
+
+  return api.post('/api/v1/auth/refresh', { refreshToken });
+};
