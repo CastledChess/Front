@@ -31,7 +31,7 @@ export const Register = () => {
     <div className="flex items-center justify-center h-full">
       <div className="p-8 rounded-lg shadow-lg w-full max-w-md" style={{ backgroundColor: '#343639' }}>
         <h2 className="text-center mb-8 font-bold" style={{ color: '#EC9E67', fontSize: '36px' }}>
-          Inscription
+          Register
         </h2>
 
         <Form {...form}>
@@ -42,7 +42,12 @@ export const Register = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input className="bg-[#494A4C] h-12 rounded-[10px] border-none" placeholder="Email" {...field} />
+                    <Input
+                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
+                      autoComplete="email"
+                      placeholder="Email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -55,7 +60,12 @@ export const Register = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input className="bg-[#494A4C] h-12 rounded-[10px] border-none" placeholder="Username" {...field} />
+                    <Input
+                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
+                      autoComplete="username"
+                      placeholder="Username"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -70,7 +80,8 @@ export const Register = () => {
                   <FormControl>
                     <Input
                       className="bg-[#494A4C] h-12 rounded-[10px] border-none"
-                      type="new-password"
+                      type="password"
+                      autoComplete="new-password"
                       placeholder="Password"
                       {...field}
                     />
@@ -88,7 +99,8 @@ export const Register = () => {
                   <FormControl>
                     <Input
                       className="bg-[#494A4C] h-12 rounded-[10px] border-none"
-                      type="new-password"
+                      type="password"
+                      autoComplete="new-password"
                       placeholder="Confirm Password"
                       {...field}
                     />

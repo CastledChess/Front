@@ -1,13 +1,10 @@
 import { api } from './index';
-import { RegisterSchema, LoginResponseSchema } from '@/schema/auth.ts';
+import { RegisterSchema, LoginResponseSchema, LoginSchema } from '@/schema/auth.ts';
 import { z } from 'zod';
 import { useAuthStore } from '@/store/auth.ts';
 
-export const login = async (email: string, password: string) => {
-  const loginCall = await api.post('/api/v1/auth/login', {
-    email,
-    password,
-  });
+export const login = async (data: z.infer<typeof LoginSchema>) => {
+  const loginCall = await api.post('/api/v1/auth/login', data);
 
   if (loginCall.status !== 200) {
     return console.error('Failed to login', loginCall);

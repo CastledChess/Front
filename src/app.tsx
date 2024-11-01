@@ -24,9 +24,9 @@ function App() {
   return (
     <main>
       <Toaster />
-      <Navbar />
       <div className="h-[calc(100vh-4rem)]">
         <Router>
+          <Navbar />
           <Routes>
             {/* Global */}
             <Route path="/" element={<Home />} />
