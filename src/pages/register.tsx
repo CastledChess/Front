@@ -1,112 +1,134 @@
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { RegisterSchema } from '@/schema/auth.ts';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form.tsx';
+import { Input } from '@/components/ui/input.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import { register } from '@/api/auth.ts';
+import { useNavigate, Link } from 'react-router-dom';
+
 export const Register = () => {
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      confirmPassword: '',
+      email: '',
+      password: '',
+      username: '',
+    },
+  });
+
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
+    await register(data);
+
+    navigate('/dashboard');
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center h-full">
       <div className="p-8 rounded-lg shadow-lg w-full max-w-md" style={{ backgroundColor: '#343639' }}>
         <h2 className="text-center mb-8 font-bold" style={{ color: '#EC9E67', fontSize: '36px' }}>
           Inscription
         </h2>
 
-        <form>
-          {/* Champ pour l'e-mail */}
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2" htmlFor="email"></label>
-            <input
-              type="email"
-              id="email"
-              className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="E-mail"
-              style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input className="bg-[#494A4C] h-12 rounded-[10px] border-none" placeholder="Email" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Champ pour le nom d'utilisateur */}
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2" htmlFor="username"></label>
-            <input
-              type="text"
-              id="username"
-              className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="Nom d'utilisateur"
-              style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input className="bg-[#494A4C] h-12 rounded-[10px] border-none" placeholder="Username" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Champ pour le mot de passe */}
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2" htmlFor="password"></label>
-            <input
-              type="password"
-              id="password"
-              className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="Mot de passe"
-              style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
+                      type="new-password"
+                      placeholder="Password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Champ pour la confirmation du mot de passe */}
-          <div className="mb-4">
-            <label className="block text-gray-300 mb-2" htmlFor="confirmPassword"></label>
-            <input
-              type="password"
-              id="confirmPassword"
-              className="rounded-lg text-gray-300 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="Confirmer le mot de passe"
-              style={{ width: '287px', height: '36px', backgroundColor: '#494A4C', padding: '0 16px' }}
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input
+                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
+                      type="new-password"
+                      placeholder="Confirm Password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div className="flex justify-between items-center mb-4">
-            <a href="#" className="text-sm text-white hover:text-gray-300">
-              Mot de passe oublié ?
-            </a>
-            <button
-              type="submit"
-              className="text-black font-bold rounded-lg transition duration-300"
-              style={{
-                backgroundColor: '#EC9E67',
-                width: '138px',
-                height: '34px',
-              }}
-            >
-              Inscription
-            </button>
-          </div>
-
-          <p className="text-gray-400 text-xs mt-4">
-            En vous inscrivant, vous acceptez les Conditions d&apos;utilisation et la Politique de confidentialité,
-            notamment l&apos;utilisation des cookies.
-          </p>
-        </form>
+            <div className="flex justify-between gap-6 items-center">
+              <Button type="submit" className="ml-auto bg-[#EC9E67] hover:bg-[#EC9E67]/90">
+                Register
+              </Button>
+            </div>
+          </form>
+        </Form>
 
         <div className="mt-6 text-center text-white">
-          Déjà inscrit ?{' '}
-          <a href="/login" className="text-white underline hover:text-orange-600">
-            Connexion
-          </a>
+          Already have an account?{' '}
+          <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
+            Login
+          </Link>
         </div>
 
         <div className="flex items-center justify-center mt-6">
-          <div className="flex-grow border-t border-white"></div>
-          <span className="text-white mx-4">ou avec</span>
-          <div className="flex-grow border-t border-white"></div>
+          <div className="flex-grow border-t border-white/15"></div>
+          <span className="text-white/60 mx-4">Or with</span>
+          <div className="flex-grow border-t border-white/15"></div>
         </div>
 
         <div className="flex justify-center mt-4 space-x-4 text-white p-4">
-          <button
-            className="w-[178px] h-[37px] p-2 rounded-full hover:bg-gray-600 flex justify-start items-center space-x-2"
-            style={{ backgroundColor: '#494A4C' }}
-          >
-            <img src="src/assets/icons/lichess.png" alt="Lichess" className="w-8 h-8" />
+          <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
+            <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-9 aspect-square" />
             <span className="text-white">Lichess</span>
-          </button>
+          </Button>
 
-          <button
-            className="w-[178px] h-[37px] p-2 rounded-full hover:bg-gray-600 flex justify-start items-center space-x-2"
-            style={{ backgroundColor: '#494A4C' }}
-          >
-            <img src="src/assets/icons/chess_logo.png" alt="Chess.com" className="w-8 h-8" />
+          <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
+            <img src="src/assets/icons/chess_logo.png" alt="Chess.com" className="h-9 aspect-square" />
             <span className="text-lime-600">chess.com</span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

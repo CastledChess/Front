@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ReactNode } from 'react';
 
 import { Navbar } from '@/components/navbar/navbar.tsx';
 import { StartAnalysis } from '@/pages/analysis/start-analysis';
@@ -6,16 +7,15 @@ import { Home } from '@/pages/home.tsx';
 import { Analysis } from '@/pages/analysis/analysis.tsx';
 import { Documentation } from '@/pages/documentation.tsx';
 import { Register } from '@/pages/register.tsx';
-import { Login } from '@/pages/login.tsx';
 import { Logout } from '@/pages/logout.tsx';
 import { Dashboard } from '@/pages/dashboard.tsx';
 import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
-import { ReactNode } from 'react';
+import { Login } from '@/pages/login.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 
-import './styles/font.css';
-import './styles/index.css';
+import '@/styles/font.css';
+import '@/styles/index.css';
 import '@/styles/scrollbar.css';
 
 function App() {
