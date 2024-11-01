@@ -2,7 +2,7 @@ name: Mirror
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "patch/mirror" ]
 
 env:
   MIRROR_URL: "git@github.com:Lxdovic/CastledFront.git"
