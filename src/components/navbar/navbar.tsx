@@ -54,7 +54,7 @@ const documentation: { title: string; href: string; description: string }[] = [
 ];
 
 export const Navbar = () => {
-  const { user, accessToken, refreshToken, logout } = useAuthStore((state) => state);
+  const { user, logout } = useAuthStore((state) => state);
 
   const navigate = useNavigate();
 
@@ -63,10 +63,6 @@ export const Navbar = () => {
 
     navigate('/login');
   };
-
-  console.log('USER', user);
-  console.log('ACCESS TOKEN', accessToken);
-  console.log('REFRESH TOKEN', refreshToken);
 
   return (
     <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end border-b">
