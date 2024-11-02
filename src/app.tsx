@@ -12,14 +12,19 @@ import { Dashboard } from '@/pages/dashboard.tsx';
 import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login.tsx';
+import { Settings } from '@/pages/settings/settings.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 
+import '@/assets/themes/piece-css/index.ts';
+import '@/assets/themes/board-css/index.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
+import { useAuthStore } from '@/store/auth.ts';
 
 function App() {
   const { analysis } = useAnalysisStore();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <main>
@@ -36,6 +41,14 @@ function App() {
               element={
                 <ProtectedRoute allow={!!analysis} redirect="/start-analysis">
                   <Analysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Settings />
                 </ProtectedRoute>
               }
             />

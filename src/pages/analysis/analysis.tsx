@@ -140,7 +140,9 @@ export const Analysis = () => {
             }}
           />
         )}
-        <Chessboard />
+        <div className="h-[calc(100%-7rem)] aspect-square">
+          <Chessboard />
+        </div>
         {analysis && (
           <PlayerInfo
             player={{
