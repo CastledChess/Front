@@ -1,4 +1,3 @@
-import { Chessboard } from '@/components/chessboard/chessboard.tsx';
 import { useEffect, useRef, useState } from 'react';
 import { DrawShape } from 'chessground/draw';
 import { useAnalysisStore } from '@/store/analysis.ts';
@@ -19,6 +18,7 @@ import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
 import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
 import { findOpening } from '@/lib/opening.ts';
 import { Opening } from '@/types/opening.ts';
+import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.tsx';
 
 const classificationToGlyph = {
   [AnalysisMoveClassification.Best]: bestRaw,
@@ -140,7 +140,9 @@ export const Analysis = () => {
             }}
           />
         )}
-        <Chessboard />
+        <div className="h-[calc(100%-7rem)] aspect-square">
+          <AnalysisChessboard />
+        </div>
         {analysis && (
           <PlayerInfo
             player={{

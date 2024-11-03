@@ -3,26 +3,21 @@ import { useLayoutEffect, useMemo, useRef } from 'react';
 import { Config } from 'chessground/config';
 import '@/components/chessboard/base.css';
 import '@/components/chessboard/brown.css';
+import { useAnalysisStore } from '@/store/analysis.ts';
 import { useThemeStore } from '@/store/theme.ts';
-import { Chess } from 'chess.js';
-import { Api } from 'chessground/api';
 
-type ChessboardProps = {
-  chess: Chess;
-  chessGround: Api | null;
-  setChessGround: (chessGround: Api) => void;
+type AnalysisChessboardProps = {
   freeMovable?: boolean;
   draggable?: boolean;
   onAfterChange?: () => void;
 };
 
-export const Chessboard = ({
-  chess,
-  setChessGround,
+export const AnalysisChessboard = ({
   onAfterChange,
   freeMovable = false,
   draggable = true,
-}: ChessboardProps) => {
+}: AnalysisChessboardProps) => {
+  const { chess, setChessGround } = useAnalysisStore();
   const { pieceTheme, boardTheme, animationSpeed } = useThemeStore();
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -51,7 +46,7 @@ export const Chessboard = ({
   return (
     <div className="w-full h-full relative">
       <div className={`w-full h-full aspect-square absolute rounded-lg chessboard-base ${boardTheme}`} />
-      <div ref={ref} className={`w-full h-full aspect-square ${pieceTheme}`} />
+      <div ref={ref} className={`w-full h-full aspect-square is2d ${pieceTheme}`} />
     </div>
   );
 };

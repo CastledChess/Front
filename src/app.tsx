@@ -12,21 +12,26 @@ import { Dashboard } from '@/pages/dashboard/dashboard.tsx';
 import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login.tsx';
+import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 
+import '@/assets/themes/piece-css/index.ts';
+import '@/assets/themes/board-css/index.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
+import { useAuthStore } from '@/store/auth.ts';
 
 function App() {
   const { analysis } = useAnalysisStore();
+  const user = useAuthStore((state) => state.user);
 
   return (
     <main>
       <Toaster />
-      <div className="h-[calc(100vh-4rem)]">
-        <Router>
-          <Navbar />
+      <Router>
+        <Navbar />
+        <div className="h-[calc(100vh-4rem)]">
           <Routes>
             {/* Global */}
             <Route path="/" element={<Home />} />
@@ -36,6 +41,14 @@ function App() {
               element={
                 <ProtectedRoute allow={!!analysis} redirect="/start-analysis">
                   <Analysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/theme"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Theme />
                 </ProtectedRoute>
               }
             />
@@ -52,11 +65,12 @@ function App() {
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />
           </Routes>
-        </Router>
-      </div>
+        </div>
+      </Router>
     </main>
   );
 }
+
 const ProtectedRoute = ({ allow, children, redirect }: { allow: boolean; redirect: string; children: ReactNode }) => {
   if (!allow) {
     return <Navigate to={redirect} replace />;

@@ -20,6 +20,7 @@ import {
 
 import * as React from 'react';
 import { Link } from '@radix-ui/react-navigation-menu';
+import { Link as RouterLink } from 'react-router-dom';
 import { cn } from '@/lib/utils.ts';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
 import { useAuthStore } from '@/store/auth.ts';
@@ -126,10 +127,12 @@ export const Navbar = () => {
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                Settings
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              <RouterLink to="/theme">
+                <DropdownMenuItem>
+                  Theme
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </RouterLink>
               <DropdownMenuItem>
                 Keyboard shortcuts
                 <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
