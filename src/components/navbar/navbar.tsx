@@ -126,13 +126,9 @@ export const Navbar = () => {
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                Billing
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <RouterLink to="/settings">
+              <RouterLink to="/theme">
                 <DropdownMenuItem>
-                  Settings
+                  Theme
                   <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </RouterLink>

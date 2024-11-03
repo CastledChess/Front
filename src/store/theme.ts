@@ -3,18 +3,22 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface ThemeState {
   pieceTheme: string;
-  setPieceTheme: (pieceTheme: string) => void;
   boardTheme: string;
+  animationSpeed: string;
+  setPieceTheme: (pieceTheme: string) => void;
   setBoardTheme: (boardTheme: string) => void;
+  setAnimationSpeed: (animationSpeed: string) => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       pieceTheme: 'cburnett',
-      setPieceTheme: (pieceTheme) => set({ pieceTheme }),
       boardTheme: 'wood',
+      animationSpeed: '250',
+      setPieceTheme: (pieceTheme) => set({ pieceTheme }),
       setBoardTheme: (boardTheme) => set({ boardTheme }),
+      setAnimationSpeed: (animationSpeed) => set({ animationSpeed }),
     }),
     {
       name: 'theme',
