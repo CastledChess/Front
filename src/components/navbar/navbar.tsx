@@ -21,7 +21,10 @@ import {
 import * as React from 'react';
 import { Link } from '@radix-ui/react-navigation-menu';
 import { cn } from '@/lib/utils.ts';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar.tsx';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
+import { useAuthStore } from '@/store/auth.ts';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button.tsx';
 
 const documentation: { title: string; href: string; description: string }[] = [
   {
@@ -47,12 +50,20 @@ const documentation: { title: string; href: string; description: string }[] = [
 ];
 
 export const Navbar = () => {
-  const isAuthenticated = true;
+  const { user, logout } = useAuthStore((state) => state);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+
+    navigate('/login');
+  };
 
   return (
     <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end border-b">
       <NavigationMenu>
-        <NavigationMenuList>
+        <NavigationMenuList className="gap-2">
           <NavigationMenuItem>
             <Link href="/dashboard" asChild>
               <NavigationMenuLink className={navigationMenuTriggerStyle()}>Dashboard</NavigationMenuLink>
@@ -80,15 +91,31 @@ export const Navbar = () => {
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
+
+          {!user && (
+            <>
+              <NavigationMenuItem>
+                <Link href="/login" asChild>
+                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>Login</NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              <NavigationMenuItem>
+                <Link href="/register" asChild>
+                  <NavigationMenuLink>
+                    <Button>Register</Button>
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+            </>
+          )}
         </NavigationMenuList>
       </NavigationMenu>
 
-      {isAuthenticated && (
+      {user && (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>{user.username.toUpperCase()[0]}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
@@ -111,7 +138,7 @@ export const Navbar = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               Log out
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>

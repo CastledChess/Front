@@ -15,9 +15,14 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch.tsx';
 import { useNavigate } from 'react-router-dom';
-import { Analysis, AnalysisMove, SearchResults } from '@/types/analysis.ts';
+import { Analysis } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { useState } from 'react';
+import { Slider } from '@/components/ui/slider.tsx';
+import { Progress } from '@/components/ui/progress.tsx';
+import { analyseMove, classifyMoves } from '@/lib/analysis.ts';
+import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
+import { Move } from 'chess.js';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -35,25 +40,22 @@ Nc4 Nxc4 22. Bxc4 Nb6 23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7
 f3 Bc8 34. Kf2 Bf5 35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5
 40. Rd6 Kc5 41. Ra6 Nf2 42. g4 Bd3 43. Re6 1/2-1/2`;
 
-const FormSchema = z.object({
-  pgn: z.string().min(1, 'PGN is required'),
-  classifyMoves: z.boolean().optional(),
-  engineDepth: z.number().min(1, 'Depth must be at least 1').max(18, 'Depth must be at most 18').optional(),
-});
-
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState({ value: 0, max: 0 });
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
+    resolver: zodResolver(StartAnalysisFormSchema),
     defaultValues: {
       classifyMoves: true,
+      variants: 1,
+      engineDepth: 12,
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+  const onSubmit = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     setIsLoading(true);
 
     const analysis = await analyseGame(data);
@@ -65,11 +67,13 @@ export const StartAnalysis = () => {
     navigate('/analysis');
   };
 
-  const analyseGame = async (data: z.infer<typeof FormSchema>) => {
+  const analyseGame = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     chess.loadPgn(data.pgn);
 
-    const moveHistory = chess.history();
-    const moves: { move: string; fen: string }[] = [];
+    const moveHistory = chess.history({ verbose: true });
+    const moves: { move: Move; fen: string }[] = [];
+
+    setProgress({ value: 0, max: moveHistory.length });
 
     while (chess.history().length > 0) {
       chess.undo();
@@ -82,45 +86,24 @@ export const StartAnalysis = () => {
       moves.unshift({ move, fen });
     }
 
+    const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data, reportProgress));
+
     const analysis: Analysis = {
       pgn: data.pgn,
+      variants: data.variants,
       header: chess.header(),
-      moves: await Promise.all(moves.map(async ({ move, fen }) => await analyseMove(fen, move))),
+      moves: data.classifyMoves ? classifyMoves(await Promise.all(analyses)) : await Promise.all(analyses),
     };
 
     return analysis;
   };
 
-  const analyseMove = (fen: string, move: string): Promise<AnalysisMove> =>
-    new Promise<AnalysisMove>((resolve) => {
-      const socket = new WebSocket('wss://chess-api.com/v1');
-
-      socket.addEventListener('open', () => {
-        socket.send(
-          JSON.stringify({
-            variants: 1,
-            searchMoves: [move],
-            fen,
-          }),
-        );
-      });
-
-      socket.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
-
-        if (['info', 'log'].includes(data.type)) return;
-        if (data.depth < 12) return;
-
-        resolve({
-          move,
-          fen,
-          engineResults: data as SearchResults,
-        });
-      });
-    });
+  const reportProgress = () => {
+    setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
+  };
 
   return (
-    <div className="flex justify-center p-20">
+    <div className="flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
         <h1 className="text-3xl font-bold my-2">New Analysis</h1>
 
@@ -135,8 +118,9 @@ export const StartAnalysis = () => {
                   <FormControl>
                     <Textarea
                       placeholder={PGN_PLACEHOLDER}
+                      spellCheck="false"
                       id="pgn"
-                      className="h-80 resize-none custom-scrollbar"
+                      className="h-56 resize-none custom-scrollbar"
                       {...field}
                     />
                   </FormControl>
@@ -167,9 +151,59 @@ export const StartAnalysis = () => {
                 </FormItem>
               )}
             />
-            <LoaderButton isLoading={isLoading} type="submit" className="ml-auto flex">
-              Go!
-            </LoaderButton>
+
+            <FormField
+              control={form.control}
+              name="variants"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between">
+                    Variants<span>{field.value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      step={1}
+                      min={1}
+                      max={5}
+                      value={[field.value]}
+                      onValueChange={(values) => field.onChange(values[0])}
+                    />
+                  </FormControl>
+                  <FormDescription>The number of lines the engine should compute</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="engineDepth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between">
+                    Engine Depth<span>{field.value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      step={1}
+                      min={1}
+                      max={18}
+                      value={[field.value]}
+                      onValueChange={(values) => field.onChange(values[0])}
+                    />
+                  </FormControl>
+                  <FormDescription>The depth at which the engine should search</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-between gap-6 items-center">
+              {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
+              <LoaderButton isLoading={isLoading} type="submit" className="ml-auto">
+                Go!
+              </LoaderButton>
+            </div>
           </form>
         </Form>
       </div>

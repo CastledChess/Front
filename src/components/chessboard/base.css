@@ -222,3 +222,7 @@ piece.fading {
 .cg-wrap coords.squares.rank8 {
   transform: translateX(700%);
 }
+
+.orange {
+  @apply bg-amber-400/50 text-green-50;
+}

@@ -1,3 +1,5 @@
+import { Move } from 'chess.js';
+
 export type SearchResults = {
   captured: boolean;
   centipawns: string;
@@ -38,12 +40,25 @@ export type Continuation = {
 
 export type Analysis = {
   pgn: string;
+  variants: number;
   header: Record<string, string>;
   moves: AnalysisMove[];
 };
 
 export type AnalysisMove = {
-  move: string;
+  move: Move;
   fen: string;
-  engineResults: SearchResults;
+  engineResults: SearchResults[];
+  classification?: AnalysisMoveClassification;
 };
+
+export enum AnalysisMoveClassification {
+  Brilliant = 'Brilliant',
+  Good = 'Good',
+  Inaccuracy = 'Inaccuracy',
+  Mistake = 'Mistake',
+  Blunder = 'Blunder',
+  None = 'None',
+  Best = 'Best',
+  Excellent = 'Excellent',
+}
