@@ -1,0 +1,120 @@
+.chessboard-base {
+  background-color: #f0d9b5;
+  background-size: contain;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4PSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIgogICAgIHZpZXdCb3g9IjAgMCA4IDgiIHNoYXBlLXJlbmRlcmluZz0iY3Jpc3BFZGdlcyI+CjxnIGlkPSJhIj4KICA8ZyBpZD0iYiI+CiAgICA8ZyBpZD0iYyI+CiAgICAgIDxnIGlkPSJkIj4KICAgICAgICA8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBpZD0iZSIgb3BhY2l0eT0iMCIvPgogICAgICAgIDx1c2UgeD0iMSIgeT0iMSIgaHJlZj0iI2UiIHg6aHJlZj0iI2UiLz4KICAgICAgICA8cmVjdCB5PSIxIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBpZD0iZiIgb3BhY2l0eT0iMC4yIi8+CiAgICAgICAgPHVzZSB4PSIxIiB5PSItMSIgaHJlZj0iI2YiIHg6aHJlZj0iI2YiLz4KICAgICAgPC9nPgogICAgICA8dXNlIHg9IjIiIGhyZWY9IiNkIiB4OmhyZWY9IiNkIi8+CiAgICA8L2c+CiAgICA8dXNlIHg9IjQiIGhyZWY9IiNjIiB4OmhyZWY9IiNjIi8+CiAgPC9nPgogIDx1c2UgeT0iMiIgaHJlZj0iI2IiIHg6aHJlZj0iI2IiLz4KPC9nPgo8dXNlIHk9IjQiIGhyZWY9IiNhIiB4OmhyZWY9IiNhIi8+Cjwvc3ZnPg==');
+}
+
+.blue2 {
+  background-image: url('@/assets/themes/board/blue2.jpg');
+}
+.blue3 {
+  background-image: url('@/assets/themes/board/blue3.jpg');
+}
+.blue-marble {
+  background-image: url('@/assets/themes/board/blue-marble.jpg');
+}
+.canvas2 {
+  background-image: url('@/assets/themes/board/canvas2.jpg');
+}
+.green-plastic {
+  background-image: url('@/assets/themes/board/green-plastic.png');
+}
+.grey {
+  background-image: url('@/assets/themes/board/grey.jpg');
+}
+.horsey {
+  background-image: url('@/assets/themes/board/horsey.jpg');
+}
+.leather {
+  background-image: url('@/assets/themes/board/leather.jpg');
+}
+.maple {
+  background-image: url('@/assets/themes/board/maple.jpg');
+}
+.maple2 {
+  background-image: url('@/assets/themes/board/maple2.jpg');
+}
+.marble {
+  background-image: url('@/assets/themes/board/marble.jpg');
+}
+.metal {
+  background-image: url('@/assets/themes/board/metal.jpg');
+}
+.olive {
+  background-image: url('@/assets/themes/board/olive.jpg');
+}
+.pink-pyramid {
+  background-image: url('@/assets/themes/board/pink-pyramid.png');
+}
+.purple-diag {
+  background-image: url('@/assets/themes/board/purple-diag.png');
+}
+.wood {
+  background-image: url('@/assets/themes/board/wood.jpg');
+}
+.wood2 {
+  background-image: url('@/assets/themes/board/wood2.jpg');
+}
+.wood3 {
+  background-image: url('@/assets/themes/board/wood3.jpg');
+}
+.wood4 {
+  background-image: url('@/assets/themes/board/wood4.jpg');
+}
+.blue2-thumbnail {
+  background-image: url('@/assets/themes/board/blue2.thumbnail.jpg');
+}
+.blue3-thumbnail {
+  background-image: url('@/assets/themes/board/blue3.thumbnail.jpg');
+}
+.blue-marble-thumbnail {
+  background-image: url('@/assets/themes/board/blue-marble.thumbnail.jpg');
+}
+.canvas2-thumbnail {
+  background-image: url('@/assets/themes/board/canvas2.thumbnail.jpg');
+}
+.green-plastic-thumbnail {
+  background-image: url('@/assets/themes/board/green-plastic.thumbnail.png');
+}
+.grey-thumbnail {
+  background-image: url('@/assets/themes/board/grey.thumbnail.jpg');
+}
+.horsey-thumbnail {
+  background-image: url('@/assets/themes/board/horsey.thumbnail.jpg');
+}
+.leather-thumbnail {
+  background-image: url('@/assets/themes/board/leather.thumbnail.jpg');
+}
+.maple-thumbnail {
+  background-image: url('@/assets/themes/board/maple.thumbnail.jpg');
+}
+.maple2-thumbnail {
+  background-image: url('@/assets/themes/board/maple2.thumbnail.jpg');
+}
+.marble-thumbnail {
+  background-image: url('@/assets/themes/board/marble.thumbnail.jpg');
+}
+.metal-thumbnail {
+  background-image: url('@/assets/themes/board/metal.thumbnail.jpg');
+}
+.olive-thumbnail {
+  background-image: url('@/assets/themes/board/olive.thumbnail.jpg');
+}
+.pink-pyramid-thumbnail {
+  background-image: url('@/assets/themes/board/pink-pyramid.thumbnail.png');
+}
+.purple-diag-thumbnail {
+  background-image: url('@/assets/themes/board/purple-diag.thumbnail.png');
+}
+.wood-thumbnail {
+  background-image: url('@/assets/themes/board/wood.thumbnail.jpg');
+}
+.wood2-thumbnail {
+  background-image: url('@/assets/themes/board/wood2.thumbnail.jpg');
+}
+.wood3-thumbnail {
+  background-image: url('@/assets/themes/board/wood3.thumbnail.jpg');
+}
+.wood4-thumbnail {
+  background-image: url('@/assets/themes/board/wood4.thumbnail.jpg');
+}
