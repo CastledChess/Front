@@ -119,10 +119,10 @@ export const Analysis = () => {
     });
   }, [current]);
 
-  useHotkey(Keys.RightArrow, 0, handleNextMove);
-  useHotkey(Keys.LeftArrow, 0, handlePrevMove);
-  useHotkey(Keys.Space, 0, handleToggleAutoPlay);
-  useHotkey(Keys.F, 0, handleFlipBoard);
+  useHotkeys('right', handleNextMove);
+  useHotkeys('left', handlePrevMove);
+  useHotkeys('space', handleToggleAutoPlay);
+  useHotkeys('f', handleFlipBoard);
 
   return (
     <div className="w-full h-full flex gap-6 justify-center p-4">
