@@ -20,7 +20,7 @@ import { useAnalysisStore } from '@/store/analysis.ts';
 import { useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
-import { analyseMove, classifyMoves } from '@/lib/analysis.ts';
+import { analyseMovesLocal, classifyMoves } from '@/lib/analysis.ts';
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 
@@ -86,7 +86,8 @@ export const StartAnalysis = () => {
       moves.unshift({ move, fen });
     }
 
-    const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data, reportProgress));
+    const analyses = analyseMovesLocal(moves, reportProgress);
+    // const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data, reportProgress));
 
     const analysis: Analysis = {
       pgn: data.pgn,

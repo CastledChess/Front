@@ -7,8 +7,11 @@ import { ArrowLeft, ArrowRight, FlipVertical2, CircleHelp, Play, Pause } from 'l
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import { Key } from 'chessground/types';
-import { Keys, useHotkey } from '@/hooks/useHotkey.ts';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip.tsx';
+import { findOpening } from '@/lib/opening.ts';
+import { Opening } from '@/types/opening.ts';
+import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.tsx';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 import bestRaw from '@/assets/icons/analysis/classification-best.svg?raw';
 import excellentRaw from '@/assets/icons/analysis/classification-excellent.svg?raw';
@@ -16,9 +19,6 @@ import goodRaw from '@/assets/icons/analysis/classification-good.svg?raw';
 import inaccuracyRaw from '@/assets/icons/analysis/classification-inaccuracy.svg?raw';
 import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
 import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
-import { findOpening } from '@/lib/opening.ts';
-import { Opening } from '@/types/opening.ts';
-import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.tsx';
 
 const classificationToGlyph = {
   [AnalysisMoveClassification.Best]: bestRaw,
@@ -30,8 +30,7 @@ const classificationToGlyph = {
 };
 
 export const Analysis = () => {
-  const { analysis, chess, chessGround } = useAnalysisStore();
-  const [current, setCurrent] = useState(0);
+  const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
   const [orientation, setOrientation] = useState<'white' | 'black'>('white');
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
@@ -39,28 +38,28 @@ export const Analysis = () => {
 
   useEffect(() => {
     findOpening(chess.pgn()).then((opening) => setOpening(opening));
-  }, [current]);
+  }, [currentMove]);
 
   const handleNextMove = () => {
-    if (current >= analysis!.moves.length) return;
+    if (currentMove >= analysis!.moves.length) return;
 
-    chess.move(analysis!.moves[current].move);
+    chess.move(analysis!.moves[currentMove].move);
     chessGround?.set({
       fen: chess.fen(),
     });
 
-    setCurrent((current) => current + 1);
+    setCurrentMove(currentMove + 1);
   };
 
   const handlePrevMove = () => {
-    if (current <= 0) return;
+    if (currentMove <= 0) return;
 
     chess.undo();
     chessGround?.set({
       fen: chess.fen(),
     });
 
-    setCurrent(current - 1);
+    setCurrentMove(currentMove - 1);
   };
 
   const handleToggleAutoPlay = () => {
@@ -74,22 +73,22 @@ export const Analysis = () => {
   };
 
   useEffect(() => {
-    if (current >= analysis!.moves.length) setIsAutoPlaying(false);
+    if (currentMove >= analysis!.moves.length) setIsAutoPlaying(false);
     if (!isAutoPlaying) clearInterval(autoPlayInterval.current!);
     else autoPlayInterval.current = setInterval(handleNextMove, 1000);
 
     return () => clearInterval(autoPlayInterval.current!);
-  }, [isAutoPlaying, current]);
+  }, [isAutoPlaying, currentMove]);
 
   useEffect(() => {
-    if (current >= analysis!.moves.length) return;
+    if (currentMove >= analysis!.moves.length) return;
 
-    const previousMove = analysis!.moves[current - 1];
+    const previousMove = analysis!.moves[currentMove - 1];
 
     if (!previousMove) return;
 
     const bestMoves = previousMove.engineResults
-      .sort((a, b) => b.depth - a.depth)
+      .sort((a, b) => b.depth! - a.depth!)
       .filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
       .slice(0, analysis?.variants ?? 1);
 
@@ -117,7 +116,7 @@ export const Analysis = () => {
       },
       drawable: { autoShapes: autoShapes },
     });
-  }, [current]);
+  }, [currentMove]);
 
   useHotkeys('right', handleNextMove);
   useHotkeys('left', handlePrevMove);
@@ -128,8 +127,8 @@ export const Analysis = () => {
     <div className="w-full h-full flex gap-6 justify-center p-4">
       <Evalbar
         orientation={orientation}
-        winChance={analysis!.moves[current]?.engineResults?.[0]?.winChance ?? 50}
-        evaluation={analysis!.moves[current]?.engineResults?.[0]?.eval ?? 0}
+        winChance={analysis!.moves[currentMove]?.engineResults?.[0]?.winChance ?? 50}
+        evaluation={analysis!.moves[currentMove]?.engineResults?.[0]?.eval ?? 0}
       />
       <div className="h-full flex flex-col gap-4">
         {analysis && (

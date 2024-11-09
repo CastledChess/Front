@@ -19,12 +19,16 @@ export const Evalbar = ({ orientation, winChance, evaluation }: EvalbarProps) =>
             }}
           >
             <motion.div
-              animate={{ height: `${100 - winChance}%` }}
+              animate={{ height: `${100 - winChance}%`, transition: { duration: 1 } }}
               initial={{ height: '50%' }}
               className="w-full bg-white/5"
             />
 
-            <motion.div animate={{ height: `${winChance}%` }} initial={{ height: '50%' }} className="w-full bg-white" />
+            <motion.div
+              animate={{ height: `${winChance}%`, transition: { duration: 1 } }}
+              initial={{ height: '50%' }}
+              className="w-full bg-white"
+            />
           </div>
         </TooltipTrigger>
         <TooltipContent>

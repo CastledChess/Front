@@ -1,7 +1,48 @@
 import { z } from 'zod';
-import { AnalysisMove, AnalysisMoveClassification, SearchResults } from '@/types/analysis.ts';
+import { AnalysisMove, AnalysisMoveClassification, InfoResult } from '@/types/analysis.ts';
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
+import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
+import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
+
+export const analyseMovesLocal = (moves: { move: Move; fen: string }[], reportProgress: () => void) => {
+  const stockfish = new StockfishService();
+  const parser = new UciParserService();
+
+  return moves.map(
+    async ({ move, fen }) =>
+      await new Promise((resolve) => {
+        const variantResults: InfoResult[] = [];
+
+        stockfish.pushCommand({
+          command: `position fen ${fen}`,
+        });
+
+        stockfish.pushCommand({
+          command: `go movetime 100`,
+          callback: (data) => {
+            const result = parser.parse(data, move.color === 'w');
+
+            if (!result) return;
+
+            if (result.type === 'bestmove') {
+              reportProgress();
+
+              resolve({
+                move,
+                fen,
+                engineResults: variantResults,
+              });
+
+              return;
+            }
+
+            if (result.type === 'info') variantResults.push(result as InfoResult);
+          },
+        });
+      }),
+  ) as Promise<AnalysisMove>[];
+};
 
 export const analyseMove = (
   fen: string,
@@ -11,7 +52,7 @@ export const analyseMove = (
 ) => {
   return new Promise<AnalysisMove>((resolve) => {
     const socket = new WebSocket('wss://chess-api.com/v1');
-    const variantResults: SearchResults[] = [];
+    const variantResults: InfoResult[] = [];
     let timeout: NodeJS.Timeout;
 
     socket.addEventListener('open', () => {
@@ -52,7 +93,7 @@ export const analyseMove = (
         });
       }, 2000);
 
-      const resultData = data as SearchResults;
+      const resultData = data as InfoResult;
 
       variantResults.push(resultData);
     });
@@ -64,12 +105,38 @@ export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
 };
 
 export const classifyRegular = (move: AnalysisMove, index: number, moves: AnalysisMove[]) => {
-  const previousWinChance = move.engineResults.sort((a, b) => b.depth - a.depth)?.[0]?.winChance;
-  const currentWinChance = moves[index + 1]?.engineResults.sort((a, b) => b.depth - a.depth)?.[0]?.winChance;
+  const previous = move.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
+  const current = moves[index + 1]?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
 
-  if (!previousWinChance || !currentWinChance) return { ...move, classification: AnalysisMoveClassification.None };
+  if (!previous || !current) return { ...move, classification: AnalysisMoveClassification.None };
 
-  const winChanceDelta = (currentWinChance - previousWinChance) / 100;
+  console.log(move);
+
+  if (current.mate) return { ...move, classification: classifyWithMate(previous.mate || current.mate, current.mate) };
+  else return { ...move, classification: classifyWithWinChance(previous.winChance!, current.winChance!) };
+};
+
+const classifyWithMate = (prev: number, current: number): AnalysisMoveClassification => {
+  if (prev === null || current === null) return AnalysisMoveClassification.None;
+
+  const mateDelta = current - prev;
+
+  let classification = AnalysisMoveClassification.None;
+
+  if (mateDelta <= 0) classification = AnalysisMoveClassification.Best;
+  else if (mateDelta === 1) classification = AnalysisMoveClassification.Excellent;
+  else if (mateDelta === 2) classification = AnalysisMoveClassification.Good;
+  else if (mateDelta === 3) classification = AnalysisMoveClassification.Inaccuracy;
+  else if (mateDelta === 4) classification = AnalysisMoveClassification.Mistake;
+  else if (mateDelta >= 5) classification = AnalysisMoveClassification.Blunder;
+
+  return classification;
+};
+
+const classifyWithWinChance = (prev: number, current: number): AnalysisMoveClassification => {
+  if (!prev || !current) return AnalysisMoveClassification.None;
+
+  const winChanceDelta = Math.abs((current - prev) / 100);
 
   let classification = AnalysisMoveClassification.None;
 
@@ -80,5 +147,5 @@ export const classifyRegular = (move: AnalysisMove, index: number, moves: Analys
   else if (winChanceDelta > 0.1 && winChanceDelta <= 0.2) classification = AnalysisMoveClassification.Mistake;
   else if (winChanceDelta > 0.2 && winChanceDelta <= 1) classification = AnalysisMoveClassification.Blunder;
 
-  return { ...move, classification };
+  return classification;
 };
