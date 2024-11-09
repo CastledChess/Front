@@ -223,6 +223,18 @@ piece.fading {
   transform: translateX(700%);
 }
 
+.green {
+  @apply bg-green-400/50 text-green-50;
+}
+
+.red {
+  @apply bg-red-400/50 text-red-50;
+}
+
+.yellow {
+  @apply bg-yellow-400/50 text-yellow-50;
+}
+
 .orange {
   @apply bg-amber-400/50 text-green-50;
 }

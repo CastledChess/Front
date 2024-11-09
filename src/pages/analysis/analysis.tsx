@@ -29,6 +29,15 @@ const classificationToGlyph = {
   [AnalysisMoveClassification.Blunder]: blunderRaw,
 };
 
+const classificationToColor = {
+  [AnalysisMoveClassification.Best]: 'green',
+  [AnalysisMoveClassification.Excellent]: 'green',
+  [AnalysisMoveClassification.Good]: 'green',
+  [AnalysisMoveClassification.Inaccuracy]: 'yellow',
+  [AnalysisMoveClassification.Mistake]: 'orange',
+  [AnalysisMoveClassification.Blunder]: 'red',
+};
+
 export const Analysis = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
   const [orientation, setOrientation] = useState<'white' | 'black'>('white');
@@ -110,8 +119,14 @@ export const Analysis = () => {
     chessGround?.set({
       highlight: {
         custom: new Map<Key, string>([
-          [previousMove.move.from as Key, 'orange'],
-          [previousMove.move.to as Key, 'orange'],
+          [
+            previousMove.move.from as Key,
+            classificationToColor[previousMove.classification as keyof typeof classificationToColor],
+          ],
+          [
+            previousMove.move.to as Key,
+            classificationToColor[previousMove.classification as keyof typeof classificationToColor],
+          ],
         ]),
       },
       drawable: { autoShapes: autoShapes },
