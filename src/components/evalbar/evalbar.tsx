@@ -5,9 +5,10 @@ type EvalbarProps = {
   orientation: 'white' | 'black';
   winChance: number;
   evaluation: number;
+  mate?: number;
 };
 
-export const Evalbar = ({ orientation, winChance, evaluation }: EvalbarProps) => {
+export const Evalbar = ({ orientation, winChance, evaluation, mate }: EvalbarProps) => {
   return (
     <TooltipProvider>
       <Tooltip delayDuration={100}>
@@ -32,7 +33,7 @@ export const Evalbar = ({ orientation, winChance, evaluation }: EvalbarProps) =>
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{evaluation}</p>
+          <p>{mate ? `M${mate}` : evaluation}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

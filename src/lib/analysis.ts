@@ -5,8 +5,14 @@ import { Move } from 'chess.js';
 import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
 import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
 
-export const analyseMovesLocal = (moves: { move: Move; fen: string }[], reportProgress: () => void) => {
-  const stockfish = new StockfishService();
+export type AnalyseMovesLocalParams = {
+  moves: { move: Move; fen: string }[];
+  data: z.infer<typeof StartAnalysisFormSchema>;
+  reportProgress: () => void;
+};
+
+export const analyseMovesLocal = ({ moves, data, reportProgress }: AnalyseMovesLocalParams) => {
+  const stockfish = new StockfishService({ variants: data.variants, threads: data.threads });
   const parser = new UciParserService();
 
   return moves.map(
@@ -44,82 +50,24 @@ export const analyseMovesLocal = (moves: { move: Move; fen: string }[], reportPr
   ) as Promise<AnalysisMove>[];
 };
 
-export const analyseMove = (
-  fen: string,
-  move: Move,
-  data: z.infer<typeof StartAnalysisFormSchema>,
-  reportProgress: () => void,
-) => {
-  return new Promise<AnalysisMove>((resolve) => {
-    const socket = new WebSocket('wss://chess-api.com/v1');
-    const variantResults: InfoResult[] = [];
-    let timeout: NodeJS.Timeout;
-
-    socket.addEventListener('open', () => {
-      socket.send(
-        JSON.stringify({
-          variants: data.variants,
-          maxThinkingTime: 100,
-          depth: data.engineDepth,
-          fen,
-        }),
-      );
-
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        socket.close();
-        reportProgress();
-        resolve({
-          move,
-          fen,
-          engineResults: variantResults,
-        });
-      }, 2000);
-    });
-
-    socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-
-      if (['info', 'log'].includes(data.type)) return;
-
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        socket.close();
-        reportProgress();
-        resolve({
-          move,
-          fen,
-          engineResults: variantResults,
-        });
-      }, 2000);
-
-      const resultData = data as InfoResult;
-
-      variantResults.push(resultData);
-    });
-  });
-};
-
 export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
   return moves.map(classifyRegular);
 };
 
 export const classifyRegular = (move: AnalysisMove, index: number, moves: AnalysisMove[]) => {
-  const previous = move.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
-  const current = moves[index + 1]?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
+  const next = moves[index + 1]?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
+  const current = move?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
 
-  if (!previous || !current) return { ...move, classification: AnalysisMoveClassification.None };
+  if (!next || !current) return { ...move, classification: AnalysisMoveClassification.None };
 
-  console.log(move);
-
-  if (current.mate) return { ...move, classification: classifyWithMate(previous.mate || current.mate, current.mate) };
-  else return { ...move, classification: classifyWithWinChance(previous.winChance!, current.winChance!) };
+  if (current.mate) return { ...move, classification: classifyWithMate(next.mate || current.mate, current.mate) };
+  else return { ...move, classification: classifyWithWinChance(next.winChance!, current.winChance!) };
 };
 
-const classifyWithMate = (prev: number, current: number): AnalysisMoveClassification => {
-  if (prev === null || current === null) return AnalysisMoveClassification.None;
+const classifyWithMate = (next: number, current: number): AnalysisMoveClassification => {
+  if (next === null || current === null) return AnalysisMoveClassification.None;
 
-  const mateDelta = current - prev;
+  const mateDelta = next - current;
 
   let classification = AnalysisMoveClassification.None;
 
@@ -133,10 +81,10 @@ const classifyWithMate = (prev: number, current: number): AnalysisMoveClassifica
   return classification;
 };
 
-const classifyWithWinChance = (prev: number, current: number): AnalysisMoveClassification => {
-  if (!prev || !current) return AnalysisMoveClassification.None;
+const classifyWithWinChance = (next: number, current: number): AnalysisMoveClassification => {
+  if (!next || !current) return AnalysisMoveClassification.None;
 
-  const winChanceDelta = Math.abs((current - prev) / 100);
+  const winChanceDelta = Math.abs((current - next) / 100);
 
   let classification = AnalysisMoveClassification.None;
 

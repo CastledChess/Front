@@ -144,6 +144,7 @@ export const Analysis = () => {
         orientation={orientation}
         winChance={analysis!.moves[currentMove]?.engineResults?.[0]?.winChance ?? 50}
         evaluation={analysis!.moves[currentMove]?.engineResults?.[0]?.eval ?? 0}
+        mate={analysis!.moves[currentMove]?.engineResults?.[0]?.mate}
       />
       <div className="h-full flex flex-col gap-4">
         {analysis && (
