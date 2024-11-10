@@ -13,6 +13,7 @@ import { Opening } from '@/types/opening.ts';
 import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.tsx';
 import { useHotkeys } from 'react-hotkeys-hook';
 
+import brilliantRaw from '@/assets/icons/analysis/classification-brilliant.svg?raw';
 import bestRaw from '@/assets/icons/analysis/classification-best.svg?raw';
 import excellentRaw from '@/assets/icons/analysis/classification-excellent.svg?raw';
 import goodRaw from '@/assets/icons/analysis/classification-good.svg?raw';
@@ -21,6 +22,7 @@ import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
 import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
 
 const classificationToGlyph = {
+  [AnalysisMoveClassification.Brilliant]: brilliantRaw,
   [AnalysisMoveClassification.Best]: bestRaw,
   [AnalysisMoveClassification.Excellent]: excellentRaw,
   [AnalysisMoveClassification.Good]: goodRaw,
@@ -30,6 +32,7 @@ const classificationToGlyph = {
 };
 
 const classificationToColor = {
+  [AnalysisMoveClassification.Brilliant]: 'blue',
   [AnalysisMoveClassification.Best]: 'green',
   [AnalysisMoveClassification.Excellent]: 'green',
   [AnalysisMoveClassification.Good]: 'green',
@@ -45,8 +48,13 @@ export const Analysis = () => {
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
 
+  console.log(analysis);
+
   useEffect(() => {
     findOpening(chess.pgn()).then((opening) => setOpening(opening));
+    /** When a custom svg (classification) is rendered twice at the same square on two different moves
+     * it does not trigger a re-render and does not animate the second one, this fixes the issue */
+    chessGround?.redrawAll();
   }, [currentMove]);
 
   const handleNextMove = () => {
