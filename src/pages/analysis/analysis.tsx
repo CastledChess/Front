@@ -25,6 +25,7 @@ import {
   classificationToColor,
   classificationToGlyph,
   classificationToGlyphUrl,
+  shouldDisplayClassificationInMoveHistory,
 } from '@/pages/analysis/classifications.ts';
 
 export const Analysis = () => {
@@ -33,6 +34,7 @@ export const Analysis = () => {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
+  const moveRefs = useRef<(HTMLTableRowElement | null)[]>([]);
 
   const currMove = analysis!.moves[currentMove]!;
   const previousMove = analysis!.moves[currentMove - 1]!;
@@ -40,13 +42,6 @@ export const Analysis = () => {
     ?.sort((a, b) => b.depth! - a.depth!)
     ?.filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
     ?.slice(0, analysis?.variants ?? 1);
-
-  useEffect(() => {
-    findOpening(chess.pgn()).then((opening) => setOpening(opening));
-    /** When a custom svg (classification) is rendered twice at the same square on two different moves
-     * it does not trigger a re-render and does not animate the second one, this fixes the issue */
-    chessGround?.redrawAll();
-  }, [currentMove]);
 
   const formatMoves = (moves: AnalysisMove[]): { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] => {
     const formattedMoves: { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] = [];
@@ -115,6 +110,32 @@ export const Analysis = () => {
       fen: chess.fen(),
     });
   };
+
+  const handleSkipToMove = (index: number) => {
+    const moves = chess.history();
+
+    for (let i = 0; i < moves.length; i++) {
+      chess.undo();
+    }
+
+    for (let i = 0; i < index; i++) {
+      chess.move(analysis!.moves[i].move);
+    }
+
+    chessGround?.set({
+      fen: chess.fen(),
+    });
+    setCurrentMove(index);
+    chessGround?.redrawAll();
+  };
+
+  useEffect(() => {
+    findOpening(chess.pgn()).then((opening) => setOpening(opening));
+    /** When a custom svg (classification) is rendered twice at the same square on two different moves
+     * it does not trigger a re-render and does not animate the second one, this fixes the issue */
+    chessGround?.redrawAll();
+    moveRefs.current[(currentMove - 1) / 2]?.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }, [currentMove]);
 
   useEffect(() => {
     if (currentMove >= analysis!.moves.length) setIsAutoPlaying(false);
@@ -239,33 +260,54 @@ export const Analysis = () => {
           </TooltipProvider>
         </div>
 
-        <div className="p-6 flex flex-col h-96 gap-10">
+        <div className="p-6 flex flex-col h-[30rem] gap-10">
           <span className="text-sm text-primary/80">{opening?.name}</span>
 
-          <div className="custom-scrollbar flex flex-col gap-2 overflow-y-scroll">
+          <div className="custom-scrollbar flex flex-col gap-2 overflow-y-scroll rounded">
             <table className="w-full">
               <tbody>
                 {formatMoves(analysis!.moves).map((move, index) => (
-                  <tr key={index} className="even:bg-foreground/[.02]">
-                    <td className="p-2">{index}</td>
+                  <tr key={index} ref={(el) => (moveRefs.current[index] = el)} className="even:bg-foreground/[.02]">
+                    <td className="p-3">{index}</td>
                     <td>
-                      <div className="flex gap-2 items-center p-2">
-                        <img
-                          src={classificationToGlyphUrl[move.whiteMove.classification!]}
-                          alt={move.whiteMove.classification}
-                          className="w-4 h-4"
-                        />
-                        {move.whiteMove.move.san}
+                      <div className="flex p-1 items-center gap-2">
+                        <label className="w-5 h-5" htmlFor={`move-${index * 2}`}>
+                          {shouldDisplayClassificationInMoveHistory[move.whiteMove.classification!] && (
+                            <img
+                              src={classificationToGlyphUrl[move.whiteMove.classification!]}
+                              alt={move.whiteMove.classification}
+                            />
+                          )}
+                        </label>
+
+                        <Button
+                          id={`move-${index * 2}`}
+                          onClick={() => handleSkipToMove(index * 2 + 1)}
+                          variant="ghost"
+                          className={`justify-start flex-1 gap-2 p-2 rounded items-center ${currentMove + 1 === (index + 1) * 2 ? 'bg-primary/10' : ''}`}
+                        >
+                          {move.whiteMove.move.san}
+                        </Button>
                       </div>
                     </td>
                     <td>
-                      <div className="flex gap-2 items-center p-2">
-                        <img
-                          src={classificationToGlyphUrl[move.blackMove.classification!]}
-                          alt={move.blackMove.classification}
-                          className="w-4 h-4"
-                        />
-                        {move.blackMove?.move.san ?? ''}
+                      <div className="flex p-1 items-center gap-2">
+                        <label className="w-5 h-5" htmlFor={`move-${index * 2 + 1}`}>
+                          {shouldDisplayClassificationInMoveHistory[move.blackMove.classification!] && (
+                            <img
+                              src={classificationToGlyphUrl[move.blackMove.classification!]}
+                              alt={move.blackMove.classification}
+                            />
+                          )}
+                        </label>
+                        <Button
+                          id={`move-${index * 2 + 1}`}
+                          onClick={() => handleSkipToMove((index + 1) * 2)}
+                          variant="ghost"
+                          className={`justify-start flex-1 gap-2 p-2 rounded items-center ${currentMove === (index + 1) * 2 ? 'bg-primary/10' : ''}`}
+                        >
+                          {move.blackMove?.move.san ?? ''}
+                        </Button>
                       </div>
                     </td>
                   </tr>

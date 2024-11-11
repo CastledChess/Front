@@ -49,3 +49,22 @@ export const classificationToColor: KeyValuePair<AnalysisMoveClassification, str
   [AnalysisMoveClassification.Blunder]: 'red',
   [AnalysisMoveClassification.None]: '',
 };
+
+export const shouldDisplayClassificationInMoveHistory: KeyValuePair<AnalysisMoveClassification, boolean> = {
+  [AnalysisMoveClassification.Brilliant]: true,
+  [AnalysisMoveClassification.Best]: true,
+  [AnalysisMoveClassification.Excellent]: false,
+  [AnalysisMoveClassification.Good]: false,
+  [AnalysisMoveClassification.Inaccuracy]: true,
+  [AnalysisMoveClassification.Mistake]: true,
+  [AnalysisMoveClassification.Blunder]: true,
+  [AnalysisMoveClassification.None]: false,
+};
+
+export const pieceToValue: KeyValuePair<string, number> = {
+  p: 1,
+  n: 3,
+  b: 3,
+  r: 5,
+  q: 9,
+};
