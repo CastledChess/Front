@@ -140,7 +140,7 @@ export const Analysis = () => {
     /** When a custom svg (classification) is rendered twice at the same square on two different moves
      * it does not trigger a re-render and does not animate the second one, this fixes the issue */
     chessGround?.redrawAll();
-    moveRefs.current[(currentMove - 1) / 2]?.scrollIntoView({ behavior: 'instant', block: 'center' });
+    moveRefs.current[currentMove - 1]?.scrollIntoView({ behavior: 'instant', block: 'center' });
   }, [currentMove]);
 
   useEffect(() => {
@@ -266,56 +266,67 @@ export const Analysis = () => {
           </TooltipProvider>
         </div>
 
-        <div className="p-6 flex flex-col h-[30rem] gap-10">
+        <div className="p-6 flex flex-col gap-10">
           <span className="text-sm text-primary/80">{opening?.name}</span>
 
-          <div className="custom-scrollbar flex flex-col gap-2 overflow-y-scroll rounded">
+          <div className="custom-scrollbar flex flex-col gap-2 h-[30rem] overflow-y-scroll rounded">
             <table className="w-full">
               <tbody>
                 {formatMoves(analysis!.moves).map((move, index) => (
-                  <tr key={index} ref={(el) => (moveRefs.current[index] = el)} className="even:bg-foreground/[.02]">
+                  <tr
+                    key={index}
+                    ref={(el) => {
+                      moveRefs.current[index * 2] = el;
+                      moveRefs.current[index * 2 + 1] = el;
+                    }}
+                    className="even:bg-foreground/[.02]"
+                  >
                     <td className="p-3">{index}</td>
-                    <td>
-                      <div className="flex p-1 items-center gap-2">
-                        <label className="w-5 h-5" htmlFor={`move-${index * 2}`}>
-                          {shouldDisplayClassificationInMoveHistory[move.whiteMove.classification!] && (
-                            <img
-                              src={classificationToGlyphUrl[move.whiteMove.classification!]}
-                              alt={move.whiteMove.classification}
-                            />
-                          )}
-                        </label>
+                    {move.whiteMove && (
+                      <td>
+                        <div className="flex p-1 items-center gap-2">
+                          <label className="w-5 h-5" htmlFor={`move-${index * 2}`}>
+                            {shouldDisplayClassificationInMoveHistory[move.whiteMove.classification!] && (
+                              <img
+                                src={classificationToGlyphUrl[move.whiteMove.classification!]}
+                                alt={move.whiteMove.classification}
+                              />
+                            )}
+                          </label>
 
-                        <Button
-                          id={`move-${index * 2}`}
-                          onClick={() => handleSkipToMove(index * 2 + 1)}
-                          variant="ghost"
-                          className={`justify-start flex-1 gap-2 p-2 rounded items-center ${currentMove + 1 === (index + 1) * 2 ? 'bg-primary/10' : ''}`}
-                        >
-                          {move.whiteMove.move.san}
-                        </Button>
-                      </div>
-                    </td>
-                    <td>
-                      <div className="flex p-1 items-center gap-2">
-                        <label className="w-5 h-5" htmlFor={`move-${index * 2 + 1}`}>
-                          {shouldDisplayClassificationInMoveHistory[move.blackMove.classification!] && (
-                            <img
-                              src={classificationToGlyphUrl[move.blackMove.classification!]}
-                              alt={move.blackMove.classification}
-                            />
-                          )}
-                        </label>
-                        <Button
-                          id={`move-${index * 2 + 1}`}
-                          onClick={() => handleSkipToMove((index + 1) * 2)}
-                          variant="ghost"
-                          className={`justify-start flex-1 gap-2 p-2 rounded items-center ${currentMove === (index + 1) * 2 ? 'bg-primary/10' : ''}`}
-                        >
-                          {move.blackMove?.move.san ?? ''}
-                        </Button>
-                      </div>
-                    </td>
+                          <Button
+                            id={`move-${index * 2}`}
+                            onClick={() => handleSkipToMove(index * 2 + 1)}
+                            variant="ghost"
+                            className={`transition-none justify-start flex-1 gap-2 p-2 rounded items-center ${currentMove + 1 === (index + 1) * 2 ? 'bg-primary/10' : ''}`}
+                          >
+                            {move.whiteMove.move.san}
+                          </Button>
+                        </div>
+                      </td>
+                    )}
+                    {move.blackMove && (
+                      <td>
+                        <div className="flex p-1 items-center gap-2">
+                          <label className="w-5 h-5" htmlFor={`move-${index * 2 + 1}`}>
+                            {shouldDisplayClassificationInMoveHistory[move.blackMove.classification!] && (
+                              <img
+                                src={classificationToGlyphUrl[move.blackMove.classification!]}
+                                alt={move.blackMove.classification}
+                              />
+                            )}
+                          </label>
+                          <Button
+                            id={`move-${index * 2 + 1}`}
+                            onClick={() => handleSkipToMove((index + 1) * 2)}
+                            variant="ghost"
+                            className={`transition-none justify-start flex-1 gap-2 p-2 rounded items-center ${currentMove === (index + 1) * 2 ? 'bg-primary/10' : ''}`}
+                          >
+                            {move.blackMove?.move.san ?? ''}
+                          </Button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
