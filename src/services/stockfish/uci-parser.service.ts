@@ -16,7 +16,7 @@ export class UciParserService {
   }
 
   private parseInfo(tokens: string[], isWhite: boolean) {
-    const info: InfoResult = { type: 'info' };
+    const info: InfoResult = { type: 'info', pv: [] };
 
     while (tokens.length) {
       const token = tokens.pop();
@@ -25,6 +25,25 @@ export class UciParserService {
 
       if (token === 'depth') info.depth = Number(tokens.pop());
       if (token === 'seldepth') info.selDepth = Number(tokens.pop());
+      if (token === 'pv') {
+        const nextToken = tokens.pop();
+
+        if (!nextToken) break;
+
+        info.move = nextToken;
+        info.from = nextToken.slice(0, 2);
+        info.to = nextToken.slice(2, 4);
+
+        info.pv.push(nextToken);
+
+        while (tokens.length) {
+          const nextToken = tokens.pop();
+
+          if (!nextToken) break;
+
+          info.pv.push(nextToken);
+        }
+      }
       if (token === 'score') {
         const nextToken = tokens.pop();
 
@@ -39,15 +58,6 @@ export class UciParserService {
           info.winChance = this.computeWinChance(info.centiPawns, isWhite);
           info.eval = info.centiPawns / 100;
         }
-      }
-      if (token === 'pv') {
-        const nextToken = tokens.pop();
-
-        if (!nextToken) continue;
-
-        info.move = nextToken;
-        info.from = nextToken.slice(0, 2);
-        info.to = nextToken.slice(2, 4);
       }
       if (token === 'string') return null;
     }

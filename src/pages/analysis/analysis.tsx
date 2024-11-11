@@ -14,7 +14,7 @@ import {
   Pause,
 } from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
-import { AnalysisMoveClassification } from '@/types/analysis.ts';
+import { AnalysisMove, AnalysisMoveClassification } from '@/types/analysis.ts';
 import { Key } from 'chessground/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { findOpening } from '@/lib/opening.ts';
@@ -54,10 +54,15 @@ export const Analysis = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
   const [orientation, setOrientation] = useState<'white' | 'black'>('white');
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
+  const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
 
-  console.log(analysis);
+  const currMove = analysis!.moves[currentMove]!;
+  const previousMove = analysis!.moves[currentMove - 1]!;
+  const variants = previousMove?.engineResults
+    ?.sort((a, b) => b.depth! - a.depth!)
+    ?.filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
+    ?.slice(0, analysis?.variants ?? 1);
 
   useEffect(() => {
     findOpening(chess.pgn()).then((opening) => setOpening(opening));
@@ -66,10 +71,18 @@ export const Analysis = () => {
     chessGround?.redrawAll();
   }, [currentMove]);
 
+  const formatMoves = (moves: AnalysisMove[]): { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] => {
+    const formattedMoves: { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] = [];
+
+    for (let i = 0; i < moves.length; i += 2) formattedMoves.push({ whiteMove: moves[i], blackMove: moves[i + 1] });
+
+    return formattedMoves;
+  };
+
   const handleNextMove = () => {
     if (currentMove >= analysis!.moves.length) return;
 
-    chess.move(analysis!.moves[currentMove].move);
+    chess.move(currMove.move);
     chessGround?.set({
       fen: chess.fen(),
     });
@@ -137,16 +150,9 @@ export const Analysis = () => {
   useEffect(() => {
     if (currentMove >= analysis!.moves.length) return;
 
-    const previousMove = analysis!.moves[currentMove - 1];
-
     if (!previousMove) return;
 
-    const bestMoves = previousMove.engineResults
-      .sort((a, b) => b.depth! - a.depth!)
-      .filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
-      .slice(0, analysis?.variants ?? 1);
-
-    const autoShapes: DrawShape[] = bestMoves.map((result) => ({
+    const autoShapes: DrawShape[] = variants.map((result) => ({
       orig: result.from,
       dest: result.to,
       brush: 'blue',
@@ -215,8 +221,8 @@ export const Analysis = () => {
         )}
       </div>
 
-      <div className="flex flex-col bg-primary/5 rounded-lg w-96">
-        <div className="w-full overflow-hidden flex rounded-lg">
+      <div className="flex flex-col bg-primary/5 h-full rounded-lg w-96">
+        <div className="w-full overflow-hidden h-max flex rounded-lg">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -231,7 +237,7 @@ export const Analysis = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                <Button className="flex-1 rounded-none" variant="ghost">
                   <CircleHelp />
                 </Button>
               </TooltipTrigger>
@@ -242,7 +248,7 @@ export const Analysis = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                <Button className="flex-1 rounded-none" variant="ghost">
                   <CircleHelp />
                 </Button>
               </TooltipTrigger>
@@ -262,8 +268,40 @@ export const Analysis = () => {
           </TooltipProvider>
         </div>
 
-        <div className="p-6 flex flex-col gap-10">
+        <div className="p-6 flex flex-col h-96 gap-10">
           <span className="text-sm text-primary/80">{opening?.name}</span>
+
+          <div className="custom-scrollbar flex flex-col gap-2 overflow-y-scroll">
+            <table className="w-full">
+              <tbody>
+                {formatMoves(analysis!.moves).map((move, index) => (
+                  <tr key={index} className="even:bg-foreground/[.02]">
+                    <td className="p-2">{index}</td>
+                    <td>
+                      <div className="flex gap-2 items-center p-2">
+                        <img
+                          src={classificationToGlyphUrl[move.whiteMove.classification!]}
+                          alt={move.whiteMove.classification}
+                          className="w-4 h-4"
+                        />
+                        {move.whiteMove.move.san}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="flex gap-2 items-center p-2">
+                        <img
+                          src={classificationToGlyphUrl[move.blackMove.classification!]}
+                          alt={move.blackMove.classification}
+                          className="w-4 h-4"
+                        />
+                        {move.blackMove?.move.san ?? ''}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="w-full overflow-hidden flex rounded-lg mt-auto">
