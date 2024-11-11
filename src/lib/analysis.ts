@@ -76,7 +76,7 @@ const pieceToValue = {
 const classifyWithMate = (move: Move, next: number, current: number): AnalysisMoveClassification => {
   if (next === null || current === null) return AnalysisMoveClassification.None;
 
-  const mateDelta = next - current;
+  const mateDelta = next - current - 1;
 
   let classification = AnalysisMoveClassification.None;
 

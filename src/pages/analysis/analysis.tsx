@@ -21,34 +21,11 @@ import { findOpening } from '@/lib/opening.ts';
 import { Opening } from '@/types/opening.ts';
 import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.tsx';
 import { useHotkeys } from 'react-hotkeys-hook';
-
-import brilliantRaw from '@/assets/icons/analysis/classification-brilliant.svg?raw';
-import bestRaw from '@/assets/icons/analysis/classification-best.svg?raw';
-import excellentRaw from '@/assets/icons/analysis/classification-excellent.svg?raw';
-import goodRaw from '@/assets/icons/analysis/classification-good.svg?raw';
-import inaccuracyRaw from '@/assets/icons/analysis/classification-inaccuracy.svg?raw';
-import mistakeRaw from '@/assets/icons/analysis/classification-mistake.svg?raw';
-import blunderRaw from '@/assets/icons/analysis/classification-blunder.svg?raw';
-
-const classificationToGlyph = {
-  [AnalysisMoveClassification.Brilliant]: brilliantRaw,
-  [AnalysisMoveClassification.Best]: bestRaw,
-  [AnalysisMoveClassification.Excellent]: excellentRaw,
-  [AnalysisMoveClassification.Good]: goodRaw,
-  [AnalysisMoveClassification.Inaccuracy]: inaccuracyRaw,
-  [AnalysisMoveClassification.Mistake]: mistakeRaw,
-  [AnalysisMoveClassification.Blunder]: blunderRaw,
-};
-
-const classificationToColor = {
-  [AnalysisMoveClassification.Brilliant]: 'blue',
-  [AnalysisMoveClassification.Best]: 'green',
-  [AnalysisMoveClassification.Excellent]: 'green',
-  [AnalysisMoveClassification.Good]: 'green',
-  [AnalysisMoveClassification.Inaccuracy]: 'yellow',
-  [AnalysisMoveClassification.Mistake]: 'orange',
-  [AnalysisMoveClassification.Blunder]: 'red',
-};
+import {
+  classificationToColor,
+  classificationToGlyph,
+  classificationToGlyphUrl,
+} from '@/pages/analysis/classifications.ts';
 
 export const Analysis = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
@@ -162,7 +139,7 @@ export const Analysis = () => {
       autoShapes.push({
         orig: previousMove.move.to as Key,
         customSvg: {
-          html: classificationToGlyph[previousMove.classification as keyof typeof classificationToGlyph],
+          html: classificationToGlyph[previousMove.classification],
         },
       });
     }
@@ -170,14 +147,8 @@ export const Analysis = () => {
     chessGround?.set({
       highlight: {
         custom: new Map<Key, string>([
-          [
-            previousMove.move.from as Key,
-            classificationToColor[previousMove.classification as keyof typeof classificationToColor],
-          ],
-          [
-            previousMove.move.to as Key,
-            classificationToColor[previousMove.classification as keyof typeof classificationToColor],
-          ],
+          [previousMove.move.from as Key, classificationToColor[previousMove.classification!]],
+          [previousMove.move.to as Key, classificationToColor[previousMove.classification!]],
         ]),
       },
       drawable: { autoShapes: autoShapes },
@@ -259,7 +230,7 @@ export const Analysis = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button className="flex-1 rounded-none" variant="ghost" onClick={handleFlipBoard}>
+                <Button className="flex-1 rounded-none" variant="ghost">
                   <CircleHelp />
                 </Button>
               </TooltipTrigger>
