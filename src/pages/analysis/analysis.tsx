@@ -158,8 +158,8 @@ export const Analysis = () => {
         {analysis && (
           <PlayerInfo
             player={{
-              username: analysis.header.Black,
-              rating: analysis.header.BlackElo,
+              username: orientation === 'white' ? analysis.header.Black : analysis.header.White,
+              rating: orientation === 'white' ? analysis.header.BlackElo : analysis.header.WhiteElo,
             }}
           />
         )}
@@ -169,8 +169,8 @@ export const Analysis = () => {
         {analysis && (
           <PlayerInfo
             player={{
-              username: analysis.header.White,
-              rating: analysis.header.WhiteElo,
+              username: orientation === 'white' ? analysis.header.White : analysis.header.Black,
+              rating: orientation === 'white' ? analysis.header.WhiteElo : analysis.header.BlackElo,
             }}
           />
         )}
