@@ -3,7 +3,16 @@ import { DrawShape } from 'chessground/draw';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { ArrowLeft, ArrowRight, FlipVertical2, CircleHelp, Play, Pause } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronLast,
+  ChevronFirst,
+  FlipVertical2,
+  CircleHelp,
+  Play,
+  Pause,
+} from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import { Key } from 'chessground/types';
@@ -87,6 +96,34 @@ export const Analysis = () => {
     setOrientation((orientation) => (orientation === 'white' ? 'black' : 'white'));
 
     chessGround?.toggleOrientation();
+  };
+
+  const handleSkipToBegin = () => {
+    const moves = chess.history();
+
+    for (let i = 0; i < moves.length; i++) {
+      chess.undo();
+    }
+
+    setCurrentMove(0);
+    chessGround?.set({
+      drawable: { autoShapes: [] },
+      highlight: { custom: new Map<Key, string>() },
+      fen: chess.fen(),
+    });
+  };
+
+  const handleSkipToEnd = () => {
+    const moves = analysis!.moves;
+
+    for (let i = currentMove; i < moves.length; i++) {
+      chess.move(moves[i].move);
+    }
+
+    setCurrentMove(moves.length);
+    chessGround?.set({
+      fen: chess.fen(),
+    });
   };
 
   useEffect(() => {
@@ -228,14 +265,20 @@ export const Analysis = () => {
         </div>
 
         <div className="w-full overflow-hidden flex rounded-lg mt-auto">
+          <Button onClick={handleSkipToBegin} className="flex-1 rounded-none" variant="ghost">
+            <ChevronFirst />
+          </Button>
           <Button onClick={handlePrevMove} className="flex-1 rounded-none" variant="ghost">
-            <ArrowLeft />
+            <ChevronLeft />
           </Button>
           <Button className="flex-1 rounded-none" variant="ghost" onClick={handleToggleAutoPlay}>
             {isAutoPlaying ? <Pause /> : <Play />}
           </Button>
           <Button onClick={handleNextMove} className="flex-1 rounded-none" variant="ghost">
-            <ArrowRight />
+            <ChevronRight />
+          </Button>
+          <Button onClick={handleSkipToEnd} className="flex-1 rounded-none" variant="ghost">
+            <ChevronLast />
           </Button>
         </div>
       </div>
