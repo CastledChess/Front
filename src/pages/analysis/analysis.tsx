@@ -180,6 +180,8 @@ export const Analysis = () => {
 
   useHotkeys('right', handleNextMove);
   useHotkeys('left', handlePrevMove);
+  useHotkeys('ctrl+left', handleSkipToBegin);
+  useHotkeys('ctrl+right', handleSkipToEnd);
   useHotkeys('space', handleToggleAutoPlay);
   useHotkeys('f', handleFlipBoard);
 
