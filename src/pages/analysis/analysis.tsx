@@ -27,6 +27,8 @@ import {
   classificationToGlyphUrl,
   shouldDisplayClassificationInMoveHistory,
 } from '@/pages/analysis/classifications.ts';
+import { EvalChart } from '@/components/evalchart/evalchart.tsx';
+import { CategoricalChartState } from 'recharts/types/chart/types';
 
 export const Analysis = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
@@ -127,6 +129,10 @@ export const Analysis = () => {
     });
     setCurrentMove(index);
     chessGround?.redrawAll();
+  };
+
+  const handleClickEvalChart = (nextState: CategoricalChartState) => {
+    if (nextState.activeTooltipIndex) handleSkipToMove(nextState.activeTooltipIndex);
   };
 
   useEffect(() => {
@@ -315,6 +321,8 @@ export const Analysis = () => {
               </tbody>
             </table>
           </div>
+
+          <EvalChart onClick={handleClickEvalChart} />
         </div>
 
         <div className="w-full overflow-hidden flex rounded-lg mt-auto">
