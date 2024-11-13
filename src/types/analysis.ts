@@ -48,8 +48,21 @@ export type Analysis = {
 export type AnalysisMove = {
   move: Move;
   fen: string;
-  engineResults: SearchResults[];
+  engineResults: InfoResult[];
   classification?: AnalysisMoveClassification;
+};
+
+export type InfoResult = {
+  type: 'info';
+  depth?: number;
+  selDepth?: number;
+  eval?: number;
+  centiPawns?: number;
+  winChance?: number;
+  mate?: number;
+  move?: string;
+  from?: string;
+  to?: string;
 };
 
 export enum AnalysisMoveClassification {
