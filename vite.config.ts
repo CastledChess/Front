@@ -2,6 +2,7 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import svgLoader from 'vite-svg-loader';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
@@ -17,6 +18,14 @@ export default defineConfig({
         });
       },
     },
+    VitePWA({
+      mode: 'development',
+      base: '/',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 1e8,
+      },
+      includeAssets: ['stockfish-16.1.js'],
+    }),
   ],
   resolve: {
     alias: {
