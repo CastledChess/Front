@@ -1,4 +1,4 @@
-import { Area, AreaChart, ResponsiveContainer, Tooltip, TooltipProps, YAxis } from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, TooltipProps, YAxis } from 'recharts';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import {
   classificationToColor,
@@ -8,10 +8,14 @@ import {
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart';
 import { useMemo } from 'react';
+import { Move } from 'chess.js';
 
 type EvalChartDataPoint = {
   name: string;
+  move: Move;
   classification: AnalysisMoveClassification;
+  mate: number;
+  eval: number;
   winChance: number;
 };
 
@@ -22,28 +26,34 @@ type EvalChartProps = {
 export const EvalChart = ({ onClick }: EvalChartProps) => {
   const { analysis } = useAnalysisStore();
 
-  const data = useMemo(
-    () =>
-      analysis?.moves.map((move) => {
-        const result = move.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
+  const data = useMemo(() => {
+    const data: EvalChartDataPoint[] = [];
 
-        return {
-          name: move.move.san,
-          classification: move.classification,
-          mate: result?.mate,
-          eval: move.move.color === 'w' ? result.eval : -result.eval!,
-          winChance: result.winChance,
-        };
-      }),
-    [analysis],
-  );
+    for (let i = 0; i < (analysis?.moves.length || 0) - 1; i++) {
+      const nextMove = analysis!.moves[i + 1]!;
+      const move = analysis!.moves[i]!;
+      const result = nextMove.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
+
+      data.push({
+        name: move.move.san,
+        move: move.move,
+        classification: move.classification!,
+        mate: result?.mate || 0,
+        eval: (nextMove.move.color === 'w' ? result.eval : -result.eval!) || 0,
+        winChance: result.winChance!,
+      });
+    }
+
+    return data;
+  }, [analysis]);
 
   return (
-    <div className="h-40 w-full bg-foreground/5 rounded">
+    <div className="h-32 w-full bg-foreground/5 rounded">
       <ResponsiveContainer>
         <AreaChart onClick={onClick} data={data}>
           <Tooltip content={<CustomTooltip />} />
           <YAxis type="number" hide domain={[0, 100]} />
+          <CartesianGrid vertical={false} horizontalCoordinatesGenerator={(props) => [props.height / 2]} />
           <Area type="monotone" dataKey="winChance" dot={<CustomizedDot />} stroke="#fff" fill="#fff" />
         </AreaChart>
       </ResponsiveContainer>
@@ -89,7 +99,8 @@ const CustomizedDot = ({
   if (shouldDisplayClassificationInMoveHistory[payload!.classification]) {
     return (
       <svg x={cx! - 10} y={cy! - 10} width={20} height={20}>
-        <circle cx={10} cy={10} r={3} fill={classificationToColor[payload!.classification]} />
+        <circle cx={10} cy={10} r={5} fill={classificationToColor[payload!.classification]} />
+        <circle cx={10} cy={10} r={3} fill={payload!.move.color === 'w' ? '#fff' : '#000'} />
       </svg>
     );
   }

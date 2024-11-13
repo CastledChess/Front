@@ -132,7 +132,7 @@ export const Analysis = () => {
   };
 
   const handleClickEvalChart = (nextState: CategoricalChartState) => {
-    if (nextState.activeTooltipIndex) handleSkipToMove(nextState.activeTooltipIndex);
+    if (nextState.activeTooltipIndex) handleSkipToMove(nextState.activeTooltipIndex + 1);
   };
 
   useEffect(() => {
@@ -269,7 +269,7 @@ export const Analysis = () => {
         <div className="p-6 flex flex-col gap-10">
           <span className="text-sm text-primary/80">{opening?.name}</span>
 
-          <div className="custom-scrollbar flex flex-col gap-2 h-[30rem] overflow-y-scroll rounded">
+          <div className="custom-scrollbar flex flex-col gap-2 h-96 overflow-y-scroll rounded">
             <table className="w-full">
               <tbody>
                 {formatMoves(analysis!.moves).map((move, index) => (
