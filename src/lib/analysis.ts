@@ -4,6 +4,7 @@ import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
 import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
+import { pieceToValue } from '@/pages/analysis/classifications.ts';
 
 export type AnalyseMovesLocalParams = {
   moves: { move: Move; fen: string }[];
@@ -65,26 +66,15 @@ export const classifyRegular = (move: AnalysisMove, index: number, moves: Analys
   else return { ...move, classification: classifyWithWinChance(move.move, next.winChance!, current.winChance!) };
 };
 
-const pieceToValue = {
-  p: 1,
-  n: 3,
-  b: 3,
-  r: 5,
-  q: 9,
-};
-
 const classifyWithMate = (move: Move, next: number, current: number): AnalysisMoveClassification => {
   if (next === null || current === null) return AnalysisMoveClassification.None;
 
-  const mateDelta = next - current;
+  const mateDelta = next - current - 1;
 
   let classification = AnalysisMoveClassification.None;
 
   if (mateDelta <= 0) {
-    if (
-      move.captured &&
-      pieceToValue[move.captured as keyof typeof pieceToValue] < pieceToValue[move.piece as keyof typeof pieceToValue]
-    )
+    if (move.captured && pieceToValue[move.captured] < pieceToValue[move.piece])
       classification = AnalysisMoveClassification.Brilliant;
     else classification = AnalysisMoveClassification.Best;
   } else if (mateDelta === 1) classification = AnalysisMoveClassification.Excellent;
@@ -104,10 +94,7 @@ const classifyWithWinChance = (move: Move, next: number, current: number): Analy
   let classification = AnalysisMoveClassification.None;
 
   if (winChanceDelta <= 0.0) {
-    if (
-      move.captured &&
-      pieceToValue[move.captured as keyof typeof pieceToValue] < pieceToValue[move.piece as keyof typeof pieceToValue]
-    )
+    if (move.captured && pieceToValue[move.captured] < pieceToValue[move.piece])
       classification = AnalysisMoveClassification.Brilliant;
     else classification = AnalysisMoveClassification.Best;
   } else if (winChanceDelta > 0.0 && winChanceDelta <= 0.02) classification = AnalysisMoveClassification.Excellent;
