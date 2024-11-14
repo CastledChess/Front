@@ -44,7 +44,7 @@ function App() {
             <Route
               path="/theme"
               element={
-                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                <ProtectedRoute allow={!!user} redirect="/">
                   <Theme />
                 </ProtectedRoute>
               }
@@ -56,7 +56,7 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             {/* Connected */}
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/" element={<Dashboard />} />
 
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />

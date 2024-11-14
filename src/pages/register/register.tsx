@@ -26,7 +26,7 @@ export const Register = () => {
     try {
       await register(data);
 
-      navigate('/dashboard');
+      navigate('/');
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
       console.error('Failed to register:', error);

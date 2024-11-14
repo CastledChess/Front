@@ -26,7 +26,7 @@ export const Login = () => {
     try {
       await login(data);
 
-      navigate('/dashboard');
+      navigate('/');
     } catch (error) {
       console.error('Failed to login:', error);
 
