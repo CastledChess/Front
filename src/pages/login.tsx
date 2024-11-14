@@ -11,6 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 export const Login = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -20,9 +21,16 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
-    await login(data);
+    try {
+      await login(data);
 
-    navigate('/dashboard');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Failed to login:', error);
+
+      form.setError('email', { message: 'Invalid Credentials' });
+      form.setError('password', { message: 'Invalid Credentials' });
+    }
   };
 
   return (
@@ -47,7 +55,7 @@ export const Login = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -66,7 +74,7 @@ export const Login = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
