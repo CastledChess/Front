@@ -14,6 +14,7 @@ import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
+import { Profile } from '@/pages/profile/profile.tsx';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
@@ -61,6 +62,14 @@ function App() {
 
             {/* Connected */}
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />
