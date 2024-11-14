@@ -1,47 +1,37 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegisterSchema } from '@/schema/auth.ts';
+import { LoginSchema } from '@/schema/auth.ts';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { register } from '@/api/auth.ts';
+import { login } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
+import lichessLogo from '@/assets/icons/lichess.png?url';
+import chessLogo from '@/assets/icons/chess_logo.png?url';
 
-export const Register = () => {
-  const form = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+export const Login = () => {
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     mode: 'onChange',
     defaultValues: {
-      confirmPassword: '',
       email: '',
       password: '',
-      username: '',
     },
   });
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     try {
-      await register(data);
+      await login(data);
 
       navigate('/dashboard');
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      console.error('Failed to register:', error);
+    } catch (error) {
+      console.error('Failed to login:', error);
 
-      // TODO: implement error display
-      //
-      // const errors: { property: string; value: string; constraints: Record<string, string> }[] =
-      //   error.response.data.message;
-      //
-      // errors.forEach(({ property, constraints }) => {
-      //   form.setError(property as keyof typeof data, {
-      //     type: 'server',
-      //     message: constraints[Object.keys(constraints)[0]],
-      //   });
-      // });
+      form.setError('email', { message: 'Invalid Credentials' });
+      form.setError('password', { message: 'Invalid Credentials' });
     }
   };
 
@@ -49,7 +39,7 @@ export const Register = () => {
     <div className="flex items-center justify-center h-full">
       <div className="p-8 rounded-lg shadow-lg w-full max-w-md" style={{ backgroundColor: '#343639' }}>
         <h2 className="text-center mb-8 font-bold" style={{ color: '#EC9E67', fontSize: '36px' }}>
-          Register
+          Login
         </h2>
 
         <Form {...form}>
@@ -67,25 +57,7 @@ export const Register = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
-                      autoComplete="username"
-                      placeholder="Username"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -99,47 +71,28 @@ export const Register = () => {
                     <Input
                       className="bg-[#494A4C] h-12 rounded-[10px] border-none"
                       type="password"
-                      autoComplete="new-password"
+                      autoComplete="current-password"
                       placeholder="Password"
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
-                      type="password"
-                      autoComplete="new-password"
-                      placeholder="Confirm Password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
 
             <div className="flex justify-between gap-6 items-center">
               <Button type="submit" className="ml-auto bg-[#EC9E67] hover:bg-[#EC9E67]/90">
-                Register
+                Login
               </Button>
             </div>
           </form>
         </Form>
 
         <div className="mt-6 text-center text-white">
-          Already have an account?{' '}
-          <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
-            Login
+          Don't have an account?{' '}
+          <Link to="/register" className="text-white underline hover:text-[#EC9E67]">
+            Register
           </Link>
         </div>
 
@@ -151,12 +104,12 @@ export const Register = () => {
 
         <div className="flex justify-center mt-4 space-x-4 text-white p-4">
           <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
-            <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-9 aspect-square" />
+            <img src={lichessLogo} alt="Lichess" className="h-9 aspect-square" />
             <span className="text-white">Lichess</span>
           </Button>
 
           <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
-            <img src="src/assets/icons/chess_logo.png" alt="Chess.com" className="h-9 aspect-square" />
+            <img src={chessLogo} alt="Chess.com" className="h-9 aspect-square" />
             <span className="text-lime-600">chess.com</span>
           </Button>
         </div>

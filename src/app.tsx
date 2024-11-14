@@ -3,15 +3,13 @@ import { ReactNode } from 'react';
 
 import { Navbar } from '@/components/navbar/navbar.tsx';
 import { StartAnalysis } from '@/pages/analysis/start-analysis';
-import { Home } from '@/pages/home.tsx';
 import { Analysis } from '@/pages/analysis/analysis.tsx';
 import { Documentation } from '@/pages/documentation.tsx';
-import { Register } from '@/pages/register.tsx';
-import { Logout } from '@/pages/logout.tsx';
+import { Register } from '@/pages/register/register.tsx';
 import { Dashboard } from '@/pages/dashboard/dashboard.tsx';
 import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
-import { Login } from '@/pages/login.tsx';
+import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 
@@ -34,7 +32,6 @@ function App() {
         <div className="h-[calc(100vh-4rem)]">
           <Routes>
             {/* Global */}
-            <Route path="/" element={<Home />} />
             <Route path="/start-analysis" element={<StartAnalysis />} />
             <Route
               path="/analysis"
@@ -57,7 +54,6 @@ function App() {
             {/* Authentication */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout />} />
 
             {/* Connected */}
             <Route path="/dashboard" element={<Dashboard />} />
