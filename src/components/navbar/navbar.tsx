@@ -19,8 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import * as React from 'react';
-import { Link } from '@radix-ui/react-navigation-menu';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils.ts';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
 import { useAuthStore } from '@/store/auth.ts';
@@ -62,23 +61,23 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end border-b">
+    <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end shadow-lg bg-castled-secondary text-castled-accent">
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
           <NavigationMenuItem>
-            <Link href="/dashboard" asChild>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Dashboard</NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link to="/dashboard">Dashboard</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="/start-analysis" asChild>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>Analysis</NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link to="/start-analysis">Analysis</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <Link href="/history" asChild>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>History</NavigationMenuLink>
-            </Link>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link to="/history">History</Link>
+            </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuTrigger>Documentation</NavigationMenuTrigger>
@@ -96,13 +95,13 @@ export const Navbar = () => {
           {!user && (
             <>
               <NavigationMenuItem>
-                <Link href="/login" asChild>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>Login</NavigationMenuLink>
-                </Link>
+                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                  <Link to="/login">Login</Link>
+                </NavigationMenuLink>
               </NavigationMenuItem>
               <NavigationMenuItem>
-                <Link href="/register" asChild>
-                  <NavigationMenuLink>
+                <Link to="/register">
+                  <NavigationMenuLink asChild>
                     <Button>Register</Button>
                   </NavigationMenuLink>
                 </Link>
@@ -127,12 +126,12 @@ export const Navbar = () => {
                 Profile
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <RouterLink to="/theme">
+              <Link to="/theme">
                 <DropdownMenuItem>
                   Theme
                   <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-              </RouterLink>
+              </Link>
               <DropdownMenuItem>
                 Keyboard shortcuts
                 <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
@@ -153,11 +152,12 @@ export const Navbar = () => {
 };
 
 const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
-  ({ className, title, children, ...props }, ref) => {
+  ({ className, title, children, href, ...props }, ref) => {
     return (
       <li>
         <NavigationMenuLink asChild>
-          <a
+          <Link
+            to={href!}
             ref={ref}
             className={cn(
               'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
@@ -167,7 +167,7 @@ const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWit
           >
             <div className="text-sm font-medium leading-none">{title}</div>
             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
-          </a>
+          </Link>
         </NavigationMenuLink>
       </li>
     );

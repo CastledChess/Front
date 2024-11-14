@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { register } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
+import { Card } from "@/components/ui/card.tsx";
 
 export const Register = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -28,12 +29,9 @@ export const Register = () => {
   };
 
   return (
+    // Ici c'est la card qui contient le formulaire
     <div className="flex items-center justify-center h-full">
-      <div className="p-8 rounded-lg shadow-lg w-full max-w-md" style={{ backgroundColor: '#343639' }}>
-        <h2 className="text-center mb-8 font-bold" style={{ color: '#EC9E67', fontSize: '36px' }}>
-          Register
-        </h2>
-
+      <Card> 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
             <FormField
@@ -42,12 +40,11 @@ export const Register = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
-                      autoComplete="email"
-                      placeholder="Email"
-                      {...field}
-                    />
+                  <Input
+                    autoComplete="email"
+                    placeholder="Email"
+                    {...field}
+                  />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -61,7 +58,6 @@ export const Register = () => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
                       autoComplete="username"
                       placeholder="Username"
                       {...field}
@@ -79,7 +75,6 @@ export const Register = () => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
                       type="password"
                       autoComplete="new-password"
                       placeholder="Password"
@@ -98,7 +93,6 @@ export const Register = () => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      className="bg-[#494A4C] h-12 rounded-[10px] border-none"
                       type="password"
                       autoComplete="new-password"
                       placeholder="Confirm Password"
@@ -142,7 +136,8 @@ export const Register = () => {
             <span className="text-lime-600">chess.com</span>
           </Button>
         </div>
-      </div>
+        
+      </Card>
     </div>
   );
 };

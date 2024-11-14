@@ -6,11 +6,6 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-      },
       colors: {
         'castled-primary': '#1B1919',
         'castled-secondary': '#272424',
@@ -21,6 +16,7 @@ export default {
         'castled-btn-purple': '#646ADA',
         'castled-btn-red': '#EA0909',
         'castled-accent': '#EC9E67',
+        'castled-input': '#494A4C',
         },
       },
       // Change the font (maybe)
