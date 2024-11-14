@@ -11,6 +11,7 @@ import { useNavigate, Link } from 'react-router-dom';
 export const Register = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
+    mode: 'onChange',
     defaultValues: {
       confirmPassword: '',
       email: '',
