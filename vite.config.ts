@@ -8,6 +8,17 @@ export default defineConfig({
   plugins: [
     react(),
     svgLoader(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      injectRegister: 'inline',
+      workbox: {
+        maximumFileSizeToCacheInBytes: 1e8,
+        globPatterns: ['**/*stockfish-16.1.wasm'],
+      },
+      manifest: {
+        theme_color: '#000000',
+      },
+    }),
     {
       name: 'configure-response-headers',
       configureServer: (server) => {
@@ -17,15 +28,14 @@ export default defineConfig({
           next();
         });
       },
-    },
-    VitePWA({
-      mode: 'development',
-      base: '/',
-      workbox: {
-        maximumFileSizeToCacheInBytes: 1e8,
+      configurePreviewServer(server) {
+        server.middlewares.use((_req, res, next) => {
+          res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+          res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+          next();
+        });
       },
-      includeAssets: ['stockfish-16.1.js'],
-    }),
+    },
   ],
   resolve: {
     alias: {
