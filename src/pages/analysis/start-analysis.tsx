@@ -110,12 +110,6 @@ export const StartAnalysis = () => {
     setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
   };
 
-  console.log(
-    form.getValues()?.engine,
-    Engines.find((engine) => engine.value === form.getValues()?.engine),
-    form.getValues(),
-  );
-
   return (
     <div className="flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
