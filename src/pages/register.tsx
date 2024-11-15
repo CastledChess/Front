@@ -33,9 +33,9 @@ export const Register = () => {
     <div className="flex items-center justify-center h-full">
       <Card>
         <h1 className="text-castled-accent text-4xl my-8 mx-14">Inscription</h1>
-        <div className="mx-14">
+        <div className="mx-14 w-72">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
               <FormField
                 control={form.control}
                 name="email"
@@ -88,18 +88,18 @@ export const Register = () => {
                 )}
               />
 
-              <div className="flex justify-between gap-6 items-center pt-5">
-                <a className="text-white text-lg">Mot de passe oublie ?</a>
-                <Button type="submit" className="px-14 text-lg bg-castled-accent hover:bg-castled-btn-orange ">
+              <div className="flex justify-between gap-6 items-center ">
+                <a className="text-white text-xs">Mot de passe oublie ?</a>
+                <Button type="submit" className="px-8 text-md h-8 bg-castled-accent hover:bg-castled-btn-orange ">
                   Inscription
                 </Button>
               </div>
             </form>
           </Form>
 
-          <p className="text-castled-gray text-xs mt-10">
-            En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique <br></br> de confidentialité,
-            notamment l'Utilisation des cookies.
+          <p className="text-castled-gray text-[0.6rem] mt-10">
+            En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique
+            de confidentialité, notamment l'Utilisation des cookies.
           </p>
 
           <div className="mt-6 text-center text-white text-sm">
