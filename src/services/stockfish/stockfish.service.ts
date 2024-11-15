@@ -1,6 +1,6 @@
 export type StockfishServiceOptions = {
   enableLogs?: boolean;
-  variants?: number;
+  engine?: string;
   threads?: number;
 };
 
@@ -10,8 +10,8 @@ export class StockfishService {
   private isWorking: boolean = false;
   private isReady: boolean = false;
 
-  constructor({ enableLogs = false, variants = 1, threads = 4 }: StockfishServiceOptions = {}) {
-    this.worker = new Worker('stockfish-16.1.js');
+  constructor({ enableLogs = false, engine = 'stockfish-16.1.js', threads = 4 }: StockfishServiceOptions = {}) {
+    this.worker = new Worker(engine);
 
     if (enableLogs) this.worker.addEventListener('message', (message) => console.log(message.data));
     this.worker.onmessage = (message: MessageEvent) => {
@@ -24,7 +24,7 @@ export class StockfishService {
     this.worker.postMessage('uci');
     this.worker.postMessage('isready');
     this.worker.postMessage('setoption name Move Overhead value 0');
-    this.worker.postMessage(`setoption name MultiPV value ${variants}`);
+    // this.worker.postMessage(`setoption name MultiPV value ${variants}`);
     this.worker.postMessage('setoption name UCI_Elo value 3190');
     this.worker.postMessage('setoption name UCI_ShowWDL value true');
     this.worker.postMessage(`setoption name Threads value ${threads}`);
