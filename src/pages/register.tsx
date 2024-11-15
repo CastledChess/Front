@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { register } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
-import { Card } from "@/components/ui/card.tsx";
+import { Card } from '@/components/ui/card.tsx';
 
 export const Register = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -31,22 +31,18 @@ export const Register = () => {
   return (
     // Ici c'est la card qui contient le formulaire
     <div className="flex items-center justify-center h-full">
-      <Card> 
-        <h1 className='text-castled-accent text-4xl my-8 mx-14'>Inscription</h1>
-        <div className='mx-14'>
+      <Card>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14">Inscription</h1>
+        <div className="mx-14">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-4">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                    <Input
-                      autoComplete="email"
-                      placeholder="Email"
-                      {...field}
-                    />
+                      <Input autoComplete="email" placeholder="Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -59,11 +55,7 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        autoComplete="username"
-                        placeholder="Username"
-                        {...field}
-                      />
+                      <Input autoComplete="username" placeholder="Username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -76,12 +68,7 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        autoComplete="new-password"
-                        placeholder="Password"
-                        {...field}
-                      />
+                      <Input type="password" autoComplete="new-password" placeholder="Password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -94,52 +81,51 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        autoComplete="new-password"
-                        placeholder="Confirm Password"
-                        {...field}
-                      />
+                      <Input type="password" autoComplete="new-password" placeholder="Confirm Password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-                <div className="flex justify-between gap-6 items-center">
-                  <a className='text-white text-sm'>Mot de passe oublie ?</a>
-                  <Button type="submit" className="ml-auto bg-castled-accent hover:bg-castled-btn-orange">
-                    Register
-                  </Button>
-                </div>
+              <div className="flex justify-between gap-6 items-center pt-5">
+                <a className="text-white text-lg">Mot de passe oublie ?</a>
+                <Button type="submit" className="px-14 text-lg bg-castled-accent hover:bg-castled-btn-orange ">
+                  Inscription
+                </Button>
+              </div>
             </form>
           </Form>
 
-        <p >Lorem, ipsum dolor sit amet consectetur adipisicing elit. Qui deleniti voluptatibus nihil beatae odio sed, aliquam error. Vitae quas, deleniti unde velit iure, voluptatum vero at nisi quam perspiciatis aliquid.</p>
-        <div className="mt-6 text-center text-white text-sm">
-          Already have an account?{' '}
-          <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
-            Login
-          </Link>
+          <p className="text-castled-gray text-xs mt-10">
+            En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique <br></br> de confidentialité,
+            notamment l'Utilisation des cookies.
+          </p>
+
+          <div className="mt-6 text-center text-white text-sm">
+            Already have an account?{' '}
+            <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
+              Login
+            </Link>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center justify-center mt-6">
-        <div className="flex-grow border-t border-castled-gray"></div>
-        <span className="text-castled-gray text-sm mx-4">ou avec</span>
-        <div className="flex-grow border-t border-castled-gray"></div>
-      </div>
+        <div className="flex items-center justify-center mt-6">
+          <div className="flex-grow border-t border-castled-gray"></div>
+          <span className="text-castled-gray text-sm mx-4">ou avec</span>
+          <div className="flex-grow border-t border-castled-gray"></div>
+        </div>
 
-      <div className="flex justify-center mt-4 space-x-4 text-white p-4">
-        <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
-          <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-9 aspect-square" />
-          <span className="text-white pl-6">Lichess</span>
-        </Button>
+        <div className="flex justify-center mt-4 space-x-4 text-white p-4">
+          <button className="w-44 h-8 py-2 px-0 rounded-full bg-[#494A4C]  transition hover:bg-white hover:text-black flex justify-start items-center space-x-2">
+            <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-8 bg-white rounded-full" />
+            <span className="pl-6">Lichess</span>
+          </button>
 
-        <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
-          <img src="src/assets/icons/chess.com.png" alt="Chess.com" className="h-9 aspect-circle" />
-          <span className="text-lime-600 pl-2">chess.com</span>
-        </Button>
-      </div> 
+          <button className="w-44 h-8 py-2 px-0 rounded-full bg-castled-input hover:bg-lime-600 transition flex justify-start items-center space-x-2">
+            <img src="src/assets/icons/chess.com.png" alt="Chess.com" className="h-8 rounded-full" />
+            <p className="pl-2">chess.com</p>
+          </button>
+        </div>
       </Card>
     </div>
   );

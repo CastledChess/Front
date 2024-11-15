@@ -257,30 +257,44 @@ piece.fading {
   }
 }
 
-
 @keyframes blunder {
   0% {
     translate: 0;
     scale: 0;
   }
-  10% { translate: 2px; }
-  20% { translate: -2px; }
-  30% { translate: 2px; }
-  40% { translate: -2px; }
-  50% { translate: 2px; scale: 1.5; }
-  100% { scale: 1; }
+  10% {
+    translate: 2px;
+  }
+  20% {
+    translate: -2px;
+  }
+  30% {
+    translate: 2px;
+  }
+  40% {
+    translate: -2px;
+  }
+  50% {
+    translate: 2px;
+    scale: 1.5;
+  }
+  100% {
+    scale: 1;
+  }
 }
 
 .svg-blunder {
-  rect, path {
+  rect,
+  path {
     transform-origin: 50% 50%;
-    animation: blunder .9s
+    animation: blunder 0.9s;
   }
 }
 
 .svg-brilliant {
-  rect, path {
+  rect,
+  path {
     transform-origin: 50% 50%;
-    animation: brilliant .9s;
+    animation: brilliant 0.9s;
   }
 }
