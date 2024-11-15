@@ -66,7 +66,7 @@ export const Navbar = () => {
         <NavigationMenuList className="gap-2">
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/">Dashboard</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>

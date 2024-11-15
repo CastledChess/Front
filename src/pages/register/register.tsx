@@ -12,6 +12,7 @@ import { Card } from '@/components/ui/card.tsx';
 export const Register = () => {
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
+    mode: 'onChange',
     defaultValues: {
       confirmPassword: '',
       email: '',
@@ -23,9 +24,26 @@ export const Register = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
-    await register(data);
+    try {
+      await register(data);
 
-    navigate('/dashboard');
+      navigate('/');
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+    } catch (error: any) {
+      console.error('Failed to register:', error);
+
+      // TODO: implement error display
+      //
+      // const errors: { property: string; value: string; constraints: Record<string, string> }[] =
+      //   error.response.data.message;
+      //
+      // errors.forEach(({ property, constraints }) => {
+      //   form.setError(property as keyof typeof data, {
+      //     type: 'server',
+      //     message: constraints[Object.keys(constraints)[0]],
+      //   });
+      // });
+    }
   };
 
   return (

@@ -7,10 +7,13 @@ import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { login } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
+import lichessLogo from '@/assets/icons/lichess.png?url';
+import chessLogo from '@/assets/icons/chess_logo.png?url';
 
 export const Login = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
+    mode: 'onChange',
     defaultValues: {
       email: '',
       password: '',
@@ -20,9 +23,16 @@ export const Login = () => {
   const navigate = useNavigate();
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
-    await login(data);
+    try {
+      await login(data);
 
-    navigate('/dashboard');
+      navigate('/');
+    } catch (error) {
+      console.error('Failed to login:', error);
+
+      form.setError('email', { message: 'Invalid Credentials' });
+      form.setError('password', { message: 'Invalid Credentials' });
+    }
   };
 
   return (
@@ -47,7 +57,7 @@ export const Login = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -66,7 +76,7 @@ export const Login = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-red-400" />
                 </FormItem>
               )}
             />
@@ -94,12 +104,12 @@ export const Login = () => {
 
         <div className="flex justify-center mt-4 space-x-4 text-white p-4">
           <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
-            <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-9 aspect-square" />
+            <img src={lichessLogo} alt="Lichess" className="h-9 aspect-square" />
             <span className="text-white">Lichess</span>
           </Button>
 
           <Button className="w-[178px] h-8 py-2 px-0 rounded-full bg-[#494A4C] hover:bg-gray-600 flex justify-start items-center space-x-2">
-            <img src="src/assets/icons/chess_logo.png" alt="Chess.com" className="h-9 aspect-square" />
+            <img src={chessLogo} alt="Chess.com" className="h-9 aspect-square" />
             <span className="text-lime-600">chess.com</span>
           </Button>
         </div>
