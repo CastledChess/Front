@@ -116,8 +116,8 @@ export const Register = () => {
           </Form>
 
           <p className="text-castled-gray text-[0.6rem] mt-10">
-            En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique
-            de confidentialité, notamment l'Utilisation des cookies.
+            En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique de confidentialité, notamment
+            l'Utilisation des cookies.
           </p>
 
           <div className="mt-6 text-center text-white text-sm">
@@ -140,7 +140,7 @@ export const Register = () => {
           </button>
 
           <button className="w-44 h-8 py-2 px-0 rounded-full bg-castled-input hover:bg-lime-600 transition flex justify-start items-center space-x-2">
-            <img src="src/assets/icons/chess.com.png" alt="Chess.com" className="h-8 rounded-full" />
+            <img src="src/assets/icons/chess_logo.png" alt="Chess.com" className="h-8 rounded-full" />
             <p className="pl-2">chess.com</p>
           </button>
         </div>

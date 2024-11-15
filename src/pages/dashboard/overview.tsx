@@ -1,58 +1,58 @@
-import { TabsContent } from '@/components/ui/tabs.tsx';
-import { Activity, Crosshair, Goal, ChevronsUp } from 'lucide-react';
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
+// import { TabsContent } from '@/components/ui/tabs.tsx';
+// import { Activity, Crosshair, Goal, ChevronsUp } from 'lucide-react';
+// import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+// import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
 
-const data = [
-  {
-    name: 'Jan',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Feb',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Mar',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Apr',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'May',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Jun',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Jul',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Aug',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Sep',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Oct',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Nov',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-  {
-    name: 'Dec',
-    total: Math.floor(Math.random() * 30) + 40,
-  },
-];
+// const data = [
+//   {
+//     name: 'Jan',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Feb',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Mar',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Apr',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'May',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Jun',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Jul',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Aug',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Sep',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Oct',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Nov',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+//   {
+//     name: 'Dec',
+//     total: Math.floor(Math.random() * 30) + 40,
+//   },
+// ];
 
 export const Overview = () => {
   //   return (
