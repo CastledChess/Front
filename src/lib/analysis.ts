@@ -12,16 +12,37 @@ export type AnalyseMovesLocalParams = {
   reportProgress: () => void;
 };
 
-export const Engines = [
+export type Engine = {
+  isMultiThreaded: boolean;
+  name: string;
+  value: string;
+  cache: string;
+};
+
+export const Engines: Engine[] = [
   {
-    name: 'Stockfish 16.1 Large',
+    isMultiThreaded: true,
+    name: 'Stockfish 16.1 Large Multi-Threaded',
     value: 'stockfish-16.1.js',
     cache: 'stockfish-16.1.wasm',
   },
   {
-    name: 'Stockfish 16.1 Lite',
+    isMultiThreaded: false,
+    name: 'Stockfish 16.1 Large Single-Threaded',
+    value: 'stockfish-16.1-single.js',
+    cache: 'stockfish-16.1-single.wasm',
+  },
+  {
+    isMultiThreaded: true,
+    name: 'Stockfish 16.1 Lite Multi-Threaded',
     value: 'stockfish-16.1-lite.js',
     cache: 'stockfish-16.1-lite.wasm',
+  },
+  {
+    isMultiThreaded: false,
+    name: 'Stockfish 16.1 Lite Single-Threaded',
+    value: 'stockfish-16.1-lite-single.js',
+    cache: 'stockfish-16.1-lite-single.wasm',
   },
 ];
 
@@ -45,7 +66,8 @@ export const getCachedEngines = async () => {
 };
 
 export const analyseMovesLocal = ({ moves, data, reportProgress }: AnalyseMovesLocalParams) => {
-  const stockfish = new StockfishService({ engine: data.engine, threads: data.threads });
+  const engine = Engines.find((engine) => engine.value === data.engine);
+  const stockfish = new StockfishService({ engine, threads: data.threads });
   const parser = new UciParserService();
 
   return moves.map(

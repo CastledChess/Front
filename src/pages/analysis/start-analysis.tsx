@@ -48,6 +48,7 @@ export const StartAnalysis = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState({ value: 0, max: 0 });
   const [cachedEngines, setCachedEngines] = useState<string[]>([]);
+  const [selectedEngine, setSelectedEngine] = useState<string>('stockfish-16.1.js');
 
   useEffect(() => {
     getCachedEngines().then(setCachedEngines);
@@ -57,7 +58,7 @@ export const StartAnalysis = () => {
     resolver: zodResolver(StartAnalysisFormSchema),
     defaultValues: {
       classifyMoves: true,
-      engine: 'stockfish-16.1-lite.js',
+      engine: selectedEngine,
       threads: 1,
     },
   });
@@ -108,6 +109,12 @@ export const StartAnalysis = () => {
   const reportProgress = () => {
     setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
   };
+
+  console.log(
+    form.getValues()?.engine,
+    Engines.find((engine) => engine.value === form.getValues()?.engine),
+    form.getValues(),
+  );
 
   return (
     <div className="flex justify-center p-16">
@@ -165,7 +172,13 @@ export const StartAnalysis = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={(e: string) => {
+                        setSelectedEngine(e);
+                        field.onChange(e);
+                      }}
+                    >
                       <SelectTrigger id="engine">
                         <SelectValue placeholder="Engine" />
                       </SelectTrigger>
@@ -195,30 +208,32 @@ export const StartAnalysis = () => {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="threads"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex justify-between">
-                    Threads<span>{field.value}</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Slider
-                      step={1}
-                      min={1}
-                      max={navigator.hardwareConcurrency || 4}
-                      value={[field.value]}
-                      onValueChange={(values) => field.onChange(values[0])}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The number of threads the engine should use (more threads = better performance)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {Engines.find((engine) => engine.value === selectedEngine)?.isMultiThreaded && (
+              <FormField
+                control={form.control}
+                name="threads"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex justify-between">
+                      Threads<span>{field.value}</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Slider
+                        step={1}
+                        min={1}
+                        max={navigator.hardwareConcurrency || 1}
+                        value={[field.value]}
+                        onValueChange={(values) => field.onChange(values[0])}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The number of threads the engine should use (more threads = better performance)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="flex justify-between gap-6 items-center">
               {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
