@@ -18,6 +18,7 @@ import '@/assets/themes/board-css/index.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
+import '@/styles/autofill.css';
 import { useAuthStore } from '@/store/auth.ts';
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
       <Toaster />
       <Router>
         <Navbar />
-        <div className="h-[calc(100vh-4rem)]">
+        <div className="h-full bg-castled-primary">
           <Routes>
             {/* Global */}
             <Route path="/start-analysis" element={<StartAnalysis />} />

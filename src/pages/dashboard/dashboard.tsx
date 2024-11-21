@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
-import { Overview } from '@/pages/dashboard/overview.tsx';
+// import { Overview } from '@/pages/dashboard/overview.tsx';
 import { Statistics } from '@/pages/dashboard/statistics.tsx';
 import { useTranslation } from 'react-i18next';
 
@@ -14,7 +14,7 @@ export const Dashboard = () => {
           <TabsTrigger value="statistics">Statistics</TabsTrigger>
         </TabsList>
 
-        <Overview />
+        {/* <Overview /> */}
         <Statistics />
       </Tabs>
     </div>
