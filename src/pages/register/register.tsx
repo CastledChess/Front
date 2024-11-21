@@ -30,25 +30,28 @@ export const Register = () => {
       navigate('/');
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (error: any) {
-      console.error('Failed to register:', error);
+      console.error(
+        'Failed to register:',
+        error.response.data.message.map((e: any) => e.constraints),
+      );
 
       // TODO: implement error display
-      //
-      // const errors: { property: string; value: string; constraints: Record<string, string> }[] =
-      //   error.response.data.message;
-      //
-      // errors.forEach(({ property, constraints }) => {
-      //   form.setError(property as keyof typeof data, {
-      //     type: 'server',
-      //     message: constraints[Object.keys(constraints)[0]],
-      //   });
-      // });
+
+      const errors: { property: string; value: string; constraints: Record<string, string> }[] =
+        error.response.data.message;
+
+      errors.forEach(({ property, constraints }) => {
+        form.setError(property as keyof typeof data, {
+          type: 'server',
+          message: constraints[Object.keys(constraints)[0]],
+        });
+      });
     }
   };
 
   return (
     // Ici c'est la card qui contient le formulaire
-    <div className="flex items-center justify-center h-full">
+    <div className="flex items-center justify-center py-5">
       <Card>
         <h1 className="text-castled-accent text-4xl my-8 mx-14">Inscription</h1>
         <div className="mx-14 w-72">

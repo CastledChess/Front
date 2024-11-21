@@ -30,7 +30,7 @@ function App() {
       <Toaster />
       <Router>
         <Navbar />
-        <div className="h-[calc(100vh-4rem)] bg-castled-primary">
+        <div className="h-full bg-castled-primary">
           <Routes>
             {/* Global */}
             <Route path="/start-analysis" element={<StartAnalysis />} />
