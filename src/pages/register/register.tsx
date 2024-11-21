@@ -110,7 +110,7 @@ export const Register = () => {
               />
 
               <div className="flex justify-between gap-6 items-center ">
-                <a className="text-white text-xs">Mot de passe oublie ?</a>
+                <a className="text-white text-xs">Mot de passe oublié ?</a>
                 <Button type="submit" className="px-8 text-md h-8 bg-castled-accent hover:bg-castled-btn-orange ">
                   Inscription
                 </Button>
