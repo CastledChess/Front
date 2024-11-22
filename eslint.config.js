@@ -1,15 +1,16 @@
 import globals from 'globals';
-import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 
 export default [
   { files: ['src/**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-  { languageOptions: { globals: { ...globals.browser, React: 'writable' } } },
-  pluginJs.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
+    rules: {
+      '@typescript-eslint/no-misused-promises': 'off',
+    },
     languageOptions: {
+      globals: { ...globals.browser, React: 'writable' },
       parserOptions: {
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
@@ -21,8 +22,6 @@ export default [
     ...pluginReact.configs.flat.recommended,
     rules: {
       'react/prop-types': 'off',
-      ...pluginReact.configs.recommended.rules,
-      ...pluginReact.configs['jsx-runtime'].rules,
     },
     settings: {
       react: {
