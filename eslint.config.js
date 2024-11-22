@@ -8,6 +8,14 @@ export default [
   { languageOptions: { globals: { ...globals.browser, React: 'writable' } } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
 
   {
     ...pluginReact.configs.flat.recommended,
