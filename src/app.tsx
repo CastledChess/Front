@@ -17,6 +17,7 @@ import { useAnalysisStore } from '@/store/analysis.ts';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
+import '@/styles/autofill.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
@@ -31,7 +32,7 @@ function App() {
       <Toaster />
       <Router>
         <Navbar />
-        <div className="h-[calc(100vh-4rem)]">
+        <div className="h-[calc(100vh-4rem)] bg-castled-primary">
           <Routes>
             {/* Global */}
             <Route path="/" element={<Home />} />
