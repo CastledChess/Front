@@ -8,8 +8,6 @@ import { Button } from '@/components/ui/button.tsx';
 import { Card } from '@/components/ui/card.tsx';
 import { login } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
-import lichessLogo from '@/assets/icons/lichess.png?url';
-import chessLogo from '@/assets/icons/chess_logo.png?url';
 
 export const Login = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
