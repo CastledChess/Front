@@ -67,6 +67,10 @@ export default {
         },
       },
     },
-  },
-  plugins: [tailwindAnimate],
-};
+    // Change the font (maybe)
+    fontFamily: {
+      sans: ['Inter', 'sans-serif'],
+    },
+    plugins: [tailwindAnimate],
+  }
+}

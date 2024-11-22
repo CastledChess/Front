@@ -137,7 +137,7 @@ export const Register = () => {
         </div>
 
         <div className="flex justify-center mt-4 space-x-4 text-white p-4">
-          <button className="w-44 h-8 py-2 px-0 rounded-full bg-[#494A4C]  transition hover:bg-white hover:text-black flex justify-start items-center space-x-2">
+          <button className="w-44 h-8 py-2 px-0 rounded-full bg-castled-input  transition hover:bg-white hover:text-black flex justify-start items-center space-x-2">
             <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-8 bg-white rounded-full" />
             <span className="pl-6">Lichess</span>
           </button>
