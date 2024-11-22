@@ -16,12 +16,17 @@ export default {
         'castled-btn-purple': '#646ADA',
         'castled-btn-red': '#EA0909',
         'castled-accent': '#EC9E67',
+        'castled-input': '#494A4C',
+        },
+      },
+      // Change the font (maybe)
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
       },
     },
     // Change the font (maybe)
     fontFamily: {
       sans: ['Inter', 'sans-serif'],
     },
-  },
-  plugins: [tailwindAnimate],
-};
+    plugins: [tailwindAnimate],
+  }

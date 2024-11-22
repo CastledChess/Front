@@ -32,8 +32,9 @@ export function ThemeProvider({
     const root = window.document.documentElement;
 
     root.classList.remove('light', 'dark');
-
+    root.style.backgroundColor = '#1B1919'
     if (theme === 'system') {
+      root.style.backgroundColor = '#1B1919'
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
       root.classList.add(systemTheme);
