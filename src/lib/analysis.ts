@@ -12,8 +12,40 @@ export type AnalyseMovesLocalParams = {
   reportProgress: () => void;
 };
 
+export const Engines = [
+  {
+    name: 'Stockfish 16.1 Large',
+    value: 'stockfish-16.1.js',
+    cache: 'stockfish-16.1.wasm',
+  },
+  {
+    name: 'Stockfish 16.1 Lite',
+    value: 'stockfish-16.1-lite.js',
+    cache: 'stockfish-16.1-lite.wasm',
+  },
+];
+
+export const getCachedEngines = async () => {
+  const cacheKeys = await caches.keys();
+
+  const engines: string[] = [];
+
+  for (const key of cacheKeys) {
+    const cache = await caches.open(key);
+    const requests = await cache.keys();
+
+    requests.forEach((request) => {
+      const name = request.url.split('?')[0].split('/').pop();
+
+      if (name && Engines.find((engine) => engine.cache === name)) engines.push(name);
+    });
+  }
+
+  return engines;
+};
+
 export const analyseMovesLocal = ({ moves, data, reportProgress }: AnalyseMovesLocalParams) => {
-  const stockfish = new StockfishService({ variants: data.variants, threads: data.threads });
+  const stockfish = new StockfishService({ engine: data.engine, threads: data.threads });
   const parser = new UciParserService();
 
   return moves.map(
