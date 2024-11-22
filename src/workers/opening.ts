@@ -12,11 +12,15 @@ const findOpeningName = (pgn: string) => {
   const chessClone = new Chess();
   let opening: Opening | undefined;
 
-  chessClone.loadPgn(pgn);
+  try {
+    chessClone.loadPgn(pgn);
 
-  while (!(opening = openings[chessClone.fen().split(' ')[0]])) {
-    if (!chessClone.undo()) break;
+    while (!(opening = openings[chessClone.fen().split(' ')[0]])) {
+      if (!chessClone.undo()) break;
+    }
+
+    self.postMessage({ result: opening });
+  } catch (error) {
+    self.postMessage({ error: error });
   }
-
-  self.postMessage({ result: opening });
 };

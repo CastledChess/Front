@@ -1,62 +1,54 @@
 import { z } from 'zod';
-import { AnalysisMove, AnalysisMoveClassification, SearchResults } from '@/types/analysis.ts';
+import { AnalysisMove, AnalysisMoveClassification, InfoResult } from '@/types/analysis.ts';
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
+import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
+import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
+import { pieceToValue } from '@/pages/analysis/classifications.ts';
 
-export const analyseMove = (
-  fen: string,
-  move: Move,
-  data: z.infer<typeof StartAnalysisFormSchema>,
-  reportProgress: () => void,
-) => {
-  return new Promise<AnalysisMove>((resolve) => {
-    const socket = new WebSocket('wss://chess-api.com/v1');
-    const variantResults: SearchResults[] = [];
-    let timeout: NodeJS.Timeout;
+export type AnalyseMovesLocalParams = {
+  moves: { move: Move; fen: string }[];
+  data: z.infer<typeof StartAnalysisFormSchema>;
+  reportProgress: () => void;
+};
 
-    socket.addEventListener('open', () => {
-      socket.send(
-        JSON.stringify({
-          variants: data.variants,
-          maxThinkingTime: 100,
-          depth: data.engineDepth,
-          fen,
-        }),
-      );
+export const analyseMovesLocal = ({ moves, data, reportProgress }: AnalyseMovesLocalParams) => {
+  const stockfish = new StockfishService({ variants: data.variants, threads: data.threads });
+  const parser = new UciParserService();
 
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        socket.close();
-        reportProgress();
-        resolve({
-          move,
-          fen,
-          engineResults: variantResults,
+  return moves.map(
+    async ({ move, fen }) =>
+      await new Promise((resolve) => {
+        const variantResults: InfoResult[] = [];
+
+        stockfish.pushCommand({
+          command: `position fen ${fen}`,
         });
-      }, 2000);
-    });
 
-    socket.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
+        stockfish.pushCommand({
+          command: `go movetime 100`,
+          callback: (data) => {
+            const result = parser.parse(data, move.color === 'w');
 
-      if (['info', 'log'].includes(data.type)) return;
+            if (!result) return;
 
-      clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        socket.close();
-        reportProgress();
-        resolve({
-          move,
-          fen,
-          engineResults: variantResults,
+            if (result.type === 'bestmove') {
+              reportProgress();
+
+              resolve({
+                move,
+                fen,
+                engineResults: variantResults,
+              });
+
+              return;
+            }
+
+            if (result.type === 'info') variantResults.push(result as InfoResult);
+          },
         });
-      }, 2000);
-
-      const resultData = data as SearchResults;
-
-      variantResults.push(resultData);
-    });
-  });
+      }),
+  ) as Promise<AnalysisMove>[];
 };
 
 export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
@@ -64,21 +56,52 @@ export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
 };
 
 export const classifyRegular = (move: AnalysisMove, index: number, moves: AnalysisMove[]) => {
-  const previousWinChance = move.engineResults.sort((a, b) => b.depth - a.depth)?.[0]?.winChance;
-  const currentWinChance = moves[index + 1]?.engineResults.sort((a, b) => b.depth - a.depth)?.[0]?.winChance;
+  const next = moves[index + 1]?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
+  const current = move?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
 
-  if (!previousWinChance || !currentWinChance) return { ...move, classification: AnalysisMoveClassification.None };
+  if (!next || !current) return { ...move, classification: AnalysisMoveClassification.None };
 
-  const winChanceDelta = (currentWinChance - previousWinChance) / 100;
+  if (current.mate)
+    return { ...move, classification: classifyWithMate(move.move, next.mate || current.mate, current.mate) };
+  else return { ...move, classification: classifyWithWinChance(move.move, next.winChance!, current.winChance!) };
+};
+
+const classifyWithMate = (move: Move, next: number, current: number): AnalysisMoveClassification => {
+  if (next === null || current === null) return AnalysisMoveClassification.None;
+
+  const mateDelta = next - current - 1;
 
   let classification = AnalysisMoveClassification.None;
 
-  if (winChanceDelta <= 0.0) classification = AnalysisMoveClassification.Best;
-  else if (winChanceDelta > 0.0 && winChanceDelta <= 0.02) classification = AnalysisMoveClassification.Excellent;
+  if (mateDelta <= 0) {
+    if (move.captured && pieceToValue[move.captured] < pieceToValue[move.piece])
+      classification = AnalysisMoveClassification.Brilliant;
+    else classification = AnalysisMoveClassification.Best;
+  } else if (mateDelta === 1) classification = AnalysisMoveClassification.Excellent;
+  else if (mateDelta === 2) classification = AnalysisMoveClassification.Good;
+  else if (mateDelta === 3) classification = AnalysisMoveClassification.Inaccuracy;
+  else if (mateDelta === 4) classification = AnalysisMoveClassification.Mistake;
+  else if (mateDelta >= 5) classification = AnalysisMoveClassification.Blunder;
+
+  return classification;
+};
+
+const classifyWithWinChance = (move: Move, next: number, current: number): AnalysisMoveClassification => {
+  if (!next || !current) return AnalysisMoveClassification.None;
+
+  const winChanceDelta = Math.abs((current - next) / 100);
+
+  let classification = AnalysisMoveClassification.None;
+
+  if (winChanceDelta <= 0.0) {
+    if (move.captured && pieceToValue[move.captured] < pieceToValue[move.piece])
+      classification = AnalysisMoveClassification.Brilliant;
+    else classification = AnalysisMoveClassification.Best;
+  } else if (winChanceDelta > 0.0 && winChanceDelta <= 0.02) classification = AnalysisMoveClassification.Excellent;
   else if (winChanceDelta > 0.02 && winChanceDelta <= 0.05) classification = AnalysisMoveClassification.Good;
   else if (winChanceDelta > 0.05 && winChanceDelta <= 0.1) classification = AnalysisMoveClassification.Inaccuracy;
   else if (winChanceDelta > 0.1 && winChanceDelta <= 0.2) classification = AnalysisMoveClassification.Mistake;
   else if (winChanceDelta > 0.2 && winChanceDelta <= 1) classification = AnalysisMoveClassification.Blunder;
 
-  return { ...move, classification };
+  return classification;
 };

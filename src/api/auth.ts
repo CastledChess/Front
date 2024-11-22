@@ -6,10 +6,6 @@ import { useAuthStore } from '@/store/auth.ts';
 export const login = async (data: z.infer<typeof LoginSchema>) => {
   const loginCall = await api.post('/api/v1/auth/login', data);
 
-  if (loginCall.status !== 200) {
-    return console.error('Failed to login', loginCall);
-  }
-
   const { accessToken, refreshToken, user } = LoginResponseSchema.parse(loginCall.data);
 
   useAuthStore.getState().setAccessToken(accessToken);

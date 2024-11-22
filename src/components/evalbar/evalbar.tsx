@@ -5,9 +5,10 @@ type EvalbarProps = {
   orientation: 'white' | 'black';
   winChance: number;
   evaluation: number;
+  mate?: number;
 };
 
-export const Evalbar = ({ orientation, winChance, evaluation }: EvalbarProps) => {
+export const Evalbar = ({ orientation, winChance, evaluation, mate }: EvalbarProps) => {
   return (
     <TooltipProvider>
       <Tooltip delayDuration={100}>
@@ -19,16 +20,20 @@ export const Evalbar = ({ orientation, winChance, evaluation }: EvalbarProps) =>
             }}
           >
             <motion.div
-              animate={{ height: `${100 - winChance}%` }}
+              animate={{ height: `${100 - winChance}%`, transition: { duration: 1 } }}
               initial={{ height: '50%' }}
               className="w-full bg-white/5"
             />
 
-            <motion.div animate={{ height: `${winChance}%` }} initial={{ height: '50%' }} className="w-full bg-white" />
+            <motion.div
+              animate={{ height: `${winChance}%`, transition: { duration: 1 } }}
+              initial={{ height: '50%' }}
+              className="w-full bg-white"
+            />
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{evaluation}</p>
+          <p>{mate ? `M${mate}` : evaluation}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

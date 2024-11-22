@@ -20,7 +20,7 @@ import { useAnalysisStore } from '@/store/analysis.ts';
 import { useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
-import { analyseMove, classifyMoves } from '@/lib/analysis.ts';
+import { analyseMovesLocal, classifyMoves } from '@/lib/analysis.ts';
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 
@@ -51,7 +51,7 @@ export const StartAnalysis = () => {
     defaultValues: {
       classifyMoves: true,
       variants: 1,
-      engineDepth: 12,
+      threads: 1,
     },
   });
 
@@ -86,7 +86,7 @@ export const StartAnalysis = () => {
       moves.unshift({ move, fen });
     }
 
-    const analyses = moves.map(async ({ move, fen }) => await analyseMove(fen, move, data, reportProgress));
+    const analyses = analyseMovesLocal({ moves, data, reportProgress });
 
     const analysis: Analysis = {
       pgn: data.pgn,
@@ -177,22 +177,24 @@ export const StartAnalysis = () => {
 
             <FormField
               control={form.control}
-              name="engineDepth"
+              name="threads"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="flex justify-between">
-                    Engine Depth<span>{field.value}</span>
+                    Threads<span>{field.value}</span>
                   </FormLabel>
                   <FormControl>
                     <Slider
                       step={1}
                       min={1}
-                      max={18}
+                      max={navigator.hardwareConcurrency || 4}
                       value={[field.value]}
                       onValueChange={(values) => field.onChange(values[0])}
                     />
                   </FormControl>
-                  <FormDescription>The depth at which the engine should search</FormDescription>
+                  <FormDescription>
+                    The number of threads the engine should use (more threads = better performance)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

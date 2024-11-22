@@ -223,6 +223,78 @@ piece.fading {
   transform: translateX(700%);
 }
 
+.blue {
+  @apply bg-blue-400/50 text-blue-50;
+}
+
+.green {
+  @apply bg-green-400/50 text-green-50;
+}
+
+.red {
+  @apply bg-red-400/50 text-red-50;
+}
+
+.yellow {
+  @apply bg-yellow-400/50 text-yellow-50;
+}
+
 .orange {
   @apply bg-amber-400/50 text-green-50;
+}
+
+@keyframes brilliant {
+  0% {
+    scale: 0;
+    rotate: 0deg;
+  }
+  50% {
+    scale: 1.5;
+  }
+  100% {
+    scale: 1;
+    rotate: 360deg;
+  }
+}
+
+@keyframes blunder {
+  0% {
+    translate: 0;
+    scale: 0;
+  }
+  10% {
+    translate: 2px;
+  }
+  20% {
+    translate: -2px;
+  }
+  30% {
+    translate: 2px;
+  }
+  40% {
+    translate: -2px;
+  }
+  50% {
+    translate: 2px;
+    scale: 1.5;
+  }
+  100% {
+    scale: 1;
+  }
+}
+
+.svg-blunder {
+  rect,
+  path {
+    transform-origin: 50% 50%;
+    animation: blunder 0.9s;
+  }
+}
+
+.svg-brilliant {
+  rect,
+  path {
+    transform-origin: 50% 50%;
+    animation: brilliant 0.9s;
+  }
 }
