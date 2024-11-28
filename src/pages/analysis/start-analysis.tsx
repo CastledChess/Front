@@ -17,12 +17,14 @@ import { Switch } from '@/components/ui/switch.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Analysis } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
-import { analyseMovesLocal, classifyMoves } from '@/lib/analysis.ts';
+import { analyseMovesLocal, classifyMoves, Engines, getCachedEngines } from '@/lib/analysis.ts';
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
+import { ArrowBigDownDash, Check } from 'lucide-react';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -45,12 +47,18 @@ export const StartAnalysis = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState({ value: 0, max: 0 });
+  const [cachedEngines, setCachedEngines] = useState<string[]>([]);
+  const [selectedEngine, setSelectedEngine] = useState<string>('stockfish-16.1.js');
+
+  useEffect(() => {
+    getCachedEngines().then(setCachedEngines);
+  }, []);
 
   const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
     resolver: zodResolver(StartAnalysisFormSchema),
     defaultValues: {
       classifyMoves: true,
-      variants: 1,
+      engine: selectedEngine,
       threads: 1,
     },
   });
@@ -90,7 +98,7 @@ export const StartAnalysis = () => {
 
     const analysis: Analysis = {
       pgn: data.pgn,
-      variants: data.variants,
+      variants: 1,
       header: chess.header(),
       moves: data.classifyMoves ? classifyMoves(await Promise.all(analyses)) : await Promise.all(analyses),
     };
@@ -103,7 +111,7 @@ export const StartAnalysis = () => {
   };
 
   return (
-    <div className="flex justify-center p-16">
+    <div className="h-full flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
         <h1 className="text-3xl font-bold my-2">New Analysis</h1>
 
@@ -154,51 +162,72 @@ export const StartAnalysis = () => {
 
             <FormField
               control={form.control}
-              name="variants"
+              name="engine"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="flex justify-between">
-                    Variants<span>{field.value}</span>
-                  </FormLabel>
                   <FormControl>
-                    <Slider
-                      step={1}
-                      min={1}
-                      max={5}
-                      value={[field.value]}
-                      onValueChange={(values) => field.onChange(values[0])}
-                    />
+                    <Select
+                      value={field.value}
+                      onValueChange={(e: string) => {
+                        setSelectedEngine(e);
+                        field.onChange(e);
+                      }}
+                    >
+                      <SelectTrigger id="engine">
+                        <SelectValue placeholder="Engine" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        {Engines.map((engine) => (
+                          <SelectItem
+                            icon={
+                              cachedEngines.includes(engine.cache) ? (
+                                <Check className="h-4 w-4" />
+                              ) : (
+                                <ArrowBigDownDash className="w-4 h-4" />
+                              )
+                            }
+                            className="flex flex-row items-center gap-4"
+                            key={engine.value}
+                            value={engine.value}
+                          >
+                            {engine.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  <FormDescription>The number of lines the engine should compute</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="threads"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex justify-between">
-                    Threads<span>{field.value}</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Slider
-                      step={1}
-                      min={1}
-                      max={navigator.hardwareConcurrency || 4}
-                      value={[field.value]}
-                      onValueChange={(values) => field.onChange(values[0])}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    The number of threads the engine should use (more threads = better performance)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {Engines.find((engine) => engine.value === selectedEngine)?.isMultiThreaded && (
+              <FormField
+                control={form.control}
+                name="threads"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex justify-between">
+                      Threads<span>{field.value}</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Slider
+                        step={1}
+                        min={1}
+                        max={navigator.hardwareConcurrency || 1}
+                        value={[field.value]}
+                        onValueChange={(values) => field.onChange(values[0])}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The number of threads the engine should use (more threads = better performance)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="flex justify-between gap-6 items-center">
               {isLoading && <Progress value={(progress.value / progress.max) * 100} />}

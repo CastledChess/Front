@@ -13,14 +13,14 @@ import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { Profile } from '@/pages/profile/profile.tsx';
+import { useAuthStore } from '@/store/auth.ts';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
+import '@/styles/autofill.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
-import '@/styles/autofill.css';
-import { useAuthStore } from '@/store/auth.ts';
 
 function App() {
   const { analysis } = useAnalysisStore();
@@ -31,7 +31,7 @@ function App() {
       <Toaster />
       <Router>
         <Navbar />
-        <div className="h-full bg-castled-primary">
+        <div className="h-[calc(100vh-4rem)]">
           <Routes>
             {/* Global */}
             <Route path="/start-analysis" element={<StartAnalysis />} />

@@ -1,4 +1,5 @@
 // import { TabsContent } from '@/components/ui/tabs.tsx';
+// import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card.tsx';
 // import { Activity, Crosshair, Goal, ChevronsUp } from 'lucide-react';
 // import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 // import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';

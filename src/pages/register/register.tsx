@@ -32,26 +32,26 @@ export const Register = () => {
     } catch (error: any) {
       console.error(
         'Failed to register:',
-        error.response.data.message.map((e: any) => e.constraints),
+        error,
+        // error.response.data.message.map((e: any) => e.constraints),
       );
 
-      // TODO: implement error display
+      // TODO: implement error display -> need types
 
-      const errors: { property: string; value: string; constraints: Record<string, string> }[] =
-        error.response.data.message;
-
-      errors.forEach(({ property, constraints }) => {
-        form.setError(property as keyof typeof data, {
-          type: 'server',
-          message: constraints[Object.keys(constraints)[0]],
-        });
-      });
+      // const errors: { property: string; value: string; constraints: Record<string, string> }[] =
+      //   error.response.data.message;
+      //
+      // errors.forEach(({ property, constraints }) => {
+      //   form.setError(property as keyof typeof data, {
+      //     type: 'server',
+      //     message: constraints[Object.keys(constraints)[0]],
+      //   });
+      // });
     }
   };
 
   return (
-    // Ici c'est la card qui contient le formulaire
-    <div className="flex items-center justify-center py-5">
+    <div className="h-full flex items-center justify-center py-5">
       <Card>
         <h1 className="text-castled-accent text-4xl my-8 mx-14">Inscription</h1>
         <div className="mx-14 w-72">
@@ -137,7 +137,7 @@ export const Register = () => {
         </div>
 
         <div className="flex justify-center mt-4 space-x-4 text-white p-4">
-          <button className="w-44 h-8 py-2 px-0 rounded-full bg-[#494A4C]  transition hover:bg-white hover:text-black flex justify-start items-center space-x-2">
+          <button className="w-44 h-8 py-2 px-0 rounded-full bg-castled-input  transition hover:bg-white hover:text-black flex justify-start items-center space-x-2">
             <img src="src/assets/icons/lichess.png" alt="Lichess" className="h-8 bg-white rounded-full" />
             <span className="pl-6">Lichess</span>
           </button>

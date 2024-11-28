@@ -1,1 +1,0 @@
-../../public/stockfish-16.1.js
