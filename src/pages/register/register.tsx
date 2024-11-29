@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button.tsx';
 import { register } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card.tsx';
+import { useTranslation } from 'react-i18next';
 
 export const Register = () => {
+  const { t } = useTranslation('register');
   const form = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
     mode: 'onChange',
@@ -53,7 +55,7 @@ export const Register = () => {
   return (
     <div className="h-full flex items-center justify-center py-5">
       <Card>
-        <h1 className="text-castled-accent text-4xl my-8 mx-14">Inscription</h1>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14">{t('register')}</h1>
         <div className="mx-14 w-72">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
@@ -63,7 +65,7 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input autoComplete="email" placeholder="Email" {...field} />
+                      <Input autoComplete="email" placeholder={t('email')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -76,7 +78,7 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input autoComplete="username" placeholder="Username" {...field} />
+                      <Input autoComplete="username" placeholder={t('username')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,7 +91,7 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" autoComplete="new-password" placeholder="Password" {...field} />
+                      <Input type="password" autoComplete="new-password" placeholder={t('password')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,37 +104,38 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" autoComplete="new-password" placeholder="Confirm Password" {...field} />
+                      <Input
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder={t('confirmPassword')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="flex justify-between gap-6 items-center ">
-                <a className="text-white text-xs">Mot de passe oublié ?</a>
+              <div className="flex justify-end gap-6 items-center ">
                 <Button type="submit" className="px-8 text-md h-8 bg-castled-accent hover:bg-castled-btn-orange ">
-                  Inscription
+                  {t('register')}
                 </Button>
               </div>
             </form>
           </Form>
 
-          <p className="text-castled-gray text-[0.6rem] mt-10">
-            En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique de confidentialité, notamment
-            l'Utilisation des cookies.
-          </p>
+          <p className="text-castled-gray text-[0.6rem] mt-10">{t('termsOfUse')}</p>
 
           <div className="mt-6 text-center text-white text-sm">
-            Already have an account?{' '}
+            {t('haveAnAccount')}{' '}
             <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
-              Login
+              {t('login')}
             </Link>
           </div>
         </div>
         <div className="flex items-center justify-center mt-6">
           <div className="flex-grow border-t border-castled-gray"></div>
-          <span className="text-castled-gray text-sm mx-4">ou avec</span>
+          <span className="text-castled-gray text-sm mx-4">{t('orWith')}</span>
           <div className="flex-grow border-t border-castled-gray"></div>
         </div>
 
