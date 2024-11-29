@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button.tsx';
-import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
-import { Pencil, LogOut, Trash } from 'lucide-react';
+import { Pencil, PencilOff, LogOut, Trash } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProfileSchema } from '@/schema/profile.ts';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form.tsx';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button.tsx';
+import { Input } from '@/components/ui/input';
 
 export const Profile = () => {
   const { logout } = useAuthStore((state) => state);
@@ -26,6 +27,7 @@ export const Profile = () => {
       confirmPassword: '',
     },
   });
+
   const onSubmit = async (data: z.infer<typeof ProfileSchema>) => {
     console.log(data);
     setIsEditing(false);
@@ -40,42 +42,57 @@ export const Profile = () => {
     setIsEditing(!isEditing);
   };
 
-  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // make a file upload logic here and update the user photo :)
-    }
-  };
+  // const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     // make a file upload logic here and update the user photo :)
+  //   }
+  // };
 
   return (
-    <div className="flex items-center justify-center h-full p-4 sm:p-8">
-      <div className="flex flex-col items-center justify-center w-full max-w-md">
-        <div className="text-center mb-8 font-bold text-[24px] sm:text-[36px] text-[#EC9E67] border-on">
-          <label className="cursor-pointer">
-            <Avatar className="flex justify-center items-center">
-              <AvatarImage
-                className="border-on rounded-full h-32 w-32 sm:h-52 sm:w-52 object-cover"
-                src={isEditing ? 'src/assets/icons/react.svg' : 'src/assets/icons/profile_picture.jpg'}
+    <div className="flex flex-col justify-center items-center h-full">
+      <div className="relative flex flex-col items-center bg-castled-primary p-4 rounded-lg">
+        <Avatar className="flex justify-center self-center w-full max-w-md h-full mb-5">
+          <AvatarImage
+            className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
+            src={isEditing ? 'src/assets/icons/react.svg' : 'src/assets/icons/profile_picture.jpg'}
+          />
+        </Avatar>
+        <Pencil
+          className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary -translate-y-6"
+          // onClick={handlePhotoChange}
+        />
+      </div>
+      <Card className="w-full max-w-md p-4">
+        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">Username</h1>
+        <div className="my-4 mx-14">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
+              <FormField
+                control={form.control}
+                name="email"
+                disabled={!isEditing}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input autoComplete="email" placeholder="Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </Avatar>
-            <input type="file" className="hidden" onChange={handlePhotoChange} />
-          </label>
-        </div>
-        <div className="p-4 sm:p-8 rounded-lg shadow-lg w-full bg-[#343639]">
-          <div className="w-full mb-8 space-y-3">
-            <div>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
+              {isEditing && (
+                <>
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="currentPassword"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
                           <Input
-                            className="bg-[#494A4C] h-10 sm:h-12 rounded-[10px] border-none font-bold text-[16px] sm:text-[20px]"
-                            autoComplete="email"
-                            placeholder="Email"
+                            type="password"
+                            autoComplete="current-password"
+                            placeholder="Current Password"
                             {...field}
                           />
                         </FormControl>
@@ -83,103 +100,75 @@ export const Profile = () => {
                       </FormItem>
                     )}
                   />
-                  {isEditing && (
-                    <>
-                      <FormField
-                        control={form.control}
-                        name="currentPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                className="bg-[#494A4C] h-10 sm:h-12 rounded-[10px] border-none font-bold text-[16px] sm:text-[20px]"
-                                autoComplete="current-password"
-                                placeholder="Current Password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="newPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                className="bg-[#494A4C] h-10 sm:h-12 rounded-[10px] border-none font-bold text-[16px] sm:text-[20px]"
-                                autoComplete="new-password"
-                                placeholder="New Password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="confirmPassword"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="password"
-                                className="bg-[#494A4C] h-10 sm:h-12 rounded-[10px] border-none font-bold text-[16px] sm:text-[20px]"
-                                autoComplete="new-password"
-                                placeholder="Confirm New Password"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </>
-                  )}
-                </form>
-              </Form>
-            </div>
-
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input type="password" autoComplete="new-password" placeholder="New Password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            autoComplete="new-password"
+                            placeholder="Confirm New Password"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+            </form>
             {isEditing && (
               <Button
                 type="button"
-                className="ml-auto bg-[#EC9E67] hover:bg-[#EC9E67]/90"
+                className="w-full sm:w-auto flex justify-center mt-4 bg-castled-gray hover:bg-castled-btn-orange"
                 onClick={form.handleSubmit(onSubmit)}
               >
                 Save Changes
               </Button>
             )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row justify-between mb-8 gap-6 items-center">
+          </Form>
+          <div className="flex flex-col sm:flex-row justify-between mt-8 text-white space-y-4 sm:space-y-0 sm:space-x-10">
             <Button
               type="button"
-              className="w-full sm:w-auto bg-[#EC9E67] hover:bg-[#EC9E67]/90 text-[10px]"
+              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-orange text-[10px] flex flex-col items-center gap-1"
               onClick={handleEditToggle}
             >
-              <Pencil></Pencil>
-              {isEditing ? 'Cancel' : 'Modify Account'}
+              {isEditing ? <PencilOff /> : <Pencil />}
+              {isEditing ? 'Cancel' : 'Modify'}
             </Button>
             <Button
               type="button"
-              className="w-full sm:w-auto bg-[#EC9E67] hover:bg-[#EC9E67]/90 text-[10px]"
+              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-purple text-[10px] flex flex-col items-center gap-1"
               onClick={handleLogout}
             >
-              <LogOut></LogOut>
+              <LogOut />
               Logout
             </Button>
-            <Button type="button" className="w-full sm:w-auto bg-[#EC9E67] hover:bg-[#EC9E67]/90 text-[10px]">
-              <Trash></Trash>
-              Delete Account
+            <Button
+              type="button"
+              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-red text-[10px] flex flex-col items-center gap-1"
+            >
+              <Trash />
+              Delete
             </Button>
           </div>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
