@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button.tsx';
 import { Card } from '@/components/ui/card.tsx';
 import { login } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const Login = () => {
+  const { t } = useTranslation('login');
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     mode: 'onChange',
@@ -38,7 +40,7 @@ export const Login = () => {
     // TODO: remplacer le py
     <div className="flex justify-center items-center h-full py-20 ">
       <Card>
-        <h1 className='text-castled-accent text-4xl my-8 mx-14'>Connexion</h1>
+        <h1 className='text-castled-accent text-4xl my-8 mx-14'>{t('login')}</h1>
         <div className='mx-14'>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
@@ -50,7 +52,7 @@ export const Login = () => {
                     <FormControl>
                       <Input
                         autoComplete="email"
-                        placeholder="Email"
+                        placeholder={t('email')}
                         {...field}
                       />
                     </FormControl>
@@ -68,7 +70,7 @@ export const Login = () => {
                       <Input
                         type="password"
                         autoComplete="current-password"
-                        placeholder="Password"
+                        placeholder={t('password')}
                         {...field}
                       />
                     </FormControl>
@@ -78,25 +80,25 @@ export const Login = () => {
               />
 
               <div className="flex justify-between gap-6 items-center">
-                <a className='text-white text-sm'>Mot de passe oublié ?</a>
+                <a className='text-white text-sm underline' href='/'>{t('forgotPassword')} </a>
                 <Button type="submit" className="ml-auto h-8 text-md px-6 bg-castled-accent hover:bg-castled-btn-orange">
-                  Connexion
+                {t('login')}
                 </Button>
               </div>
             </form>
           </Form>
 
           <div className="mt-10 text-center text-sm text-white">
-            Pas encore de compte ?{' '}
+          {t('noAccount')}{' '}
             <Link to="/register" className="text-white underline hover:text-[#EC9E67]">
-              Inscription
+            {t('register')}
             </Link>
           </div>
         </div>
 
         <div className="flex items-center justify-center mt-6">
           <div className="flex-grow border-t border-castled-gray"></div>
-          <span className="text-castled-gray text-sm mx-4">ou avec</span>
+          <span className="text-castled-gray text-sm mx-4">{t('orWith')}</span>
           <div className="flex-grow border-t border-castled-gray"></div>
         </div>
 

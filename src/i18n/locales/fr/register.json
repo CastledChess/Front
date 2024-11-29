@@ -1,0 +1,11 @@
+{
+    "register": "Inscription",
+    "email": "Email",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer mot de passe",
+    "termsOfUse": "En vous inscrivant, vous acceptez les Conditions d'utilisation et la Politique de confidentialité, notamment l'Utilisation des Cookies.",
+    "haveAnAccount": "Vous avez déjà un compte ?",
+    "login": "Connexion",
+    "orWith": "ou avec"
+}
