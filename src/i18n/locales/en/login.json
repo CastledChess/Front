@@ -1,0 +1,9 @@
+{
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password ?",
+    "noAccount": "Don't have an account yet ?",
+    "register": "Register",
+    "orWith": "or with"
+}
