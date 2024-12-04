@@ -30,8 +30,8 @@ export const EvalChart = ({ onClick }: EvalChartProps) => {
     const data: EvalChartDataPoint[] = [];
 
     for (let i = 0; i < (analysis?.moves.length || 0) - 1; i++) {
-      const nextMove = analysis!.moves[i + 1]!;
-      const move = analysis!.moves[i]!;
+      const nextMove = analysis!.moves[i + 1];
+      const move = analysis!.moves[i];
       const result = nextMove.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
 
       data.push({

@@ -38,8 +38,8 @@ export const Login = () => {
     // TODO: remplacer le py
     <div className="flex justify-center items-center h-full py-20 ">
       <Card>
-        <h1 className='text-castled-accent text-4xl my-8 mx-14'>Connexion</h1>
-        <div className='mx-14'>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14">Connexion</h1>
+        <div className="mx-14">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
               <FormField
@@ -48,11 +48,7 @@ export const Login = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        autoComplete="email"
-                        placeholder="Email"
-                        {...field}
-                      />
+                      <Input autoComplete="email" placeholder="Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -65,12 +61,7 @@ export const Login = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        autoComplete="current-password"
-                        placeholder="Password"
-                        {...field}
-                      />
+                      <Input type="password" autoComplete="current-password" placeholder="Password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -78,8 +69,11 @@ export const Login = () => {
               />
 
               <div className="flex justify-between gap-6 items-center">
-                <a className='text-white text-sm'>Mot de passe oublié ?</a>
-                <Button type="submit" className="ml-auto h-8 text-md px-6 bg-castled-accent hover:bg-castled-btn-orange">
+                <a className="text-white text-sm">Mot de passe oublié ?</a>
+                <Button
+                  type="submit"
+                  className="ml-auto h-8 text-md px-6 bg-castled-accent hover:bg-castled-btn-orange"
+                >
                   Connexion
                 </Button>
               </div>

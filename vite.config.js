@@ -12,7 +12,12 @@ export default defineConfig({
             injectRegister: 'inline',
             workbox: {
                 maximumFileSizeToCacheInBytes: 1e8,
-                globPatterns: ['**/*stockfish-16.1.wasm'],
+                globPatterns: [
+                    '**/*stockfish-16.1.wasm',
+                    '**/*stockfish-16.1-lite.wasm',
+                    '**/*stockfish-16.1-lite-single.wasm',
+                    '**/*stockfish-16.1-single.wasm',
+                ],
             },
             manifest: {
                 theme_color: '#000000',
