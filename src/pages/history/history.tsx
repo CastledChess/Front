@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-// import axios from 'axios';
 import HistoryTable from '@/components/historytable/historytable';
 
 type AnalysisData = {
@@ -14,7 +13,7 @@ const History: React.FC = () => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   useEffect(() => {
-    // REQUETE API A DECOMMENTER !
+    // REQUETE API A DECOMMENTER
     /*
     axios
       .get<AnalysisData[]>('/api/history')
@@ -39,22 +38,27 @@ const History: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Historique des analyses</h1>
-
-      <div className="bg-gray-100 p-4 rounded-md shadow-md mb-4">
-        <p className="text-gray-700">
+      <h1
+        className="text-2xl font-extrabold mb-6 text-[#6E6ED8] font-poppins text-center"
+        style={{
+          padding: '8px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          textTransform: 'uppercase',
+          letterSpacing: '1.5px',
+          transition: 'all 0.3s ease',
+        }}
+        onMouseEnter={(e) => (e.target.style.transform = 'scale(1.05)')}
+        onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
+      >
+        Historique des analyses
+      </h1>
+      <HistoryTable data={analysisHistory} selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
+      <div className="bg-[#5353BB] p-4 rounded-md shadow-md mb-4 w-48 mx-auto mt-6">
+        <p className="text-white">
           Total d'analyses : <span className="font-bold">{analysisHistory.length}</span>
         </p>
       </div>
-      <HistoryTable data={analysisHistory} selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
-      {selectedIds.length > 0 && (
-        <button
-          onClick={handleDeleteSelected}
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md shadow hover:bg-red-600"
-        >
-          Supprimer les éléments sélectionnés
-        </button>
-      )}
     </div>
   );
 };
