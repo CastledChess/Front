@@ -63,7 +63,7 @@ export const Profile = () => {
         <Pencil className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary -translate-y-6" />
       </div>
       <Card className="w-full max-w-md p-4">
-        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">{t('Username')}</h1>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">Username</h1>
         <div className="my-4 mx-14">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
