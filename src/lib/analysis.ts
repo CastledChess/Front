@@ -65,7 +65,11 @@ export const getCachedEngines = async () => {
   return engines;
 };
 
-export const analyseMovesLocal = ({ moves, data, reportProgress }: AnalyseMovesLocalParams) => {
+export const analyseMovesLocal = ({
+  moves,
+  data,
+  reportProgress,
+}: AnalyseMovesLocalParams): Promise<AnalysisMove>[] => {
   const engine = Engines.find((engine) => engine.value === data.engine);
   const stockfish = new StockfishService({ engine, threads: data.threads });
   const parser = new UciParserService();
