@@ -61,12 +61,12 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end border-b">
+    <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end shadow-lg bg-castled-secondary text-castled-accent">
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/">Dashboard</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>

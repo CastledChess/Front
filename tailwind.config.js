@@ -6,12 +6,25 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        'castled-primary': '#1B1919',
+        'castled-secondary': '#272424',
+        'castled-tertiary': '#343536',
+        'castled-gray': '#D5D4CF',
+        'castled-btn-primary': '#ECECEC',
+        'castled-btn-orange': '#F68C41',
+        'castled-btn-purple': '#646ADA',
+        'castled-btn-red': '#EA0909',
+        'castled-accent': '#EC9E67',
+        'castled-input': '#494A4C',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -54,6 +67,10 @@ export default {
         },
       },
     },
-  },
-  plugins: [tailwindAnimate],
-};
+    // Change the font (maybe)
+    fontFamily: {
+      sans: ['Inter', 'sans-serif'],
+    },
+    plugins: [tailwindAnimate],
+  }
+}
