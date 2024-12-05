@@ -39,7 +39,7 @@ const History: React.FC = () => {
   return (
     <div className="p-6">
       <h1
-        className="text-2xl font-extrabold mb-6 text-[#6E6ED8] font-poppins text-center"
+        className="text-2xl font-extrabold mb-6 text-[#EC9E67] font-poppins text-center"
         style={{
           padding: '8px',
           borderRadius: '8px',
@@ -54,7 +54,7 @@ const History: React.FC = () => {
         Historique des analyses
       </h1>
       <HistoryTable data={analysisHistory} selectedIds={selectedIds} setSelectedIds={setSelectedIds} />
-      <div className="bg-[#5353BB] p-4 rounded-md shadow-md mb-4 w-48 mx-auto mt-6">
+      <div className="bg-[#EC9E67] p-4 rounded-md shadow-md mb-4 w-48 mx-auto mt-6">
         <p className="text-white">
           Total d'analyses : <span className="font-bold">{analysisHistory.length}</span>
         </p>
