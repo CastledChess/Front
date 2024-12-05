@@ -55,8 +55,8 @@ export const Register = () => {
   return (
     <div className="h-full flex items-center justify-center py-5">
       <Card>
-        <h1 className="text-castled-accent text-4xl my-8 mx-14">{t('register')}</h1>
-        <div className="mx-14 w-72">
+        <h1 className="text-castled-accent text-4xl my-8 mx-14">{t('login')}</h1>
+        <div className="mx-14">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
               <FormField
@@ -66,19 +66,6 @@ export const Register = () => {
                   <FormItem>
                     <FormControl>
                       <Input autoComplete="email" placeholder={t('email')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input autoComplete="username" placeholder={t('username')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -104,32 +91,31 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        autoComplete="new-password"
-                        placeholder={t('confirmPassword')}
-                        {...field}
-                      />
+                      <Input type="password" autoComplete="current-password" placeholder={t('password')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <div className="flex justify-end gap-6 items-center ">
-                <Button type="submit" className="px-8 text-md h-8 bg-castled-accent hover:bg-castled-btn-orange ">
-                  {t('register')}
+              <div className="flex justify-between gap-6 items-center">
+                <a className="text-white text-sm underline" href="/">
+                  {t('forgotPassword')}{' '}
+                </a>
+                <Button
+                  type="submit"
+                  className="ml-auto h-8 text-md px-6 bg-castled-accent hover:bg-castled-btn-orange"
+                >
+                  {t('login')}
                 </Button>
               </div>
             </form>
           </Form>
 
-          <p className="text-castled-gray text-[0.6rem] mt-10">{t('termsOfUse')}</p>
-
-          <div className="mt-6 text-center text-white text-sm">
-            {t('haveAnAccount')}{' '}
-            <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
-              {t('login')}
+          <div className="mt-10 text-center text-sm text-white">
+            {t('noAccount')}{' '}
+            <Link to="/register" className="text-white underline hover:text-[#EC9E67]">
+              {t('register')}
             </Link>
           </div>
         </div>

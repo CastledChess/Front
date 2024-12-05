@@ -38,8 +38,8 @@ export const Analysis = () => {
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
   const moveRefs = useRef<(HTMLTableRowElement | null)[]>([]);
 
-  const currMove = analysis!.moves[currentMove]!;
-  const previousMove = analysis!.moves[currentMove - 1]!;
+  const currMove = analysis!.moves[currentMove];
+  const previousMove = analysis!.moves[currentMove - 1];
   const variants = previousMove?.engineResults
     ?.sort((a, b) => b.depth! - a.depth!)
     ?.filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
