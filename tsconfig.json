@@ -5,14 +5,12 @@
     "allowJs": true,
     "module": "ESNext",
     "skipLibCheck": true,
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -23,17 +21,15 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": [
-      "src",
+    "src",
     "vite.config.js",
     "vite.config.d.ts",
     "tailwind.config.js",
     "eslint.config.js",
     "postcss.config.js",
-
+    "public/**/*"
   ],
-  "exclude": [  "node_modules",
-  "public/*.js", 
-  "public/stockfish-16.1-lite-single.js"],
+  "exclude": ["node_modules"],
   "references": [
     {
       "path": "./tsconfig.node.json"
