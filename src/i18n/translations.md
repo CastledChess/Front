@@ -5,7 +5,7 @@ This document describes how to use the translation system in the project.
 ## Using translations
 
 There are a few different ways of using translations in the project.
-The most common way is to use the `useTranslation` hook from `react-i18next`. 
+The most common way is to use the `useTranslation` hook from `react-i18next`.
 This hook returns a `t` function that can be used to translate strings.
 
 > [!WARNING]  
@@ -32,8 +32,8 @@ import React from 'react';
 
 import { withTranslation } from 'react-i18next';
 
-function MyComponent ({ t }) {
-  return <h1>{t('Welcome to React')}</h1>
+function MyComponent({ t }) {
+  return <h1>{t('Welcome to React')}</h1>;
 }
 
 export default withTranslation()(MyComponent);
@@ -56,7 +56,7 @@ export default function MyComponent () {
 ### Using i18n outside of React components
 
 ```tsx
-import i18next from './i18n'
+import i18next from './i18n';
 
-i18next.t('my.key')
+i18next.t('my.key');
 ```

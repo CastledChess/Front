@@ -104,7 +104,12 @@ export const Register = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input type="password" autoComplete="new-password" placeholder={t('confirmPassword')} {...field} />
+                      <Input
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder={t('confirmPassword')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -113,20 +118,18 @@ export const Register = () => {
 
               <div className="flex justify-end gap-6 items-center ">
                 <Button type="submit" className="px-8 text-md h-8 bg-castled-accent hover:bg-castled-btn-orange ">
-                {t('register')}
+                  {t('register')}
                 </Button>
               </div>
             </form>
           </Form>
 
-          <p className="text-castled-gray text-[0.6rem] mt-10">
-          {t('termsOfUse')}
-          </p>
+          <p className="text-castled-gray text-[0.6rem] mt-10">{t('termsOfUse')}</p>
 
           <div className="mt-6 text-center text-white text-sm">
-          {t('haveAnAccount')}{' '}
+            {t('haveAnAccount')}{' '}
             <Link to="/login" className="text-white underline hover:text-[#EC9E67]">
-            {t('login')}
+              {t('login')}
             </Link>
           </div>
         </div>

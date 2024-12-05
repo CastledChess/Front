@@ -102,7 +102,7 @@ export const analyseMovesLocal = ({ moves, data, reportProgress }: AnalyseMovesL
           },
         });
       }),
-  ) as Promise<AnalysisMove>[];
+  );
 };
 
 export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
