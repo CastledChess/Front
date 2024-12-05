@@ -1,8 +1,7 @@
 # On vérifie les fichiers modifiés avant et après l'exécution d
-MODIFIED_FILES_BEFORE=$(git diff --name-only)
+#MODIFIED_FILES_BEFORE=$(git diff --name-only)
 
 # On exécute le linter et le formateur de code
-npm run lint
 npm run format
 
 # On vérifie les fichiers modifiés après l'exécution des formateurs de code

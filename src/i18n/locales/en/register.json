@@ -1,11 +1,11 @@
 {
-    "register": "Register",
-    "email": "Email",
-    "username": "Username",
-    "password": "Password",
-    "confirmPassword": "Confirm password",
-    "termsOfUse": "By signing up, you agree to the Terms of Use and Privacy Policy, including the Use of Cookies.",
-    "haveAnAccount": "Already have an account ?",
-    "login": "Login",
-    "orWith": "or with"
+  "register": "Register",
+  "email": "Email",
+  "username": "Username",
+  "password": "Password",
+  "confirmPassword": "Confirm password",
+  "termsOfUse": "By signing up, you agree to the Terms of Use and Privacy Policy, including the Use of Cookies.",
+  "haveAnAccount": "Already have an account ?",
+  "login": "Login",
+  "orWith": "or with"
 }

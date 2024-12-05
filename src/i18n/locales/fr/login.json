@@ -1,9 +1,9 @@
 {
-    "login": "Connexion",
-    "email": "Email",
-    "password": "Mot de passe",
-    "forgotPassword": "Mot de passe oublié ?",
-    "noAccount": "Pas encore de compte ?",
-    "register": "Inscription",
-    "orWith": "ou avec"
+  "login": "Connexion",
+  "email": "Email",
+  "password": "Mot de passe",
+  "forgotPassword": "Mot de passe oublié ?",
+  "noAccount": "Pas encore de compte ?",
+  "register": "Inscription",
+  "orWith": "ou avec"
 }

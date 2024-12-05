@@ -40,8 +40,8 @@ export const Login = () => {
     // TODO: remplacer le py
     <div className="flex justify-center items-center h-full py-20 ">
       <Card>
-        <h1 className='text-castled-accent text-4xl my-8 mx-14'>{t('login')}</h1>
-        <div className='mx-14'>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14">{t('login')}</h1>
+        <div className="mx-14">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
               <FormField
@@ -50,11 +50,7 @@ export const Login = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        autoComplete="email"
-                        placeholder={t('email')}
-                        {...field}
-                      />
+                      <Input autoComplete="email" placeholder={t('email')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -67,12 +63,7 @@ export const Login = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input
-                        type="password"
-                        autoComplete="current-password"
-                        placeholder={t('password')}
-                        {...field}
-                      />
+                      <Input type="password" autoComplete="current-password" placeholder={t('password')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -80,18 +71,23 @@ export const Login = () => {
               />
 
               <div className="flex justify-between gap-6 items-center">
-                <a className='text-white text-sm underline' href='/'>{t('forgotPassword')} </a>
-                <Button type="submit" className="ml-auto h-8 text-md px-6 bg-castled-accent hover:bg-castled-btn-orange">
-                {t('login')}
+                <a className="text-white text-sm underline" href="/">
+                  {t('forgotPassword')}{' '}
+                </a>
+                <Button
+                  type="submit"
+                  className="ml-auto h-8 text-md px-6 bg-castled-accent hover:bg-castled-btn-orange"
+                >
+                  {t('login')}
                 </Button>
               </div>
             </form>
           </Form>
 
           <div className="mt-10 text-center text-sm text-white">
-          {t('noAccount')}{' '}
+            {t('noAccount')}{' '}
             <Link to="/register" className="text-white underline hover:text-[#EC9E67]">
-            {t('register')}
+              {t('register')}
             </Link>
           </div>
         </div>
