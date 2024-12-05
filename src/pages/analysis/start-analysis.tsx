@@ -124,7 +124,8 @@ export const StartAnalysis = () => {
 
     try {
       await fetch(engine.cache);
-      checkCachedEngines();
+      await caches.open('engine-cache').then((cache) => cache.add(engine.cache));
+      await checkCachedEngines();
     } catch (error) {
       console.error(error);
     }
@@ -140,7 +141,6 @@ export const StartAnalysis = () => {
     <div className="h-full flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
         <h1 className="text-3xl font-bold my-2">New Analysis</h1>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
             <FormField
