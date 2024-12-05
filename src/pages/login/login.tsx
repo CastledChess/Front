@@ -1,59 +1,44 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegisterSchema } from '@/schema/auth.ts';
+import { LoginSchema } from '@/schema/auth.ts';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import { register } from '@/api/auth.ts';
-import { useNavigate, Link } from 'react-router-dom';
 import { Card } from '@/components/ui/card.tsx';
+import { login } from '@/api/auth.ts';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-export const Register = () => {
-  const { t } = useTranslation('register');
-  const form = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+export const Login = () => {
+  const { t } = useTranslation('login');
+  const form = useForm<z.infer<typeof LoginSchema>>({
+    resolver: zodResolver(LoginSchema),
     mode: 'onChange',
     defaultValues: {
-      confirmPassword: '',
       email: '',
       password: '',
-      username: '',
     },
   });
 
   const navigate = useNavigate();
 
-  const onSubmit = async (data: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     try {
-      await register(data);
+      await login(data);
 
       navigate('/');
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      console.error(
-        'Failed to register:',
-        error,
-        // error.response.data.message.map((e: any) => e.constraints),
-      );
+    } catch (error) {
+      console.error('Failed to login:', error);
 
-      // TODO: implement error display -> need types
-
-      // const errors: { property: string; value: string; constraints: Record<string, string> }[] =
-      //   error.response.data.message;
-      //
-      // errors.forEach(({ property, constraints }) => {
-      //   form.setError(property as keyof typeof data, {
-      //     type: 'server',
-      //     message: constraints[Object.keys(constraints)[0]],
-      //   });
-      // });
+      form.setError('email', { message: 'Invalid Credentials' });
+      form.setError('password', { message: 'Invalid Credentials' });
     }
   };
 
   return (
-    <div className="h-full flex items-center justify-center py-5">
+    // TODO: remplacer le py
+    <div className="flex justify-center items-center h-full py-20 ">
       <Card>
         <h1 className="text-castled-accent text-4xl my-8 mx-14">{t('login')}</h1>
         <div className="mx-14">
@@ -75,19 +60,6 @@ export const Register = () => {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input type="password" autoComplete="new-password" placeholder={t('password')} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -119,6 +91,7 @@ export const Register = () => {
             </Link>
           </div>
         </div>
+
         <div className="flex items-center justify-center mt-6">
           <div className="flex-grow border-t border-castled-gray"></div>
           <span className="text-castled-gray text-sm mx-4">{t('orWith')}</span>
