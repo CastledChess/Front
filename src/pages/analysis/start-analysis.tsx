@@ -51,7 +51,7 @@ export const StartAnalysis = () => {
   const [selectedEngine, setSelectedEngine] = useState<string>('stockfish-16.1.js');
 
   useEffect(() => {
-    getCachedEngines().then(setCachedEngines);
+    getCachedEngines().then(setCachedEngines).catch(console.error);
   }, []);
 
   const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
