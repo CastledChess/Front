@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
 import { Pencil, PencilOff, LogOut, Trash } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button.tsx';
 import { Input } from '@/components/ui/input';
 
 export const Profile = () => {
+  const { t } = useTranslation('profile');
   const { logout } = useAuthStore((state) => state);
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
@@ -58,13 +60,10 @@ export const Profile = () => {
             src={isEditing ? 'src/assets/icons/react.svg' : 'src/assets/icons/profile_picture.jpg'}
           />
         </Avatar>
-        <Pencil
-          className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary -translate-y-6"
-          // onClick={handlePhotoChange}
-        />
+        <Pencil className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary -translate-y-6" />
       </div>
       <Card className="w-full max-w-md p-4">
-        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">Username</h1>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">{t('Username')}</h1>
         <div className="my-4 mx-14">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
@@ -75,7 +74,7 @@ export const Profile = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input autoComplete="email" placeholder="Email" {...field} />
+                      <Input autoComplete="email" placeholder={t('email')} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,7 +91,7 @@ export const Profile = () => {
                           <Input
                             type="password"
                             autoComplete="current-password"
-                            placeholder="Current Password"
+                            placeholder={t('Current Password')}
                             {...field}
                           />
                         </FormControl>
@@ -106,7 +105,12 @@ export const Profile = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input type="password" autoComplete="new-password" placeholder="New Password" {...field} />
+                          <Input
+                            type="password"
+                            autoComplete="new-password"
+                            placeholder={t('New Password')}
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -121,7 +125,7 @@ export const Profile = () => {
                           <Input
                             type="password"
                             autoComplete="new-password"
-                            placeholder="Confirm New Password"
+                            placeholder={t('Confirm New Password')}
                             {...field}
                           />
                         </FormControl>
@@ -138,7 +142,7 @@ export const Profile = () => {
                 className="w-full sm:w-auto flex justify-center mt-4 bg-castled-gray hover:bg-castled-btn-orange"
                 onClick={form.handleSubmit(onSubmit)}
               >
-                Save Changes
+                {t('Save')}
               </Button>
             )}
           </Form>
@@ -149,7 +153,7 @@ export const Profile = () => {
               onClick={handleEditToggle}
             >
               {isEditing ? <PencilOff /> : <Pencil />}
-              {isEditing ? 'Cancel' : 'Modify'}
+              {isEditing ? t('Cancel') : t('Modify')}
             </Button>
             <Button
               type="button"
@@ -157,14 +161,14 @@ export const Profile = () => {
               onClick={handleLogout}
             >
               <LogOut />
-              Logout
+              {t('Logout')}
             </Button>
             <Button
               type="button"
               className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-red text-[10px] flex flex-col items-center gap-1"
             >
               <Trash />
-              Delete
+              {t('Delete')}
             </Button>
           </div>
         </div>
