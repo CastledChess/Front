@@ -62,6 +62,7 @@ export const Profile = () => {
         </Avatar>
         <Pencil className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary -translate-y-6" />
       </div>
+
       <Card className="w-full max-w-md p-4">
         <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">Username</h1>
         <div className="my-4 mx-14">
@@ -80,6 +81,7 @@ export const Profile = () => {
                   </FormItem>
                 )}
               />
+
               {isEditing && (
                 <>
                   <FormField
@@ -136,6 +138,7 @@ export const Profile = () => {
                 </>
               )}
             </form>
+
             {isEditing && (
               <Button
                 type="button"
@@ -146,26 +149,29 @@ export const Profile = () => {
               </Button>
             )}
           </Form>
-          <div className="flex flex-col sm:flex-row justify-between mt-8 text-white space-y-4 sm:space-y-0 sm:space-x-10">
+
+          <div className="flex flex-col sm:flex-row justify-between mt-8 text-white">
             <Button
               type="button"
-              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-orange text-[10px] flex flex-col items-center gap-1"
+              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
               onClick={handleEditToggle}
             >
               {isEditing ? <PencilOff /> : <Pencil />}
               {isEditing ? t('Cancel') : t('Modify')}
             </Button>
+
             <Button
               type="button"
-              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-purple text-[10px] flex flex-col items-center gap-1"
+              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-purple flex flex-col items-center gap-0"
               onClick={handleLogout}
             >
               <LogOut />
               {t('Logout')}
             </Button>
+
             <Button
               type="button"
-              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-red text-[10px] flex flex-col items-center gap-1"
+              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0"
             >
               <Trash />
               {t('Delete')}
