@@ -2,27 +2,10 @@ import path from 'path';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import svgLoader from 'vite-svg-loader';
-import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
     plugins: [
         react(),
         svgLoader(),
-        VitePWA({
-            registerType: 'autoUpdate',
-            injectRegister: 'inline',
-            workbox: {
-                maximumFileSizeToCacheInBytes: 1e8,
-                globPatterns: [
-                    '**/*stockfish-16.1.wasm',
-                    '**/*stockfish-16.1-lite.wasm',
-                    '**/*stockfish-16.1-lite-single.wasm',
-                    '**/*stockfish-16.1-single.wasm',
-                ],
-            },
-            manifest: {
-                theme_color: '#000000',
-            },
-        }),
         {
             name: 'configure-response-headers',
             configureServer: function (server) {

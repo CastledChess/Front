@@ -20,12 +20,12 @@ import { useAnalysisStore } from '@/store/analysis.ts';
 import { useEffect, useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
-import { analyseMovesLocal, classifyMoves, Engines, getCachedEngines } from '@/lib/analysis.ts';
+import { analyseMovesLocal, classifyMoves, Engine, Engines, getCachedEngines } from '@/lib/analysis.ts';
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
-import { ArrowBigDownDash, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -47,15 +47,12 @@ export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState({ value: 0, max: 0 });
-  const [cachedEngines, setCachedEngines] = useState<string[]>([]);
-  const [selectedEngine, setSelectedEngine] = useState<string>('stockfish-16.1.js');
+  const [selectedEngine, setSelectedEngine] = useState<Engine>(Engines[0]);
+  const [cachedEngines, setCachedEngines] = useState<Engine[]>([]);
 
   const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
-
-  useEffect(() => {
-    getCachedEngines().then(setCachedEngines).catch(console.error);
-  }, []);
 
   const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
     resolver: zodResolver(StartAnalysisFormSchema),
@@ -113,11 +110,40 @@ export const StartAnalysis = () => {
     setProgress((prev) => ({ value: prev.value + 1, max: prev.max }));
   };
 
+  const checkCachedEngines = async () => {
+    const cachedEngines = await getCachedEngines();
+
+    setCachedEngines(cachedEngines);
+  };
+
+  const isEngineCached = (engine: Engine) => cachedEngines.find((cachedEngine) => cachedEngine.name === engine.name);
+
+  const downloadSelectedEngine = async () => {
+    const engine = Engines.find((engine) => engine.name === selectedEngine.name);
+
+    if (!engine) return;
+
+    setIsDownloading(true);
+
+    try {
+      await fetch(engine.cache);
+      await caches.open('engine-cache').then((cache) => cache.add(engine.cache));
+      await checkCachedEngines();
+    } catch (error) {
+      console.error(error);
+    }
+
+    setIsDownloading(false);
+  };
+
+  useEffect(() => {
+    checkCachedEngines();
+  }, []);
+
   return (
     <div className="h-full flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
         <h1 className="text-3xl font-bold my-2">{t('title')}</h1>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
             <FormField
@@ -169,43 +195,58 @@ export const StartAnalysis = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Select
-                      value={field.value}
-                      onValueChange={(e: string) => {
-                        setSelectedEngine(e);
-                        field.onChange(e);
-                      }}
-                    >
-                      <SelectTrigger id="engine">
-                        <SelectValue placeholder="Engine" />
-                      </SelectTrigger>
+                    <div className="flex gap-6">
+                      <Select
+                        value={field.value.value}
+                        onValueChange={(e: string) => {
+                          const engine = Engines.find((engine) => engine.value === e);
 
-                      <SelectContent>
-                        {Engines.map((engine) => (
-                          <SelectItem
-                            icon={
-                              cachedEngines.includes(engine.cache) ? (
-                                <Check className="h-4 w-4" />
-                              ) : (
-                                <ArrowBigDownDash className="w-4 h-4" />
-                              )
-                            }
-                            className="flex flex-row items-center gap-4"
-                            key={engine.value}
-                            value={engine.value}
-                          >
-                            {engine.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                          if (engine) setSelectedEngine(engine);
+                          field.onChange(engine);
+                        }}
+                      >
+                        <SelectTrigger id="engine">
+                          {isEngineCached(selectedEngine) ? (
+                            <Check className="h-4 w-4" />
+                          ) : (
+                            <ArrowBigDownDash className="w-4 h-4" />
+                          )}
+                          <SelectValue placeholder="Engine" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {Engines.map((engine) => (
+                            <SelectItem
+                              icon={
+                                isEngineCached(engine) ? (
+                                  <Check className="h-4 w-4" />
+                                ) : (
+                                  <ArrowBigDownDash className="w-4 h-4" />
+                                )
+                              }
+                              className="flex flex-row items-center gap-4"
+                              key={engine.value}
+                              value={engine.value}
+                            >
+                              {engine.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {!isEngineCached(selectedEngine) && (
+                        <LoaderButton isLoading={isDownloading} type="button" onClick={downloadSelectedEngine}>
+                          <DownloadCloud />
+                        </LoaderButton>
+                      )}
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {Engines.find((engine) => engine.value === selectedEngine)?.isMultiThreaded && (
+            {Engines.find((engine) => engine.name === selectedEngine.name)?.isMultiThreaded && (
               <FormField
                 control={form.control}
                 name="threads"
@@ -233,7 +274,12 @@ export const StartAnalysis = () => {
 
             <div className="flex justify-between gap-6 items-center">
               {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
-              <LoaderButton isLoading={isLoading} type="submit" className="ml-auto">
+              <LoaderButton
+                disabled={!isEngineCached(selectedEngine)}
+                isLoading={isLoading}
+                type="submit"
+                className="ml-auto"
+              >
                 {t('startAnalysis')}
               </LoaderButton>
             </div>
