@@ -7,5 +7,6 @@
     "threads": "Threads",
     "threadsDescription": "The number of threads the engine should use (more threads = more CPU usage for better performance).",
     "startAnalysis": "Go!"
-  }
+  },
+  "flipBoard": "Flip board"
 }

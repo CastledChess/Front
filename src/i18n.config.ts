@@ -19,7 +19,7 @@ await i18n
   .init({
     fallbackLng: 'en',
     defaultNS: 'common',
-    lng: 'fr',
+    lng: 'en',
     ns: ['common', 'analysis', 'register', 'login'],
     debug: true,
     // backend: {

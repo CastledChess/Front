@@ -7,5 +7,6 @@
     "threads": "Threads",
     "threadsDescription": "Le nombre de threads que le moteur doit utiliser (plus de threads = plus d'utilisation du processeur pour de meilleures performances).",
     "startAnalysis": "Go!"
-  }
+  },
+  "flipBoard": "Retourner l'échiquier"
 }

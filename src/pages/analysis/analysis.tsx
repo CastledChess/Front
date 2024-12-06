@@ -29,6 +29,7 @@ import {
 } from '@/pages/analysis/classifications.ts';
 import { EvalChart } from '@/components/evalchart/evalchart.tsx';
 import { CategoricalChartState } from 'recharts/types/chart/types';
+import { useTranslation } from 'react-i18next';
 
 export const Analysis = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
@@ -37,6 +38,8 @@ export const Analysis = () => {
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
   const moveRefs = useRef<(HTMLTableRowElement | null)[]>([]);
+
+  const { t } = useTranslation('analysis');
 
   const currMove = analysis!.moves[currentMove];
   const previousMove = analysis!.moves[currentMove - 1];
@@ -136,7 +139,9 @@ export const Analysis = () => {
   };
 
   useEffect(() => {
-    findOpening(chess.pgn()).then((opening) => setOpening(opening));
+    findOpening(chess.pgn())
+      .then((opening) => setOpening(opening))
+      .catch(console.error);
     /** When a custom svg (classification) is rendered twice at the same square on two different moves
      * it does not trigger a re-render and does not animate the second one, this fixes the issue */
     chessGround?.redrawAll();
@@ -228,7 +233,7 @@ export const Analysis = () => {
                   <FlipVertical2 />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Flip board</TooltipContent>
+              <TooltipContent>{t('flipBoard')}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
