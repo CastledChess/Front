@@ -24,6 +24,7 @@ import { analyseMovesLocal, classifyMoves, Engine, Engines, getCachedEngines } f
 import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
+import { useTranslation } from 'react-i18next';
 import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
@@ -50,6 +51,8 @@ export const StartAnalysis = () => {
   const [progress, setProgress] = useState({ value: 0, max: 0 });
   const [selectedEngine, setSelectedEngine] = useState<Engine>(Engines[0]);
   const [cachedEngines, setCachedEngines] = useState<Engine[]>([]);
+
+  const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
 
   const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
     resolver: zodResolver(StartAnalysisFormSchema),
@@ -140,7 +143,7 @@ export const StartAnalysis = () => {
   return (
     <div className="h-full flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
-        <h1 className="text-3xl font-bold my-2">New Analysis</h1>
+        <h1 className="text-3xl font-bold my-2">{t('title')}</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
             <FormField
@@ -159,7 +162,7 @@ export const StartAnalysis = () => {
                     />
                   </FormControl>
                   <FormDescription>
-                    What is a{' '}
+                    {t('pgnDescription')}{' '}
                     <a className="text-primary" href="https://fr.wikipedia.org/wiki/Portable_Game_Notation">
                       PGN
                     </a>
@@ -176,8 +179,8 @@ export const StartAnalysis = () => {
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                   <div className="space-y-0.5">
-                    <FormLabel>Classify moves</FormLabel>
-                    <FormDescription>Ask the engine to rate each move by classifying them.</FormDescription>
+                    <FormLabel>{t('classifyMoves')}</FormLabel>
+                    <FormDescription>{t('classifyMovesDescription')}</FormDescription>
                   </div>
                   <FormControl>
                     <Switch checked={field.value} onCheckedChange={field.onChange} />
@@ -250,7 +253,8 @@ export const StartAnalysis = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="flex justify-between">
-                      Threads<span>{field.value}</span>
+                      {t('threads')}
+                      <span>{field.value}</span>
                     </FormLabel>
                     <FormControl>
                       <Slider
@@ -261,9 +265,7 @@ export const StartAnalysis = () => {
                         onValueChange={(values) => field.onChange(values[0])}
                       />
                     </FormControl>
-                    <FormDescription>
-                      The number of threads the engine should use (more threads = better performance)
-                    </FormDescription>
+                    <FormDescription>{t('threadsDescription')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -278,7 +280,7 @@ export const StartAnalysis = () => {
                 type="submit"
                 className="ml-auto"
               >
-                Go!
+                {t('startAnalysis')}
               </LoaderButton>
             </div>
           </form>
