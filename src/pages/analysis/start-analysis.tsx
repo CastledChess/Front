@@ -26,6 +26,8 @@ import { Move } from 'chess.js';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { useTranslation } from 'react-i18next';
 import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
+import { createAnalysis } from '@/api/analysis.ts';
+import { useAuthStore } from '@/store/auth.ts';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -45,6 +47,7 @@ f3 Bc8 34. Kf2 Bf5 35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5
 
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -66,13 +69,25 @@ export const StartAnalysis = () => {
   const onSubmit = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     setIsLoading(true);
 
-    const analysis = await analyseGame(data);
+    try {
+      const analysis = await analyseGame(data);
+
+      setAnalysis(analysis);
+
+      if (user) {
+        const response = await createAnalysis(analysis);
+        toast.success('Analysis Ready!');
+
+        navigate(`/analysis/${response.data.id}`);
+      } else {
+        navigate('/analysis');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred while analysing the game.');
+    }
 
     setIsLoading(false);
-    setAnalysis(analysis);
-
-    toast.success('Analysis Ready!');
-    navigate('/analysis');
   };
 
   const analyseGame = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
