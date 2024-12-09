@@ -20,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { ChessboardTooltip } from '@/components/chessboard/chessboard-tooltip.tsx';
 import { Calendar } from '@/components/ui/calendar.tsx';
 import { CaptionLabelProps, DateRange } from 'react-day-picker';
+import { useTranslation } from 'react-i18next';
 
 type ChesscomSelectProps = {
   form: UseFormReturn<z.infer<typeof StartAnalysisFormSchema>>;
@@ -44,7 +45,9 @@ export type ChessComGame = {
 };
 
 const ChesscomGame = ({ game }: { game: ChessComGame | undefined }) => {
-  if (!game) return <div className="text-sm text-muted-foreground">No game selected</div>;
+  const { t } = useTranslation('analysis');
+
+  if (!game) return <div className="text-sm text-muted-foreground">{t('noGameSelected')}</div>;
 
   const dateSince = formatDistance(new Date(game.end_time * 1000), new Date(), { addSuffix: true });
 
@@ -78,13 +81,14 @@ const CustomDateCaptionLabel = ({
 const MAX_RANGE_DAYS = 31;
 
 export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
+  const { t } = useTranslation('analysis');
   const [games, setGames] = useState<ChessComGame[]>([]);
   const [seachOpen, setSearchOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
   const [userName, setUserName] = useState('');
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
+    from: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     to: new Date(),
   });
 
@@ -155,11 +159,11 @@ export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => debouncedSearchGames(e.target.value)}
             shouldFilter={false}
           >
-            <CommandInput placeholder="Search player..." />
+            <CommandInput placeholder={t('searchPlayer')} />
 
             <Popover open={dateOpen} onOpenChange={setDateOpen}>
               <PopoverTrigger id="chesscom-search-date" asChild>
-                <Button variant="outline" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
+                <Button variant="ghost" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
                   From {dateRange?.from?.toLocaleDateString()} to {dateRange?.to?.toLocaleDateString()}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -199,7 +203,7 @@ export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
                   </CommandItem>
                 ))}
               </CommandGroup>
-              <CommandEmpty>No results.</CommandEmpty>
+              <CommandEmpty>{t('noResults')}</CommandEmpty>
             </CommandList>
           </Command>
         </PopoverContent>

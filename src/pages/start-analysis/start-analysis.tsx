@@ -27,6 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTranslation } from 'react-i18next';
 import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
 import { ChesscomSelect } from '@/pages/start-analysis/chesscom-select.tsx';
+import { LichessorgSelect } from '@/pages/start-analysis/lichessorg-select.tsx';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -169,6 +170,8 @@ export const StartAnalysis = () => {
             </Select>
 
             {importMode === ImportMode.CHESS_COM && <ChesscomSelect form={form} />}
+
+            {importMode === ImportMode.LICHESS_ORG && <LichessorgSelect form={form} />}
 
             {importMode === ImportMode.PGN && (
               <FormField
