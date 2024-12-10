@@ -243,6 +243,10 @@ piece.fading {
   @apply bg-amber-400/50 text-green-50;
 }
 
+.gray {
+  @apply bg-gray-400/50 text-gray-50;
+}
+
 @keyframes brilliant {
   0% {
     scale: 0;

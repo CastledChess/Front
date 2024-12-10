@@ -37,4 +37,5 @@ export enum AnalysisMoveClassification {
   None = 'None',
   Best = 'Best',
   Excellent = 'Excellent',
+  Forced = 'Forced',
 }
