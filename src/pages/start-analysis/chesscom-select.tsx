@@ -45,7 +45,7 @@ export type ChessComGame = {
 };
 
 const ChesscomGame = ({ game }: { game: ChessComGame | undefined }) => {
-  const { t } = useTranslation('analysis');
+  const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
 
   if (!game) return <div className="text-sm text-muted-foreground">{t('noGameSelected')}</div>;
 
@@ -81,7 +81,7 @@ const CustomDateCaptionLabel = ({
 const MAX_RANGE_DAYS = 31;
 
 export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
-  const { t } = useTranslation('analysis');
+  const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
   const [games, setGames] = useState<ChessComGame[]>([]);
   const [seachOpen, setSearchOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);

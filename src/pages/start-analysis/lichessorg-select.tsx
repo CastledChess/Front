@@ -73,7 +73,7 @@ export type LichessOrgGame = {
 };
 
 const LichessorgGame = ({ game }: { game: LichessOrgGame | undefined }) => {
-  const { t } = useTranslation('analysis');
+  const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
 
   if (!game) return <div className="text-sm text-muted-foreground">{t('noGameSelected')}</div>;
 
@@ -109,7 +109,7 @@ const CustomDateCaptionLabel = ({
 const MAX_RANGE_DAYS = 31;
 
 export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
-  const { t } = useTranslation('analysis');
+  const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
   const [games, setGames] = useState<LichessOrgGame[]>([]);
   const [seachOpen, setSearchOpen] = useState(false);
   const [dateOpen, setDateOpen] = useState(false);
