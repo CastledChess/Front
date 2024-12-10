@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ReactNode } from 'react';
 
 import { Navbar } from '@/components/navbar/navbar.tsx';
-import { StartAnalysis } from '@/pages/analysis/start-analysis';
+import { StartAnalysis } from '@/pages/start-analysis/start-analysis.tsx';
 import { Analysis } from '@/pages/analysis/analysis.tsx';
 import { Documentation } from '@/pages/documentation.tsx';
 import { Register } from '@/pages/register/register.tsx';
