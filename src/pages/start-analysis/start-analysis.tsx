@@ -1,4 +1,4 @@
-import { LoaderButton } from '@/components/ui/button';
+import { LoaderButton } from '@/components/ui/button.tsx';
 import {
   Form,
   FormControl,
@@ -26,6 +26,8 @@ import { Move } from 'chess.js';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { useTranslation } from 'react-i18next';
 import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
+import { ChesscomSelect } from '@/pages/start-analysis/chesscom-select.tsx';
+import { LichessorgSelect } from '@/pages/start-analysis/lichessorg-select.tsx';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -43,6 +45,12 @@ Nc4 Nxc4 22. Bxc4 Nb6 23. Ne5 Rae8 24. Bxf7+ Rxf7 25. Nxf7 Rxe1+ 26. Qxe1 Kxf7
 f3 Bc8 34. Kf2 Bf5 35. Ra7 g6 36. Ra6+ Kc5 37. Ke1 Nf4 38. g3 Nxh3 39. Kd2 Kb5
 40. Rd6 Kc5 41. Ra6 Nf2 42. g4 Bd3 43. Re6 1/2-1/2`;
 
+enum ImportMode {
+  PGN = 'PGN',
+  CHESS_COM = 'Chess.com',
+  LICHESS_ORG = 'Lichess.org',
+}
+
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();
@@ -51,6 +59,7 @@ export const StartAnalysis = () => {
   const [progress, setProgress] = useState({ value: 0, max: 0 });
   const [selectedEngine, setSelectedEngine] = useState<Engine>(Engines[0]);
   const [cachedEngines, setCachedEngines] = useState<Engine[]>([]);
+  const [importMode, setImportMode] = useState<ImportMode>(ImportMode.PGN);
 
   const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
 
@@ -146,32 +155,51 @@ export const StartAnalysis = () => {
         <h1 className="text-3xl font-bold my-2">{t('title')}</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-            <FormField
-              control={form.control}
-              name="pgn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>PGN</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={PGN_PLACEHOLDER}
-                      spellCheck="false"
-                      id="pgn"
-                      className="h-56 resize-none custom-scrollbar"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t('pgnDescription')}{' '}
-                    <a className="text-primary" href="https://fr.wikipedia.org/wiki/Portable_Game_Notation">
-                      PGN
-                    </a>
-                    ?
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <Select value={importMode} onValueChange={(v: string) => setImportMode(v as ImportMode)}>
+              <SelectTrigger id="import">
+                <SelectValue placeholder="PGN" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {Object.values(ImportMode).map((mode) => (
+                  <SelectItem className="flex flex-row items-center gap-4" key={mode} value={mode}>
+                    {mode}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {importMode === ImportMode.CHESS_COM && <ChesscomSelect form={form} />}
+
+            {importMode === ImportMode.LICHESS_ORG && <LichessorgSelect form={form} />}
+
+            {importMode === ImportMode.PGN && (
+              <FormField
+                control={form.control}
+                name="pgn"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        placeholder={PGN_PLACEHOLDER}
+                        spellCheck="false"
+                        id="pgn"
+                        className="h-56 resize-none custom-scrollbar"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('pgnDescription')}{' '}
+                      <a className="text-primary" href="https://fr.wikipedia.org/wiki/Portable_Game_Notation">
+                        PGN
+                      </a>
+                      ?
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
