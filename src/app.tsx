@@ -12,7 +12,7 @@ import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAuthStore } from '@/store/auth.ts';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAnalysisStore } from '@/store/analysis.ts';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
@@ -20,9 +20,6 @@ import '@/styles/autofill.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
-import { useAnalysisStore } from '@/store/analysis.ts';
-
-const queryClient = new QueryClient();
 
 function App() {
   const analysis = useAnalysisStore((state) => state.analysis);
@@ -30,46 +27,44 @@ function App() {
 
   return (
     <main>
-      <QueryClientProvider client={queryClient}>
-        <Toaster />
-        <Router>
-          <Navbar />
-          <div className="h-[calc(100vh-4rem)]">
-            <Routes>
-              {/* Global */}
-              <Route path="/start-analysis" element={<StartAnalysis />} />
-              <Route
-                path="/analysis/"
-                element={
-                  <ProtectedRoute allow={!!analysis} redirect={'/start-analysis'}>
-                    <AnalysisPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/analysis/:id" element={<AnalysisPage />} />
-              <Route
-                path="/theme"
-                element={
-                  <ProtectedRoute allow={!!user} redirect="/">
-                    <Theme />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/documentation" element={<Documentation />} />
+      <Toaster />
+      <Router>
+        <Navbar />
+        <div className="h-[calc(100vh-4rem)]">
+          <Routes>
+            {/* Global */}
+            <Route path="/start-analysis" element={<StartAnalysis />} />
+            <Route
+              path="/analysis/"
+              element={
+                <ProtectedRoute allow={!!analysis} redirect={'/start-analysis'}>
+                  <AnalysisPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/analysis/:id" element={<AnalysisPage />} />
+            <Route
+              path="/theme"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/">
+                  <Theme />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/documentation" element={<Documentation />} />
 
-              {/* Authentication */}
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
+            {/* Authentication */}
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
 
-              {/* Connected */}
-              <Route path="/" element={<Dashboard />} />
+            {/* Connected */}
+            <Route path="/" element={<Dashboard />} />
 
-              {/* 404 */}
-              <Route path="/*" element={<NotFound />} />
-            </Routes>
-          </div>
-        </Router>
-      </QueryClientProvider>
+            {/* 404 */}
+            <Route path="/*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </Router>
     </main>
   );
 }
