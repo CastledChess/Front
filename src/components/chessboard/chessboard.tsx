@@ -13,6 +13,7 @@ type ChessboardProps = {
   setChessGround: (chessGround: Api) => void;
   freeMovable?: boolean;
   draggable?: boolean;
+  disableCoordinates?: boolean;
   onAfterChange?: () => void;
 };
 
@@ -22,6 +23,7 @@ export const Chessboard = ({
   onAfterChange,
   freeMovable = false,
   draggable = true,
+  disableCoordinates = false,
 }: ChessboardProps) => {
   const { pieceTheme, boardTheme, animationSpeed } = useThemeStore();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -29,6 +31,7 @@ export const Chessboard = ({
   const CHESSGROUND_CONFIG: Config = useMemo(
     () => ({
       fen: chess.fen(),
+      coordinates: !disableCoordinates,
       movable: { free: freeMovable },
       draggable: { enabled: draggable },
       animation: {
