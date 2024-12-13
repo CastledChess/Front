@@ -1,0 +1,36 @@
+{
+  "navbar": {
+    "dashboard": "Tableau de bord",
+    "analysis": "Analyse",
+    "history": "Historique",
+    "documentation": "Documentation",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "register": "Inscription"
+  },
+  "account-dropdown": {
+    "header": "Mon compte",
+    "profile": "Profil",
+    "theme": "Thème",
+    "support": "Support",
+    "logout": "Déconnexion"
+  },
+  "documentation-dropdown": {
+    "start": {
+      "title": "Commencer",
+      "description": "Apprenez à utiliser Castled pour votre première analyse !"
+    },
+    "engine": {
+      "title": "Moteur",
+      "description": "Explorez les moteurs disponibles sur Castled et comment les configurer."
+    },
+    "variations": {
+      "title": "Variantes",
+      "description": "Comprenez ce que sont les variantes et comment les utiliser à votre avantage."
+    },
+    "evaluation": {
+      "title": "Évaluation",
+      "description": "Comprenez l'évaluation du moteur et ce qu'elle signifie."
+    }
+  }
+}
