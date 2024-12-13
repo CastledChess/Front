@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
-import { Pencil, PencilOff, LogOut, Trash } from 'lucide-react';
+import { Pencil, PencilOff, LogOut, Trash, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -138,44 +138,49 @@ export const Profile = () => {
                 </>
               )}
             </form>
-
-            {isEditing && (
-              <Button
-                type="button"
-                className="w-full sm:w-auto flex justify-center mt-4 bg-castled-gray hover:bg-castled-btn-orange"
-                onClick={form.handleSubmit(onSubmit)}
-              >
-                {t('Save')}
-              </Button>
-            )}
           </Form>
 
-          <div className="flex flex-col sm:flex-row justify-between mt-8 text-white">
+          <div className="flex flex-col sm:flex-row justify-between mt-8 text-white space-y-2 sm:space-y-0 sm:space-x-2">
             <Button
               type="button"
-              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+              className="w-full bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0 button-size"
               onClick={handleEditToggle}
             >
               {isEditing ? <PencilOff /> : <Pencil />}
               {isEditing ? t('Cancel') : t('Modify')}
             </Button>
 
-            <Button
-              type="button"
-              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-purple flex flex-col items-center gap-0"
-              onClick={handleLogout}
-            >
-              <LogOut />
-              {t('Logout')}
-            </Button>
+            {isEditing && (
+              <Button
+                type="button"
+                className="w-full bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0 button-size"
+                onClick={form.handleSubmit(onSubmit)}
+              >
+                <Save />
+                {t('Save')}
+              </Button>
+            )}
 
-            <Button
-              type="button"
-              className="w-full sm:w-auto bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0"
-            >
-              <Trash />
-              {t('Delete')}
-            </Button>
+            {!isEditing && (
+              <>
+                <Button
+                  type="button"
+                  className="w-full bg-castled-gray hover:bg-castled-btn-purple flex flex-col items-center gap-0 button-size"
+                  onClick={handleLogout}
+                >
+                  <LogOut />
+                  {t('Logout')}
+                </Button>
+
+                <Button
+                  type="button"
+                  className="w-full bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0 button-size"
+                >
+                  <Trash />
+                  {t('Delete')}
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </Card>
