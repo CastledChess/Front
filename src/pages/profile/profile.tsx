@@ -44,12 +44,12 @@ export const Profile = () => {
     setIsEditing(!isEditing);
   };
 
-  // const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     // make a file upload logic here and update the user photo :)
-  //   }
-  // };
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // make a file upload logic here and update the user photo :)
+    }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center h-full">
@@ -57,9 +57,13 @@ export const Profile = () => {
         <Avatar className="flex justify-center self-center w-full max-w-md h-full mb-5 relative">
           <AvatarImage
             className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
-            src={isEditing ? 'src/assets/icons/react.svg' : 'src/assets/icons/profile_picture.jpg'}
+            src="src/assets/icons/profile_picture.jpg"
           />
-          <SquarePen className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary" />
+          <SquarePen
+            className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary cursor-pointer"
+            onClick={() => document.getElementById('fileInput')?.click()}
+          />
+          <input id="fileInput" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </Avatar>
       </div>
 
