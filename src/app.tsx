@@ -13,6 +13,7 @@ import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { useAuthStore } from '@/store/auth.ts';
+import { History } from '@/pages/history/history-page';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
@@ -58,6 +59,15 @@ function App() {
 
             {/* Connected */}
             <Route path="/" element={<Dashboard />} />
+
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <History />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />
