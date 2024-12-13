@@ -1,13 +1,14 @@
 {
-    "title": "Historique de parties",
-    "players": "Joueurs",
-    "result": "Résultat",
-    "moves": "Coups",
-    "date": "Date",
-    "previous": "Précédent",
-    "next": "Prochain",
-    "won": "VICTOIRE",
-    "lost": "DEFAITE",
-    "delete": "Supprimer",
-    "details": "Voir l'analyse"
+  "title": "Historique de parties",
+  "players": "Joueurs",
+  "result": "Résultat",
+  "moves": "Coups",
+  "date": "Date",
+  "previous": "Précédent",
+  "next": "Prochain",
+  "won": "VICTOIRE",
+  "lost": "DEFAITE",
+  "delete": "Supprimer",
+  "details": "Voir l'analyse",
+  "test": "Test"
 }

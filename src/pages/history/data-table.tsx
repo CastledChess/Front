@@ -1,6 +1,6 @@
-"use client"
-import { Button } from "@/components/ui/button"
-import * as React from "react"
+'use client';
+import { Button } from '@/components/ui/button';
+import * as React from 'react';
 import {
   SortingState,
   ColumnDef,
@@ -8,29 +8,21 @@ import {
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
-  getSortedRowModel
-} from "@tanstack/react-table"
+  getSortedRowModel,
+} from '@tanstack/react-table';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useTranslation } from 'react-i18next';
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [rowSelection, setRowSelection] = React.useState({})
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = React.useState({});
+  const { t } = useTranslation('history');
   const table = useReactTable({
     data,
     columns,
@@ -43,8 +35,7 @@ export function DataTable<TData, TValue>({
       sorting,
       rowSelection,
     },
-  }
-  )
+  });
 
   return (
     <div>
@@ -56,14 +47,9 @@ export function DataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -71,13 +57,16 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {cell.column.id === 'playerOne'
+                        ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                        : null}
+                      {cell.column.id === 'result' ? t(String(cell.getValue()).toLowerCase()) : null}
+                      {cell.column.id === 'moves' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                      {cell.column.id === 'date' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                      {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                     </TableCell>
                   ))}
                 </TableRow>
@@ -93,23 +82,13 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
           Previous
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
+        <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
           Next
         </Button>
       </div>
     </div>
-  )
+  );
 }
