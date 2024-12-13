@@ -59,10 +59,12 @@ export const Profile = () => {
             className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
             src="src/assets/icons/profile_picture.jpg"
           />
-          <SquarePen
+          <label
+            htmlFor="fileInput"
             className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary cursor-pointer"
-            onClick={() => document.getElementById('fileInput')?.click()}
-          />
+          >
+            <SquarePen />
+          </label>
           <input id="fileInput" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </Avatar>
       </div>
