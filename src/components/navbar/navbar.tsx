@@ -10,7 +10,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -23,7 +22,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
 import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Flag from 'react-flagkit';
 import logo from '@/assets/logo/castled-white-logo.png';
+import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
 
 const documentation: { title: string; href: string; description: string }[] = [
   {
@@ -50,13 +51,17 @@ const documentation: { title: string; href: string; description: string }[] = [
 
 export const Navbar = () => {
   const { user, logout } = useAuthStore((state) => state);
-  const { t } = useTranslation('navbar');
+  const { t, i18n } = useTranslation('navbar');
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
   };
 
   return (
@@ -84,13 +89,6 @@ export const Navbar = () => {
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/history" className="hover:no-underline  hover:text-castled-accent">
-                {t('navbar.history')}
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
             <NavigationMenuTrigger className="hover:no-underline hover:text-castled-accent">
               {t('navbar.documentation')}
             </NavigationMenuTrigger>
@@ -100,9 +98,13 @@ export const Navbar = () => {
                   const title = t(component.title);
                   const description = t(component.description);
 
-                  console.log(`Title: ${title}, Description: ${description}`); // Debug
                   return (
-                    <ListItem key={component.href} title={title} href={component.href}>
+                    <ListItem
+                      className="hover:text-castled-accent"
+                      key={component.href}
+                      title={title}
+                      href={component.href}
+                    >
                       {description}
                     </ListItem>
                   );
@@ -140,17 +142,26 @@ export const Navbar = () => {
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuGroup>
-                  <DropdownMenuItem>{t('account-dropdown.profile')}</DropdownMenuItem>
-                  <Link to="/theme">
-                    <DropdownMenuItem>{t('account-dropdown.theme')}</DropdownMenuItem>
-                  </Link>
+              <DropdownMenuContent align="end" className="w-24">
+                <DropdownMenuItem className="focus:text-castled-accent ">
+                  {t('account-dropdown.profile')}
+                </DropdownMenuItem>
+                <DropdownMenuItem className="focus:text-castled-accent ">
+                  <Link to="/theme">{t('account-dropdown.theme')}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="focus:text-castled-accent">
+                  {t('account-dropdown.support')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="focus:text-castled-accent" onClick={handleLogout}>
+                  {t('account-dropdown.logout')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup className="flex flex-row justify-between mx-5">
+                  <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} />
+                  <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} />
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>{t('account-dropdown.support')}</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>{t('account-dropdown.logout')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
