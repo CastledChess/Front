@@ -53,14 +53,14 @@ export const Profile = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      <div className="relative flex flex-col items-center bg-castled-primary p-4 rounded-lg">
-        <Avatar className="flex justify-center self-center w-full max-w-md h-full mb-5">
+      <div className="relative flex flex-col items-center p-4 rounded-lg">
+        <Avatar className="flex justify-center self-center w-full max-w-md h-full mb-5 relative">
           <AvatarImage
             className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
             src={isEditing ? 'src/assets/icons/react.svg' : 'src/assets/icons/profile_picture.jpg'}
           />
+          <Pencil className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary" />
         </Avatar>
-        <Pencil className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary -translate-y-6" />
       </div>
 
       <Card className="w-full max-w-md p-4">
