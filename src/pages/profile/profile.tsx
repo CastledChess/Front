@@ -15,14 +15,14 @@ import { Input } from '@/components/ui/input';
 
 export const Profile = () => {
   const { t } = useTranslation('profile');
-  const { logout } = useAuthStore((state) => state);
+  const { logout, user } = useAuthStore((state) => state);
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      email: '',
+      email: user?.email,
       password: '',
       currentPassword: '',
       newPassword: '',
@@ -70,7 +70,7 @@ export const Profile = () => {
       </div>
 
       <Card className="w-full max-w-md p-4">
-        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">Username</h1>
+        <h1 className="text-castled-accent text-4xl my-8 mx-14 text-center">{user?.username}</h1>
         <div className="my-4 mx-14">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
@@ -81,7 +81,7 @@ export const Profile = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input autoComplete="email" placeholder={t('email')} {...field} />
+                      <Input autoComplete="email" placeholder={user?.email} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
