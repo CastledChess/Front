@@ -74,18 +74,34 @@ export const Navbar = () => {
 
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
+          {location.pathname === '/' ? (
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/" className="hover:no-underline  text-castled-accent">
+                  {t('navbar.dashboard')}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          ) : (
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/" className="hover:no-underline hover:text-castled-accent">
+                  {t('navbar.dashboard')}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          )}
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/" className="hover:no-underline  hover:text-castled-accent">
-                {t('navbar.dashboard')}
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/start-analysis" className="hover:no-underline  hover:text-castled-accent">
-                {t('navbar.analysis')}
-              </Link>
+              {location.pathname === '/start-analysis' ? (
+                <Link to="/start-analysis" className="hover:no-underline text-castled-accent">
+                  {t('navbar.analysis')}
+                </Link>
+              ) : (
+                <Link to="/start-analysis" className="hover:no-underline  hover:text-castled-accent">
+                  {t('navbar.analysis')}
+                </Link>
+              )}
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
@@ -142,7 +158,7 @@ export const Navbar = () => {
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-24">
+              <DropdownMenuContent align="end" className="">
                 <DropdownMenuItem className="focus:text-castled-accent ">
                   {t('account-dropdown.profile')}
                 </DropdownMenuItem>
@@ -158,7 +174,7 @@ export const Navbar = () => {
                   {t('account-dropdown.logout')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup className="flex flex-row justify-between mx-5">
+                <DropdownMenuGroup className="flex flex-row gap-6 justify-center mx-3">
                   <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} />
                   <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} />
                 </DropdownMenuGroup>
