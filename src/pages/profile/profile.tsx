@@ -146,10 +146,10 @@ export const Profile = () => {
             </form>
           </Form>
 
-          <div className="flex flex-col sm:flex-row justify-between mt-8 text-white space-y-2 sm:space-y-0 sm:space-x-8">
+          <div className="flex flex-col sm:flex-row justify-center items-center mt-8 text-white space-y-2 sm:space-y-0 sm:space-x-8">
             <Button
               type="button"
-              className="w-full bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+              className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
               onClick={handleEditToggle}
             >
               {isEditing ? <PencilOff /> : <Pencil />}
@@ -159,7 +159,7 @@ export const Profile = () => {
             {isEditing && (
               <Button
                 type="button"
-                className="w-full bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+                className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
                 onClick={form.handleSubmit(onSubmit)}
               >
                 <Save />
@@ -171,7 +171,7 @@ export const Profile = () => {
               <>
                 <Button
                   type="button"
-                  className="w-full bg-castled-gray hover:bg-castled-btn-purple flex flex-col items-center gap-0"
+                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-purple flex flex-col items-center gap-0"
                   onClick={handleLogout}
                 >
                   <LogOut />
@@ -180,7 +180,7 @@ export const Profile = () => {
 
                 <Button
                   type="button"
-                  className="w-full bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0"
+                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0"
                 >
                   <Trash />
                   {t('Delete')}
