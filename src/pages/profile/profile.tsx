@@ -3,7 +3,7 @@ import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
-import { Pencil, PencilOff, LogOut, Trash, Save } from 'lucide-react';
+import { Pencil, PencilOff, SquarePen, LogOut, Trash, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -59,7 +59,7 @@ export const Profile = () => {
             className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
             src={isEditing ? 'src/assets/icons/react.svg' : 'src/assets/icons/profile_picture.jpg'}
           />
-          <Pencil className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary" />
+          <SquarePen className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary" />
         </Avatar>
       </div>
 
