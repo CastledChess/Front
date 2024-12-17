@@ -14,7 +14,7 @@ export const Evalbar = ({ orientation, winChance, evaluation, mate }: EvalbarPro
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <div
-            className="relative flex flex-col h-full overflow-hidden w-10 rounded-lg"
+            className="relative flex flex-col h-full overflow-hidden w-6 rounded"
             style={{
               transform: orientation === 'black' ? 'rotate(180deg)' : 'rotate(0deg)',
             }}

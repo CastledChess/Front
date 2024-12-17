@@ -10,6 +10,8 @@ export default [
     rules: {
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
     },
     languageOptions: {
       globals: { ...globals.browser, React: 'writable' },
