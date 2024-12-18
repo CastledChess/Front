@@ -30,6 +30,7 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(), // Important pour activer le tri
     onRowSelectionChange: setRowSelection,
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       rowSelection,
