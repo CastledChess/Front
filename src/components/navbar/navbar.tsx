@@ -160,7 +160,7 @@ export const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="">
                 <DropdownMenuItem className="focus:text-castled-accent ">
-                  {t('account-dropdown.profile')}
+                  <Link to="/profile">{t('account-dropdown.profile')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="focus:text-castled-accent ">
                   <Link to="/theme">{t('account-dropdown.theme')}</Link>

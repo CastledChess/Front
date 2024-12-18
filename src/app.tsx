@@ -12,6 +12,7 @@ import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
+import { Profile } from '@/pages/profile/profile.tsx';
 import { useAuthStore } from '@/store/auth.ts';
 import { History } from '@/pages/history/history-page';
 
@@ -59,6 +60,14 @@ function App() {
 
             {/* Connected */}
             <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/dashboard"
