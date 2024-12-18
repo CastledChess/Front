@@ -61,7 +61,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
 
             <Route
-              path="/history"
+              path="/dashboard"
               element={
                 <ProtectedRoute allow={!!user} redirect="/login">
                   <History />
