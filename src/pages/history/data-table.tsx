@@ -45,9 +45,19 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  console.log('DEBUG_1', header.column.columnDef.header);
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {/* {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())} */}
+                      {header.column.id === 'select'
+                        ? flexRender(header.column.columnDef.header, header.getContext())
+                        : null}
+                      {header.column.id === 'players' ? t(String(header.column.columnDef.header).toLowerCase()) : null}
+                      {header.column.id === 'header_Result'
+                        ? flexRender(header.column.columnDef.header, header.getContext())
+                        : null}
+                      {header.column.id === 'moves' ? t(String(header.column.id).toLowerCase()) : null}
+                      {header.column.id === 'header_Date' ? t('date') : null}
                     </TableHead>
                   );
                 })}

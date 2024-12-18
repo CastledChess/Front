@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import i18next from 'i18next';
 
 export interface GameDetails {
   createdAt: string;
@@ -56,7 +57,7 @@ export const columns: ColumnDef<GameDetails>[] = [
     accessorKey: 'header.Result',
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Result
+        {i18next.t('history:result')}
         {column.getIsSorted() === 'asc' && <ArrowUpDown className="ml-2 h-4 w-4 rotate-180" />}
         {column.getIsSorted() === 'desc' && <ArrowUpDown className="ml-2 h-4 w-4" />}
         {!column.getIsSorted() && <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />}
@@ -79,7 +80,7 @@ export const columns: ColumnDef<GameDetails>[] = [
     accessorKey: 'header.Date',
     header: ({ column }) => (
       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-        Date
+        {i18next.t('history:date')}
         {column.getIsSorted() === 'asc' && <ArrowUpDown className="ml-2 h-4 w-4 rotate-180" />}
         {column.getIsSorted() === 'desc' && <ArrowUpDown className="ml-2 h-4 w-4" />}
         {!column.getIsSorted() && <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />}
