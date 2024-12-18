@@ -56,11 +56,11 @@ export const Analysis = () => {
           <LayoutSidebar layout={layout} which="bottomLeft" onDrop={onDrop} justify="end" />
         </div>
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={50} minSize={15}>
+          <ResizablePanel defaultSize={50} minSize={15} id="leftPanel" order={1}>
             <ResizablePanelGroup direction="vertical">
               {topLeftPanels.map((key, index) => (
                 <React.Fragment key={index}>
-                  <ResizablePanel minSize={15} key={key}>
+                  <ResizablePanel minSize={15} key={key} id={key} order={1 + index}>
                     {panels[key as keyof Layout]}
                   </ResizablePanel>
                   {index < topLeftPanels.length - 1 && topLeftPanels.length > 1 && <ResizableHandle withHandle />}
@@ -71,7 +71,7 @@ export const Analysis = () => {
 
               {bottomLeftPanels.map((key, index) => (
                 <React.Fragment key={index}>
-                  <ResizablePanel minSize={15} key={key}>
+                  <ResizablePanel minSize={15} key={key} order={1 + topLeftPanels.length + index}>
                     {panels[key as keyof Layout]}
                   </ResizablePanel>
                   {index < bottomLeftPanels.length - 1 && bottomLeftPanels.length > 1 && <ResizableHandle withHandle />}
@@ -80,11 +80,21 @@ export const Analysis = () => {
             </ResizablePanelGroup>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50} minSize={15}>
+          <ResizablePanel
+            defaultSize={50}
+            minSize={15}
+            id="rightPanel"
+            order={2 + topLeftPanels.length + bottomLeftPanels.length}
+          >
             <ResizablePanelGroup direction="vertical">
               {topRightPanels.map((key, index) => (
                 <React.Fragment key={index}>
-                  <ResizablePanel minSize={15} key={key}>
+                  <ResizablePanel
+                    minSize={15}
+                    key={key}
+                    id={key}
+                    order={2 + topLeftPanels.length + bottomLeftPanels.length + index}
+                  >
                     {panels[key as keyof Layout]}
                   </ResizablePanel>
                   {index < topRightPanels.length - 1 && topRightPanels.length > 1 && <ResizableHandle withHandle />}
@@ -95,7 +105,12 @@ export const Analysis = () => {
 
               {bottomRightPanels.map((key, index) => (
                 <React.Fragment key={index}>
-                  <ResizablePanel minSize={15} key={key}>
+                  <ResizablePanel
+                    minSize={15}
+                    key={key}
+                    id={key}
+                    order={2 + topLeftPanels.length + bottomLeftPanels.length + topRightPanels.length + index}
+                  >
                     {panels[key as keyof Layout]}
                   </ResizablePanel>
                   {index < bottomRightPanels.length - 1 && bottomRightPanels.length > 1 && (
