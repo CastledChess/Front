@@ -58,17 +58,29 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {cell.column.id === 'playerOne'
-                        ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                        : null}
-                      {cell.column.id === 'result' ? t(String(cell.getValue()).toLowerCase()) : null}
-                      {cell.column.id === 'moves' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
-                      {cell.column.id === 'date' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
-                      {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map(
+                    (cell) => (
+                      console.log(cell),
+                      (
+                        <TableCell key={cell.id}>
+                          {cell.column.id === 'select'
+                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                            : null}
+                          {cell.column.id === 'playerOne'
+                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                            : null}
+                          {cell.column.id === 'result' ? t(String(cell.getValue()).toLowerCase()) : null}
+                          {cell.column.id === 'moves'
+                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                            : null}
+                          {cell.column.id === 'date' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                          {cell.column.id === 'actions'
+                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                            : null}
+                        </TableCell>
+                      )
+                    ),
+                  )}
                 </TableRow>
               ))
             ) : (
