@@ -5,10 +5,12 @@
   "moves": "Coups",
   "date": "Date",
   "previous": "Précédent",
-  "next": "Prochain",
+  "next": "Suivant",
   "won": "VICTOIRE",
   "lost": "DEFAITE",
   "delete": "Supprimer",
   "details": "Voir l'analyse",
-  "test": "Test"
+  "copyId": "Copier l'ID de la partie",
+  "analysis": "Analyse de la partie",
+  "loading": "Chargement de l'historique des parties..."
 }

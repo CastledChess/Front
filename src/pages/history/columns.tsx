@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import i18next from 'i18next';
+import { deleteGame } from '@/api/history';
 
 export interface GameDetails {
   createdAt: string;
@@ -104,11 +105,17 @@ export const columns: ColumnDef<GameDetails>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(gameDetails.id)}>
-              Copy Game Details ID
+              {i18next.t('history:copyId')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View game details</DropdownMenuItem>
+            <DropdownMenuItem>
+              <a href={`/analysis/${gameDetails.id}`} target="_blank" rel="noreferrer">
+                {i18next.t('history:analysis')}
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <div onClick={() => deleteGame(gameDetails.id)}>{i18next.t('history:delete')}</div>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -9,5 +9,8 @@
   "won": "WON",
   "lost": "LOST",
   "delete": "Delete",
-  "details": "View game analysis"
+  "details": "View game analysis",
+  "copyId": "Copy Game Details ID",
+  "analysis": "Game Analysis",
+  "loading": "Loading game history..."
 }

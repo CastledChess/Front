@@ -45,7 +45,6 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  console.log('DEBUG_1', header.column.columnDef.header);
                   return (
                     <TableHead key={header.id}>
                       {/* {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())} */}
@@ -96,10 +95,10 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-          Previous
+          {t('previous')}
         </Button>
         <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-          Next
+          {t('next')}
         </Button>
       </div>
     </div>

@@ -19,7 +19,7 @@ export const History = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t('loading')}</div>;
   }
 
   return (
