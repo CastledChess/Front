@@ -2,36 +2,7 @@ import { useEffect, useState } from 'react';
 import { DataTable } from './data-table';
 import { GameDetails, columns } from './columns';
 import { useTranslation } from 'react-i18next';
-
-async function getData(): Promise<GameDetails[]> {
-  // Simulated API call
-  return [
-    {
-      id: '1',
-      playerOne: 'seterB',
-      playerTwo: 'Terraxe',
-      result: 'WON',
-      moves: 20,
-      date: new Date('2024-10-12'),
-    },
-    {
-      id: '2',
-      playerOne: '4rthur',
-      playerTwo: 'c0rinn3',
-      result: 'LOST',
-      moves: 38,
-      date: new Date('2024-08-15'),
-    },
-    {
-      id: '3',
-      playerOne: 'Patate',
-      playerTwo: 'Banane',
-      result: 'LOST',
-      moves: 9,
-      date: new Date('2024-01-01'),
-    },
-  ];
-}
+import { getHistory } from '@/api/history.ts';
 
 export const History = () => {
   const { t } = useTranslation('history');
@@ -40,8 +11,8 @@ export const History = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await getData();
-      setData(result);
+      const history = await getHistory();
+      setData(history);
       setLoading(false);
     }
     fetchData();

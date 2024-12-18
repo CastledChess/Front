@@ -10,16 +10,17 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from '@tanstack/react-table';
-
+import Moment from 'moment';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useTranslation } from 'react-i18next';
+import { GameDetails } from './columns';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends GameDetails>({ columns, data }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const { t } = useTranslation('history');
@@ -27,14 +28,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: getSortedRowModel(), // Important pour activer le tri
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       rowSelection,
     },
+    onSortingChange: setSorting, // Met à jour l'état du tri
   });
 
   return (
@@ -58,29 +58,20 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map(
-                    (cell) => (
-                      console.log(cell),
-                      (
-                        <TableCell key={cell.id}>
-                          {cell.column.id === 'select'
-                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                            : null}
-                          {cell.column.id === 'playerOne'
-                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                            : null}
-                          {cell.column.id === 'result' ? t(String(cell.getValue()).toLowerCase()) : null}
-                          {cell.column.id === 'moves'
-                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                            : null}
-                          {cell.column.id === 'date' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
-                          {cell.column.id === 'actions'
-                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                            : null}
-                        </TableCell>
-                      )
-                    ),
-                  )}
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {cell.column.id === 'select' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                      {cell.column.id === 'players' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                      {cell.column.id === 'header_Result'
+                        ? t(String(cell.row.original.header.Result).toLowerCase())
+                        : null}
+                      {cell.column.id === 'moves' ? cell.row.original.header.Round : null}
+                      {cell.column.id === 'header_Date'
+                        ? Moment(cell.row.original.header.Date).format(' DD / MM / YYYY')
+                        : null}
+                      {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (

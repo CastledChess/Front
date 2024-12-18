@@ -14,14 +14,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export type GameDetails = {
+export interface GameDetails {
+  createdAt: string;
+  header: {
+    Black: string;
+    White: string;
+    BlackElo: string;
+    WhiteElo: string;
+    Result: string;
+    Date: string;
+    Round: string;
+  };
   id: string;
-  playerOne: string;
-  playerTwo: string;
-  result: 'WON' | 'LOST' | 'DRAW';
-  moves: number;
-  date: Date;
-};
+  pgn: string;
+}
 
 export const columns: ColumnDef<GameDetails>[] = [
   {
@@ -42,20 +48,21 @@ export const columns: ColumnDef<GameDetails>[] = [
     ),
   },
   {
-    accessorKey: 'playerOne',
+    accessorKey: 'players',
     header: 'Players',
-    cell: ({ row }) => `${row.original.playerOne} vs ${row.original.playerTwo}`,
+    cell: ({ row }) => `${row.original.header.White} vs ${row.original.header.Black}`,
   },
   {
-    accessorKey: 'result',
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          Result
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    accessorKey: 'header.Result',
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        Result
+        {column.getIsSorted() === 'asc' && <ArrowUpDown className="ml-2 h-4 w-4 rotate-180" />}
+        {column.getIsSorted() === 'desc' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+        {!column.getIsSorted() && <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />}
+      </Button>
+    ),
+    enableSorting: true,
   },
   {
     accessorKey: 'moves',
@@ -69,17 +76,17 @@ export const columns: ColumnDef<GameDetails>[] = [
     },
   },
   {
-    accessorKey: 'date',
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-          Date
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    accessorKey: 'header.Date',
+    header: ({ column }) => (
+      <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+        Date
+        {column.getIsSorted() === 'asc' && <ArrowUpDown className="ml-2 h-4 w-4 rotate-180" />}
+        {column.getIsSorted() === 'desc' && <ArrowUpDown className="ml-2 h-4 w-4" />}
+        {!column.getIsSorted() && <ArrowUpDown className="ml-2 h-4 w-4 opacity-50" />}
+      </Button>
+    ),
+    enableSorting: true,
   },
-
   {
     id: 'actions',
     cell: ({ row }) => {
