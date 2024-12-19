@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { useAuthStore } from '@/store/auth.ts';
-import { refreshTokens } from '@/api/auth.ts';
+// import { useAuthStore } from '@/store/auth.ts';
+// import { refreshTokens } from '@/api/auth.ts';
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL as string,
@@ -9,45 +9,45 @@ export const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
-  (request) => {
-    const accessToken = useAuthStore.getState().accessToken;
+// api.interceptors.request.use(
+//   (request) => {
+//     const accessToken = useAuthStore.getState().accessToken;
 
-    if (accessToken) request.headers['Authorization'] = `Bearer ${accessToken}`;
+//     if (accessToken) request.headers['Authorization'] = `Bearer ${accessToken}`;
 
-    return request;
-  },
-  (error) => {
-    return Promise.reject(error);
-  },
-);
+//     return request;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   },
+// );
 
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const response = await refreshTokens();
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
+// api.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     const originalRequest = error.config;
+//     if (error.response.status === 401 && !originalRequest._retry) {
+//       originalRequest._retry = true;
+//       try {
+//         const response = await refreshTokens();
+//         const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-        useAuthStore.getState().setAccessToken(accessToken);
-        useAuthStore.getState().setRefreshToken(newRefreshToken);
+//         useAuthStore.getState().setAccessToken(accessToken);
+//         useAuthStore.getState().setRefreshToken(newRefreshToken);
 
-        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+//         api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-        return api(originalRequest);
-      } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
+//         return api(originalRequest);
+//       } catch (refreshError) {
+//         console.error('Token refresh failed:', refreshError);
 
-        useAuthStore.getState().logout();
+//         useAuthStore.getState().logout();
 
-        window.location.href = '/login';
+//         window.location.href = '/login';
 
-        return Promise.reject(refreshError);
-      }
-    }
-    return Promise.reject(error);
-  },
-);
+//         return Promise.reject(refreshError);
+//       }
+//     }
+//     return Promise.reject(error);
+//   },
+// );
