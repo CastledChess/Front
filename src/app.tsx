@@ -11,8 +11,10 @@ import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
-import { useAuthStore } from '@/store/auth.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
+import { Profile } from '@/pages/profile/profile.tsx';
+import { useAuthStore } from '@/store/auth.ts';
+import { History } from '@/pages/history/history-page';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
@@ -59,6 +61,23 @@ function App() {
 
             {/* Connected */}
             <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <History />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />
