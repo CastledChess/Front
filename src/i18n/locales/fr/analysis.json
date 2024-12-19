@@ -1,0 +1,15 @@
+{
+  "newAnalysis": {
+    "title": "Nouvelle Analyse",
+    "pgnDescription": "Qu'est-ce qu'une",
+    "classifyMoves": "Classer les coups",
+    "classifyMovesDescription": "Demander au moteur de noter chaque coup en les classant.",
+    "threads": "Threads",
+    "threadsDescription": "Le nombre de threads que le moteur doit utiliser (plus de threads = plus d'utilisation du processeur pour de meilleures performances).",
+    "startAnalysis": "Go!",
+    "searchPlayer": "Rechercher un joueur...",
+    "noResults": "Aucun résultat trouvé",
+    "noGameSelected": "Aucune partie sélectionnée"
+  },
+  "flipBoard": "Retourner l'échiquier"
+}

@@ -20,7 +20,7 @@ i18n
     fallbackLng: 'en',
     defaultNS: 'common',
     lng: 'en',
-    ns: ['common', 'register', 'login'],
+    ns: ['common', 'analysis', 'register', 'login', 'history'],
     debug: true,
     // backend: {
     //   loadPath: 'i18n/locales/{{lng}}/{{ns}}.json',

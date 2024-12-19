@@ -35,7 +35,7 @@ export const useAnalysisStore = create<AnalysisState>()(
     }),
     {
       name: 'analysis',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({ analysis: state.analysis }),
     },
   ),

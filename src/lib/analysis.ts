@@ -5,6 +5,7 @@ import { Move } from 'chess.js';
 import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
 import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
 import { pieceToValue } from '@/pages/analysis/classifications.ts';
+import { isCached } from '@/services/cache/cache.service.ts';
 
 export type AnalyseMovesLocalParams = {
   moves: { move: Move; fen: string }[];
@@ -47,22 +48,15 @@ export const Engines: Engine[] = [
 ];
 
 export const getCachedEngines = async () => {
-  const cacheKeys = await caches.keys();
+  const cachedEngines: Engine[] = [];
 
-  const engines: string[] = [];
+  for (const engine of Engines) {
+    const isCachedWasm = await isCached('engine-cache', engine.cache);
 
-  for (const key of cacheKeys) {
-    const cache = await caches.open(key);
-    const requests = await cache.keys();
-
-    requests.forEach((request) => {
-      const name = request.url.split('?')[0].split('/').pop();
-
-      if (name && Engines.find((engine) => engine.cache === name)) engines.push(name);
-    });
+    if (isCachedWasm) cachedEngines.push(engine);
   }
 
-  return engines;
+  return cachedEngines;
 };
 
 export const analyseMovesLocal = ({
@@ -70,8 +64,7 @@ export const analyseMovesLocal = ({
   data,
   reportProgress,
 }: AnalyseMovesLocalParams): Promise<AnalysisMove>[] => {
-  const engine = Engines.find((engine) => engine.value === data.engine);
-  const stockfish = new StockfishService({ engine, threads: data.threads });
+  const stockfish = new StockfishService({ engine: data.engine, threads: data.threads });
   const parser = new UciParserService();
 
   return moves.map(

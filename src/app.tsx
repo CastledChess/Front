@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ReactNode } from 'react';
 
 import { Navbar } from '@/components/navbar/navbar.tsx';
-import { StartAnalysis } from '@/pages/analysis/start-analysis';
-import { Analysis } from '@/pages/analysis/analysis.tsx';
+import { AnalysisPage } from '@/pages/analysis/analysis.tsx';
+import { StartAnalysis } from '@/pages/start-analysis/start-analysis.tsx';
 import { Documentation } from '@/pages/documentation.tsx';
 import { Register } from '@/pages/register/register.tsx';
 import { Dashboard } from '@/pages/dashboard/dashboard.tsx';
@@ -12,7 +12,9 @@ import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
+import { Profile } from '@/pages/profile/profile.tsx';
 import { useAuthStore } from '@/store/auth.ts';
+import { History } from '@/pages/history/history-page';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
@@ -22,7 +24,7 @@ import '@/styles/index.css';
 import '@/styles/scrollbar.css';
 
 function App() {
-  const { analysis } = useAnalysisStore();
+  const analysis = useAnalysisStore((state) => state.analysis);
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -35,13 +37,14 @@ function App() {
             {/* Global */}
             <Route path="/start-analysis" element={<StartAnalysis />} />
             <Route
-              path="/analysis"
+              path="/analysis/"
               element={
-                <ProtectedRoute allow={!!analysis} redirect="/start-analysis">
-                  <Analysis />
+                <ProtectedRoute allow={!!analysis} redirect={'/start-analysis'}>
+                  <AnalysisPage />
                 </ProtectedRoute>
               }
             />
+            <Route path="/analysis/:id" element={<AnalysisPage />} />
             <Route
               path="/theme"
               element={
@@ -58,6 +61,23 @@ function App() {
 
             {/* Connected */}
             <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <History />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />

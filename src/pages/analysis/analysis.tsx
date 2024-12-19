@@ -14,7 +14,7 @@ import {
   Pause,
 } from 'lucide-react';
 import { Evalbar } from '@/components/evalbar/evalbar.tsx';
-import { AnalysisMove, AnalysisMoveClassification } from '@/types/analysis.ts';
+import { Analysis, AnalysisMove, AnalysisMoveClassification } from '@/types/analysis.ts';
 import { Key } from 'chessground/types';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 import { findOpening } from '@/lib/opening.ts';
@@ -29,23 +29,35 @@ import {
 } from '@/pages/analysis/classifications.ts';
 import { EvalChart } from '@/components/evalchart/evalchart.tsx';
 import { CategoricalChartState } from 'recharts/types/chart/types';
+import { useTranslation } from 'react-i18next';
+import { getAnalysisById } from '@/api/analysis.ts';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuthStore } from '@/store/auth.ts';
 
-export const Analysis = () => {
-  const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
+export const AnalysisPage = () => {
+  const params = useParams();
+  const { currentMove, setCurrentMove, analysis, setAnalysis, chess, chessGround } = useAnalysisStore();
+  const { user } = useAuthStore();
   const [orientation, setOrientation] = useState<'white' | 'black'>('white');
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
   const moveRefs = useRef<(HTMLTableRowElement | null)[]>([]);
 
-  const currMove = analysis!.moves[currentMove];
-  const previousMove = analysis!.moves[currentMove - 1];
+  const navigate = useNavigate();
+
+  const { t } = useTranslation('analysis');
+
+  const currMove = analysis?.moves?.[currentMove];
+  const previousMove = analysis?.moves?.[currentMove - 1];
   const variants = previousMove?.engineResults
     ?.sort((a, b) => b.depth! - a.depth!)
     ?.filter((result, index, self) => self.findIndex((r) => r.move === result.move) === index)
     ?.slice(0, analysis?.variants ?? 1);
 
-  const formatMoves = (moves: AnalysisMove[]): { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] => {
+  const formatMoves = (moves: AnalysisMove[] | undefined): { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] => {
+    if (!moves) return [];
+
     const formattedMoves: { whiteMove: AnalysisMove; blackMove: AnalysisMove }[] = [];
 
     for (let i = 0; i < moves.length; i += 2) formattedMoves.push({ whiteMove: moves[i], blackMove: moves[i + 1] });
@@ -55,6 +67,7 @@ export const Analysis = () => {
 
   const handleNextMove = () => {
     if (currentMove >= analysis!.moves.length) return;
+    if (!currMove) return;
 
     chess.move(currMove.move);
     chessGround?.set({
@@ -114,6 +127,8 @@ export const Analysis = () => {
   };
 
   const handleSkipToMove = (index: number) => {
+    if (!analysis?.moves) return;
+
     const moves = chess.history();
 
     for (let i = 0; i < moves.length; i++) {
@@ -121,7 +136,8 @@ export const Analysis = () => {
     }
 
     for (let i = 0; i < index; i++) {
-      chess.move(analysis!.moves[i].move);
+      console.log(analysis?.moves?.[i].move);
+      chess.move(analysis?.moves?.[i].move);
     }
 
     chessGround?.set({
@@ -136,7 +152,9 @@ export const Analysis = () => {
   };
 
   useEffect(() => {
-    findOpening(chess.pgn()).then((opening) => setOpening(opening));
+    findOpening(chess.pgn())
+      .then((opening) => setOpening(opening))
+      .catch(console.error);
     /** When a custom svg (classification) is rendered twice at the same square on two different moves
      * it does not trigger a re-render and does not animate the second one, this fixes the issue */
     chessGround?.redrawAll();
@@ -144,7 +162,7 @@ export const Analysis = () => {
   }, [currentMove]);
 
   useEffect(() => {
-    if (currentMove >= analysis!.moves.length) setIsAutoPlaying(false);
+    if (currentMove >= (analysis?.moves?.length || 0)) setIsAutoPlaying(false);
     if (!isAutoPlaying) clearInterval(autoPlayInterval.current!);
     else autoPlayInterval.current = setInterval(handleNextMove, 1000);
 
@@ -152,11 +170,11 @@ export const Analysis = () => {
   }, [isAutoPlaying, currentMove]);
 
   useEffect(() => {
-    if (currentMove >= analysis!.moves.length) return;
+    if (currentMove >= (analysis?.moves?.length || 0)) return;
 
     if (!previousMove) return;
 
-    const autoShapes: DrawShape[] = variants.map((result) => ({
+    const autoShapes: DrawShape[] = variants?.map((result) => ({
       orig: result.from,
       dest: result.to,
       brush: 'blue',
@@ -182,6 +200,23 @@ export const Analysis = () => {
     });
   }, [currentMove]);
 
+  useEffect(() => {
+    const getAnalysis = async () => {
+      try {
+        const response = await getAnalysisById(params.id!);
+        setAnalysis(response.data as Analysis);
+      } catch (error) {
+        console.error(error);
+        navigate('/start-analysis');
+      }
+    };
+
+    if (user) getAnalysis();
+    else if (!analysis) {
+      navigate('/start-analysis');
+    }
+  }, [user]);
+
   useHotkeys('right', handleNextMove);
   useHotkeys('left', handlePrevMove);
   useHotkeys('ctrl+left', handleSkipToBegin);
@@ -193,9 +228,9 @@ export const Analysis = () => {
     <div className="w-full h-full flex gap-6 justify-center p-4">
       <Evalbar
         orientation={orientation}
-        winChance={analysis!.moves[currentMove]?.engineResults?.[0]?.winChance ?? 50}
-        evaluation={analysis!.moves[currentMove]?.engineResults?.[0]?.eval ?? 0}
-        mate={analysis!.moves[currentMove]?.engineResults?.[0]?.mate}
+        winChance={analysis?.moves?.[currentMove]?.engineResults?.[0]?.winChance ?? 50}
+        evaluation={analysis?.moves?.[currentMove]?.engineResults?.[0]?.eval ?? 0}
+        mate={analysis?.moves?.[currentMove]?.engineResults?.[0]?.mate}
       />
       <div className="h-full flex flex-col gap-4">
         {analysis && (
@@ -228,7 +263,7 @@ export const Analysis = () => {
                   <FlipVertical2 />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Flip board</TooltipContent>
+              <TooltipContent>{t('flipBoard')}</TooltipContent>
             </Tooltip>
           </TooltipProvider>
 
@@ -272,7 +307,7 @@ export const Analysis = () => {
           <div className="custom-scrollbar flex flex-col gap-2 h-96 overflow-y-scroll rounded">
             <table className="w-full">
               <tbody>
-                {formatMoves(analysis!.moves).map((move, index) => (
+                {formatMoves(analysis?.moves).map((move, index) => (
                   <tr
                     key={index}
                     ref={(el) => {
