@@ -27,7 +27,7 @@ const panelIcons: Record<keyof typeof panels, string> = {
 };
 
 export const Analysis = () => {
-  const { layout } = useLayoutStore();
+  const { layout, selectedLayouts } = useLayoutStore();
 
   return (
     <div className="h-full w-full flex">
@@ -37,72 +37,51 @@ export const Analysis = () => {
           <LayoutSidebar which="bottomLeft" justify="end" />
         </div>
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={50} minSize={15} id="leftPanel" order={1}>
-            <ResizablePanelGroup direction="vertical">
-              {layout.topLeft.map((key, index) => (
-                <React.Fragment key={index}>
-                  <ResizablePanel minSize={15} key={key} id={key} order={1 + index}>
-                    {panels[key]}
+          {(selectedLayouts.topLeft !== null || selectedLayouts.bottomLeft !== null) && (
+            <ResizablePanel defaultSize={50} minSize={15} id="leftPanel" order={1}>
+              <ResizablePanelGroup direction="vertical">
+                {selectedLayouts.topLeft !== null && layout.topLeft.length > 0 && (
+                  <ResizablePanel defaultSize={50} minSize={15} order={2}>
+                    {panels[layout.topLeft[selectedLayouts.topLeft]]}
                   </ResizablePanel>
-                  {index < layout.topLeft.length - 1 && layout.topLeft.length > 1 && <ResizableHandle withHandle />}
-                </React.Fragment>
-              ))}
+                )}
 
-              {layout.topLeft.length > 0 && layout.bottomLeft.length > 0 && <ResizableHandle withHandle />}
+                {selectedLayouts.topLeft !== null && selectedLayouts.bottomLeft !== null && (
+                  <ResizableHandle withHandle />
+                )}
 
-              {layout.bottomLeft.map((key, index) => (
-                <React.Fragment key={index}>
-                  <ResizablePanel minSize={15} key={key} order={1 + layout.topLeft.length + index}>
-                    {panels[key]}
+                {selectedLayouts.bottomLeft !== null && layout.bottomLeft.length > 0 && (
+                  <ResizablePanel defaultSize={50} minSize={15} order={3}>
+                    {panels[layout.bottomLeft[selectedLayouts.bottomLeft]]}
                   </ResizablePanel>
-                  {index < layout.bottomLeft.length - 1 && layout.bottomLeft.length > 1 && (
-                    <ResizableHandle withHandle />
-                  )}
-                </React.Fragment>
-              ))}
-            </ResizablePanelGroup>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel
-            defaultSize={50}
-            minSize={15}
-            id="rightPanel"
-            order={2 + layout.topLeft.length + layout.bottomLeft.length}
-          >
-            <ResizablePanelGroup direction="vertical">
-              {layout.topRight.map((key, index) => (
-                <React.Fragment key={index}>
-                  <ResizablePanel
-                    minSize={15}
-                    key={key}
-                    id={key}
-                    order={2 + layout.topLeft.length + layout.bottomLeft.length + index}
-                  >
-                    {panels[key]}
-                  </ResizablePanel>
-                  {index < layout.topRight.length - 1 && layout.topRight.length > 1 && <ResizableHandle withHandle />}
-                </React.Fragment>
-              ))}
+                )}
+              </ResizablePanelGroup>
+            </ResizablePanel>
+          )}
 
-              {layout.bottomRight.length > 0 && layout.topRight.length > 0 && <ResizableHandle withHandle />}
+          {(selectedLayouts.topLeft !== null || selectedLayouts.bottomLeft !== null) && <ResizableHandle withHandle />}
 
-              {layout.bottomRight.map((key, index) => (
-                <React.Fragment key={index}>
-                  <ResizablePanel
-                    minSize={15}
-                    key={key}
-                    id={key}
-                    order={2 + layout.topLeft.length + layout.bottomLeft.length + layout.topRight.length + index}
-                  >
-                    {panels[key]}
+          {(selectedLayouts.topRight !== null || selectedLayouts.bottomRight !== null) && (
+            <ResizablePanel defaultSize={50} minSize={15} id="rightPanel" order={4}>
+              <ResizablePanelGroup direction="vertical">
+                {selectedLayouts.topRight !== null && layout.topRight.length > 0 && (
+                  <ResizablePanel defaultSize={50} minSize={15} order={5}>
+                    {panels[layout.topRight[selectedLayouts.topRight]]}
                   </ResizablePanel>
-                  {index < layout.bottomRight.length - 1 && layout.bottomRight.length > 1 && (
-                    <ResizableHandle withHandle />
-                  )}
-                </React.Fragment>
-              ))}
-            </ResizablePanelGroup>
-          </ResizablePanel>
+                )}
+
+                {selectedLayouts.topRight !== null && selectedLayouts.bottomRight !== null && (
+                  <ResizableHandle withHandle />
+                )}
+
+                {selectedLayouts.bottomRight !== null && layout.bottomRight.length > 0 && (
+                  <ResizablePanel defaultSize={50} minSize={15} order={6}>
+                    {panels[layout.bottomRight[selectedLayouts.bottomRight]]}
+                  </ResizablePanel>
+                )}
+              </ResizablePanelGroup>
+            </ResizablePanel>
+          )}
         </ResizablePanelGroup>
         <div className="px-[1px] pb-[1px] w-11 flex flex-col border-l h-full">
           <LayoutSidebar which="topRight" justify="start" />
@@ -174,7 +153,7 @@ type DragItem = {
 };
 
 export const LayoutSidebarItem = ({ item, which }: LayoutSidebarItemProps) => {
-  const { layout, movePanel } = useLayoutStore();
+  const { layout, movePanel, setSelectedLayouts, selectedLayouts } = useLayoutStore();
   const ref = React.useRef<HTMLButtonElement>(null);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
@@ -222,13 +201,33 @@ export const LayoutSidebarItem = ({ item, which }: LayoutSidebarItemProps) => {
 
   drag(drop(ref));
 
+  const isSelected = selectedLayouts[which] === layout[which].indexOf(item);
+
   return isDragging ? (
     <div ref={dragPreview} />
   ) : (
     <Button
+      onClick={() => {
+        // if item is already selected, unselect it
+        if (layout[which].indexOf(item) === selectedLayouts[which]) {
+          setSelectedLayouts((selectedLayouts) => ({
+            ...selectedLayouts,
+            [which]: null,
+          }));
+          return;
+        }
+
+        setSelectedLayouts((selectedLayouts) => ({
+          ...selectedLayouts,
+          [which]: layout[which].indexOf(item),
+        }));
+      }}
       variant="ghost"
       ref={ref}
-      className="cursor-pointer border rounded w-8 h-8 flex justify-center p-0 items-center"
+      className={cn(
+        'cursor-pointer border rounded w-8 h-8 flex justify-center p-0 items-center',
+        isSelected && 'bg-castled-accent/15 hover:bg-castled-accent/20 border-castled-accent border',
+      )}
     >
       <Icon icon={panelIcons[item]} className="text-foreground/70" />
     </Button>
