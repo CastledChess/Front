@@ -6,9 +6,13 @@ import {
   shouldDisplayClassificationInMoveHistory,
 } from '@/pages/analysis/classifications.ts';
 import { cn } from '@/lib/utils.ts';
+import { useEffect, useState } from 'react';
+import { Opening } from '@/types/opening.ts';
+import { findOpening } from '@/lib/opening.ts';
 
 export const MoveList = () => {
   const { analysis, chess, chessGround, currentMove, setCurrentMove } = useAnalysisStore();
+  const [opening, setOpening] = useState<Opening | undefined>(undefined);
 
   const handleSkipToMove = (index: number) => {
     const moves = chess.history();
@@ -50,31 +54,43 @@ export const MoveList = () => {
     return move;
   };
 
+  useEffect(() => {
+    findOpening(chess.pgn())
+      .then((opening) => setOpening(opening))
+      .catch(console.error);
+    /** When a custom svg (classification) is rendered twice at the same square on two different moves
+     * it does not trigger a re-render and does not animate the second one, this fixes the issue */
+    chessGround?.redrawAll();
+  }, [currentMove]);
+
   return (
-    <div className="flex max-h-full gap-1 p-6 flex-wrap overflow-y-scroll custom-scrollbar">
-      {analysis?.moves.map((move, index) => (
-        <Button
-          key={index}
-          className={cn(
-            'flex gap-2 p-1 h-max',
-            currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
-          )}
-          variant="ghost"
-          onClick={() => handleSkipToMove(index + 1)}
-        >
-          {index % 2 == 0 && <span>{Math.floor(index / 2) + 1}.</span>}
-          <span
+    <div className="p-6 flex flex-col gap-2">
+      <span className="text-xs h-6">{opening && opening.name}</span>
+      <div className="flex max-h-full gap-1 flex-wrap overflow-y-scroll custom-scrollbar">
+        {analysis?.moves.map((move, index) => (
+          <Button
+            key={index}
             className={cn(
-              'text-sm',
-              move.classification &&
-                shouldDisplayClassificationInMoveHistory[move.classification] &&
-                classificationToTailwindColor[move.classification],
+              'flex gap-2 p-1 h-max',
+              currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
             )}
+            variant="ghost"
+            onClick={() => handleSkipToMove(index + 1)}
           >
-            {toPieceNotation(move.move.san, move.move.color)}
-          </span>
-        </Button>
-      ))}
+            {index % 2 == 0 && <span>{Math.floor(index / 2) + 1}.</span>}
+            <span
+              className={cn(
+                'text-sm',
+                move.classification &&
+                  shouldDisplayClassificationInMoveHistory[move.classification] &&
+                  classificationToTailwindColor[move.classification],
+              )}
+            >
+              {toPieceNotation(move.move.san, move.move.color)}
+            </span>
+          </Button>
+        ))}
+      </div>
     </div>
   );
 };
