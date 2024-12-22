@@ -10,7 +10,7 @@ import { EngineInterpretation } from '@/pages/analysis/panels/engineInterpretati
 import { EngineLines } from '@/pages/analysis/panels/engineLines/engine-lines.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { useLayoutStore } from '@/store/layout.ts';
-import { LayoutItem, Panel } from '@/types/layout';
+import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
 
 const panels: Record<Panel, React.ReactNode> = {
   chessboard: <ChessboardPanel />,
@@ -26,6 +26,59 @@ const panelIcons: Record<keyof typeof panels, string> = {
   moveList: 'ix:move',
 };
 
+const DroppablePanel = ({
+  id,
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof ResizablePanel> & {
+  id: LayoutItem;
+  children: React.ReactNode;
+}) => {
+  const { layout, movePanel, setSelectedLayouts } = useLayoutStore();
+
+  const [{ canDrop, isOver }, drop] = useDrop<DragItem, void, { canDrop: boolean; isOver: boolean }>({
+    accept: 'layoutItem',
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    hover: (dragItem: DragItem, monitor) => {
+      if (!monitor.isOver({ shallow: true })) {
+        return;
+      }
+
+      const dragIndex = layout[dragItem.which].indexOf(dragItem.id);
+      const hoverIndex = layout[id].length; // Drop at the end of the list
+
+      // Only move if the item is not already in the target list
+      if (dragItem.which !== id) {
+        movePanel(dragItem.which, id, dragItem.id, dragIndex, hoverIndex);
+        dragItem.which = id;
+      }
+    },
+    drop: (dragItem: DragItem) => {
+      setSelectedLayouts((selectedLayouts) => ({
+        ...selectedLayouts,
+        [id]: layout[id].indexOf(dragItem.id),
+      }));
+    },
+  });
+
+  const isActive: boolean = canDrop && isOver;
+
+  return (
+    <ResizablePanel {...props} className="h-full w-full">
+      <div ref={drop} className={cn('h-full w-full', isActive && 'bg-castled-accent/10')}>
+        {children}
+      </div>
+    </ResizablePanel>
+  );
+};
+
+const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, items: LayoutItem[]): boolean => {
+  return items.some((item) => selectedLayouts[item] !== null && layout[item].length > 0);
+};
+
 export const Analysis = () => {
   const { layout, selectedLayouts } = useLayoutStore();
 
@@ -37,47 +90,50 @@ export const Analysis = () => {
           <LayoutSidebar which="bottomLeft" justify="end" />
         </div>
         <ResizablePanelGroup direction="horizontal">
-          {(selectedLayouts.topLeft !== null || selectedLayouts.bottomLeft !== null) && (
+          {hasSelectedPanels(selectedLayouts, layout, ['topLeft', 'bottomLeft']) && (
             <ResizablePanel defaultSize={50} minSize={15} id="leftPanel" order={1}>
               <ResizablePanelGroup direction="vertical">
                 {selectedLayouts.topLeft !== null && layout.topLeft.length > 0 && (
-                  <ResizablePanel defaultSize={50} minSize={15} order={2}>
+                  <DroppablePanel id="topLeft" defaultSize={50} minSize={15} order={2}>
                     {panels[layout.topLeft[selectedLayouts.topLeft]]}
-                  </ResizablePanel>
+                  </DroppablePanel>
                 )}
 
-                {selectedLayouts.topLeft !== null && selectedLayouts.bottomLeft !== null && (
-                  <ResizableHandle withHandle />
-                )}
+                {selectedLayouts.topLeft !== null &&
+                  selectedLayouts.bottomLeft !== null &&
+                  layout.topLeft.length > 0 &&
+                  layout.bottomLeft.length > 0 && <ResizableHandle withHandle />}
 
                 {selectedLayouts.bottomLeft !== null && layout.bottomLeft.length > 0 && (
-                  <ResizablePanel defaultSize={50} minSize={15} order={3}>
+                  <DroppablePanel id="bottomLeft" defaultSize={50} minSize={15} order={3}>
                     {panels[layout.bottomLeft[selectedLayouts.bottomLeft]]}
-                  </ResizablePanel>
+                  </DroppablePanel>
                 )}
               </ResizablePanelGroup>
             </ResizablePanel>
           )}
 
-          {(selectedLayouts.topLeft !== null || selectedLayouts.bottomLeft !== null) && <ResizableHandle withHandle />}
+          {hasSelectedPanels(selectedLayouts, layout, ['topLeft', 'bottomLeft']) &&
+            hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && <ResizableHandle withHandle />}
 
-          {(selectedLayouts.topRight !== null || selectedLayouts.bottomRight !== null) && (
+          {hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && (
             <ResizablePanel defaultSize={50} minSize={15} id="rightPanel" order={4}>
               <ResizablePanelGroup direction="vertical">
                 {selectedLayouts.topRight !== null && layout.topRight.length > 0 && (
-                  <ResizablePanel defaultSize={50} minSize={15} order={5}>
+                  <DroppablePanel id="topRight" defaultSize={50} minSize={15} order={5}>
                     {panels[layout.topRight[selectedLayouts.topRight]]}
-                  </ResizablePanel>
+                  </DroppablePanel>
                 )}
 
-                {selectedLayouts.topRight !== null && selectedLayouts.bottomRight !== null && (
-                  <ResizableHandle withHandle />
-                )}
+                {selectedLayouts.topRight !== null &&
+                  selectedLayouts.bottomRight !== null &&
+                  layout.topRight.length > 0 &&
+                  layout.bottomRight.length > 0 && <ResizableHandle withHandle />}
 
                 {selectedLayouts.bottomRight !== null && layout.bottomRight.length > 0 && (
-                  <ResizablePanel defaultSize={50} minSize={15} order={6}>
+                  <DroppablePanel id="bottomRight" defaultSize={50} minSize={15} order={6}>
                     {panels[layout.bottomRight[selectedLayouts.bottomRight]]}
-                  </ResizablePanel>
+                  </DroppablePanel>
                 )}
               </ResizablePanelGroup>
             </ResizablePanel>

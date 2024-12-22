@@ -42,8 +42,6 @@ export const useLayoutStore = create<LayoutState>()(
       },
       movePanel: (from: LayoutItem, to: LayoutItem, item: Panel, indexFrom: number, indexTo: number) => {
         set((state) => {
-          console.log(`move ${item} from ${from} at index ${indexFrom} to ${to} at ${indexTo}`);
-
           state.layout[from].splice(indexFrom, 1);
           state.layout[to].splice(indexTo, 0, item);
 
