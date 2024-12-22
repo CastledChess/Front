@@ -14,7 +14,7 @@ export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
       pieceTheme: 'cburnett',
-      boardTheme: 'wood',
+      boardTheme: 'grey',
       animationSpeed: '250',
       setPieceTheme: (pieceTheme) => set({ pieceTheme }),
       setBoardTheme: (boardTheme) => set({ boardTheme }),
