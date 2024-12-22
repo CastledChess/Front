@@ -8,7 +8,7 @@ import {
 import { cn } from '@/lib/utils.ts';
 
 export const MoveList = () => {
-  const { analysis, chess, chessGround, setCurrentMove } = useAnalysisStore();
+  const { analysis, chess, chessGround, currentMove, setCurrentMove } = useAnalysisStore();
 
   const handleSkipToMove = (index: number) => {
     const moves = chess.history();
@@ -55,7 +55,10 @@ export const MoveList = () => {
       {analysis?.moves.map((move, index) => (
         <Button
           key={index}
-          className="flex gap-2 p-1 h-max"
+          className={cn(
+            'flex gap-2 p-1 h-max',
+            currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
+          )}
           variant="ghost"
           onClick={() => handleSkipToMove(index + 1)}
         >
