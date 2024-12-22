@@ -18,7 +18,7 @@ export const useLayoutStore = create<LayoutState>()(
       layout: {
         topLeft: ['chessboard'],
         bottomLeft: [],
-        topRight: ['engineInterpretation'],
+        topRight: ['engineInterpretation', 'evalHistory'],
         bottomRight: ['engineLines', 'moveList'],
       },
       selectedLayouts: {

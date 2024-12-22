@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils.ts';
 import { EngineInterpretation } from '@/pages/analysis/panels/engineInterpretation/engine-interpretation.tsx';
 import { EngineLines } from '@/pages/analysis/panels/engineLines/engine-lines.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
+import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
 import { useLayoutStore } from '@/store/layout.ts';
 import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
 
@@ -17,6 +18,7 @@ const panels: Record<Panel, React.ReactNode> = {
   engineInterpretation: <EngineInterpretation />,
   engineLines: <EngineLines />,
   moveList: <MoveList />,
+  evalHistory: <EvalHistory />,
 };
 
 const panelIcons: Record<keyof typeof panels, string> = {
@@ -24,6 +26,7 @@ const panelIcons: Record<keyof typeof panels, string> = {
   engineInterpretation: 'fa6-solid:hands-asl-interpreting',
   engineLines: 'game-icons:striking-arrows',
   moveList: 'ix:move',
+  evalHistory: 'fa-solid:chart-line',
 };
 
 const DroppablePanel = ({
