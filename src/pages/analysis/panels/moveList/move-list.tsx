@@ -51,29 +51,27 @@ export const MoveList = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="flex gap-1 p-6 flex-wrap">
-        {analysis?.moves.map((move, index) => (
-          <Button
-            key={index}
-            className="flex gap-2 p-1 h-max"
-            variant="ghost"
-            onClick={() => handleSkipToMove(index + 1)}
+    <div className="flex max-h-full gap-1 p-6 flex-wrap overflow-y-scroll custom-scrollbar">
+      {analysis?.moves.map((move, index) => (
+        <Button
+          key={index}
+          className="flex gap-2 p-1 h-max"
+          variant="ghost"
+          onClick={() => handleSkipToMove(index + 1)}
+        >
+          {index % 2 == 0 && <span>{Math.floor(index / 2) + 1}.</span>}
+          <span
+            className={cn(
+              'text-sm',
+              move.classification &&
+                shouldDisplayClassificationInMoveHistory[move.classification] &&
+                classificationToTailwindColor[move.classification],
+            )}
           >
-            {index % 2 == 0 && <span>{Math.floor(index / 2) + 1}.</span>}
-            <span
-              className={cn(
-                'text-sm',
-                move.classification &&
-                  shouldDisplayClassificationInMoveHistory[move.classification] &&
-                  classificationToTailwindColor[move.classification],
-              )}
-            >
-              {toPieceNotation(move.move.san, move.move.color)}
-            </span>
-          </Button>
-        ))}
-      </div>
+            {toPieceNotation(move.move.san, move.move.color)}
+          </span>
+        </Button>
+      ))}
     </div>
   );
 };
