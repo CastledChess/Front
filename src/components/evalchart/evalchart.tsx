@@ -4,7 +4,7 @@ import {
   classificationToColor,
   classificationToGlyphUrl,
   shouldDisplayClassificationInMoveHistory,
-} from '@/pages/analysis/classifications.ts';
+} from '@/data/classifications.ts';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart';
 import { useMemo } from 'react';

@@ -8,7 +8,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'chessground/types';
 import { DrawShape } from 'chessground/draw';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
-import { classificationToColor, classificationToGlyph } from '@/pages/analysis/classifications.ts';
+import { classificationToColor, classificationToGlyph } from '@/data/classifications.ts';
 
 export const ChessboardPanel = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();

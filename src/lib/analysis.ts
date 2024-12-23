@@ -4,7 +4,7 @@ import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
 import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
-import { pieceToValue } from '@/pages/analysis/classifications.ts';
+import { pieceToValue } from '@/data/classifications.ts';
 import { isCached } from '@/services/cache/cache.service.ts';
 
 export type AnalyseMovesLocalParams = {

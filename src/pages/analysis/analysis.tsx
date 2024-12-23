@@ -1,81 +1,23 @@
 ﻿import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
-import React from 'react';
-import { DndProvider, useDrag, useDrop, XYCoord } from 'react-dnd';
+import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Icon } from '@iconify/react';
-import { Button } from '@/components/ui/button.tsx';
-import { cn } from '@/lib/utils.ts';
 import { EngineInterpretation } from '@/pages/analysis/panels/engineInterpretation/engine-interpretation.tsx';
 import { EngineLines } from '@/pages/analysis/panels/engineLines/engine-lines.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
 import { useLayoutStore } from '@/store/layout.ts';
+import { DroppablePanel } from '@/pages/analysis/droppable-panel.tsx';
+import { LayoutSidebar } from '@/pages/analysis/layoutSidebar.tsx';
 import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
+import React from 'react';
 
-const panels: Record<Panel, React.ReactNode> = {
+export const panels: Record<Panel, React.ReactNode> = {
   chessboard: <ChessboardPanel />,
   engineInterpretation: <EngineInterpretation />,
   engineLines: <EngineLines />,
   moveList: <MoveList />,
   evalHistory: <EvalHistory />,
-};
-
-const panelIcons: Record<keyof typeof panels, string> = {
-  chessboard: 'fa-solid:chess-king',
-  engineInterpretation: 'fa6-solid:hands-asl-interpreting',
-  engineLines: 'game-icons:striking-arrows',
-  moveList: 'ix:move',
-  evalHistory: 'fa-solid:chart-line',
-};
-
-const DroppablePanel = ({
-  id,
-  children,
-  ...props
-}: React.ComponentPropsWithoutRef<typeof ResizablePanel> & {
-  id: LayoutItem;
-  children: React.ReactNode;
-}) => {
-  const { layout, movePanel, setSelectedLayouts } = useLayoutStore();
-
-  const [{ canDrop, isOver }, drop] = useDrop<DragItem, void, { canDrop: boolean; isOver: boolean }>({
-    accept: 'layoutItem',
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-    hover: (dragItem: DragItem, monitor) => {
-      if (!monitor.isOver({ shallow: true })) {
-        return;
-      }
-
-      const dragIndex = layout[dragItem.which].indexOf(dragItem.id);
-      const hoverIndex = layout[id].length; // Drop at the end of the list
-
-      // Only move if the item is not already in the target list
-      if (dragItem.which !== id) {
-        movePanel(dragItem.which, id, dragItem.id, dragIndex, hoverIndex);
-        dragItem.which = id;
-      }
-    },
-    drop: (dragItem: DragItem) => {
-      setSelectedLayouts((selectedLayouts) => ({
-        ...selectedLayouts,
-        [id]: layout[id].indexOf(dragItem.id),
-      }));
-    },
-  });
-
-  const isActive: boolean = canDrop && isOver;
-
-  return (
-    <ResizablePanel {...props} className="h-full w-full">
-      <div ref={drop} className={cn('h-full w-full', isActive && 'bg-castled-accent/10')}>
-        {children}
-      </div>
-    </ResizablePanel>
-  );
 };
 
 const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, items: LayoutItem[]): boolean => {
@@ -148,147 +90,5 @@ export const Analysis = () => {
         </div>
       </DndProvider>
     </div>
-  );
-};
-
-type LayoutSidebarProps = {
-  which: LayoutItem;
-  justify?: 'start' | 'end' | 'center';
-};
-
-export const LayoutSidebar = ({ justify, which }: LayoutSidebarProps) => {
-  const { layout, movePanel } = useLayoutStore();
-
-  const [{ canDrop, isOver }, drop] = useDrop<DragItem, void, { canDrop: boolean; isOver: boolean }>({
-    accept: 'layoutItem',
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
-    }),
-    hover: (dragItem: DragItem, monitor) => {
-      if (!monitor.isOver({ shallow: true })) {
-        return;
-      }
-
-      const dragIndex = layout[dragItem.which].indexOf(dragItem.id);
-      const hoverIndex = layout[which].length; // Drop at the end of the list
-
-      // Only move if the item is not already in the target list
-      if (dragItem.which !== which) {
-        movePanel(dragItem.which, which, dragItem.id, dragIndex, hoverIndex);
-        dragItem.which = which;
-      }
-    },
-  });
-  const isActive: boolean = canDrop && isOver;
-
-  return (
-    <div
-      ref={drop}
-      className={cn(
-        `flex transition p-1 flex-col items-center gap-1 h-1/2 rounded`,
-        isActive && 'ring-1 ring-castled-accent/50 bg-castled-accent/10',
-      )}
-      style={{
-        justifyContent: justify,
-      }}
-    >
-      {layout[which].map((key) => (
-        <LayoutSidebarItem item={key} which={which} key={key} />
-      ))}
-    </div>
-  );
-};
-
-type LayoutSidebarItemProps = {
-  item: Panel;
-  which: LayoutItem;
-};
-
-type DragItem = {
-  type: 'layoutItem';
-  id: Panel;
-  which: LayoutItem;
-};
-
-export const LayoutSidebarItem = ({ item, which }: LayoutSidebarItemProps) => {
-  const { layout, movePanel, setSelectedLayouts, selectedLayouts } = useLayoutStore();
-  const ref = React.useRef<HTMLButtonElement>(null);
-
-  const [{ isDragging }, drag, dragPreview] = useDrag(() => ({
-    type: 'layoutItem',
-    item: { id: item, which, type: 'layoutItem' },
-    options: {
-      dropEffect: 'guards',
-    },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
-  }));
-
-  const [, drop] = useDrop<DragItem>({
-    accept: 'layoutItem',
-    hover: (dragItem: DragItem, monitor) => {
-      if (!ref.current) return;
-
-      const dragIndex = layout[dragItem.which].indexOf(dragItem.id);
-      const hoverIndex = layout[which].indexOf(item);
-
-      // Don't replace items with themselves
-      if (dragItem.id === item) return;
-
-      const hoverBoundingRect = ref.current?.getBoundingClientRect();
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-      const clientOffset = monitor.getClientOffset();
-      const hoverClientY = (clientOffset as XYCoord).y - hoverBoundingRect.top;
-
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-      if (
-        (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) ||
-        (dragIndex > hoverIndex && hoverClientY > hoverMiddleY)
-      )
-        return;
-
-      movePanel(dragItem.which, which, dragItem.id, dragIndex, hoverIndex);
-
-      // Avoid flickering when hovering over the dragged item
-      dragItem.which = which;
-    },
-  });
-
-  drag(drop(ref));
-
-  const isSelected = selectedLayouts[which] === layout[which].indexOf(item);
-
-  return isDragging ? (
-    <div ref={dragPreview} />
-  ) : (
-    <Button
-      onClick={() => {
-        // if item is already selected, unselect it
-        if (layout[which].indexOf(item) === selectedLayouts[which]) {
-          setSelectedLayouts((selectedLayouts) => ({
-            ...selectedLayouts,
-            [which]: null,
-          }));
-          return;
-        }
-
-        setSelectedLayouts((selectedLayouts) => ({
-          ...selectedLayouts,
-          [which]: layout[which].indexOf(item),
-        }));
-      }}
-      variant="ghost"
-      ref={ref}
-      className={cn(
-        'cursor-pointer border rounded w-8 h-8 flex justify-center p-0 items-center',
-        isSelected && 'bg-castled-accent/15 hover:bg-castled-accent/20 border-castled-accent border',
-      )}
-    >
-      <Icon icon={panelIcons[item]} className="text-foreground/70" />
-    </Button>
   );
 };

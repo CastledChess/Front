@@ -1,10 +1,7 @@
 ﻿import { useAnalysisStore } from '@/store/analysis.ts';
 import { Button } from '@/components/ui/button';
 import { Color } from 'chess.js';
-import {
-  classificationToTailwindColor,
-  shouldDisplayClassificationInMoveHistory,
-} from '@/pages/analysis/classifications.ts';
+import { classificationToTailwindColor, shouldDisplayClassificationInMoveHistory } from '@/data/classifications.ts';
 import { cn } from '@/lib/utils.ts';
 import { useEffect, useState } from 'react';
 import { Opening } from '@/types/opening.ts';

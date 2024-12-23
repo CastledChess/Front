@@ -26,7 +26,7 @@ import {
   classificationToGlyph,
   classificationToGlyphUrl,
   shouldDisplayClassificationInMoveHistory,
-} from '@/pages/analysis/classifications.ts';
+} from '@/data/classifications.ts';
 import { EvalChart } from '@/components/evalchart/evalchart.tsx';
 import { CategoricalChartState } from 'recharts/types/chart/types';
 import { useTranslation } from 'react-i18next';
