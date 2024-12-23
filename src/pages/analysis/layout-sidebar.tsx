@@ -1,5 +1,5 @@
 import { useLayoutStore } from '@/store/layout.ts';
-import { useDrop } from 'react-dnd';
+import { useDragDropManager, useDrop } from 'react-dnd';
 import { DragItem, LayoutItem } from '@/types/layout.ts';
 import { cn } from '@/lib/utils.ts';
 import { LayoutSidebarItem } from '@/pages/analysis/layout-sidebar-item.tsx';
@@ -11,6 +11,8 @@ type LayoutSidebarProps = {
 
 export const LayoutSidebar = ({ justify, which }: LayoutSidebarProps) => {
   const { layout, movePanel } = useLayoutStore();
+
+  const manager = useDragDropManager();
 
   const [{ canDrop, isOver }, drop] = useDrop<DragItem, void, { canDrop: boolean; isOver: boolean }>({
     accept: 'layoutItem',
@@ -33,19 +35,28 @@ export const LayoutSidebar = ({ justify, which }: LayoutSidebarProps) => {
       }
     },
   });
+
   const isActive: boolean = canDrop && isOver;
+  const monitorIsDragging = manager.getMonitor().isDragging();
 
   return (
     <div
       ref={drop}
-      className={cn(
-        `flex transition p-1 flex-col items-center gap-1 h-1/2 rounded`,
-        isActive && 'ring-1 ring-castled-accent/50 bg-castled-accent/10',
-      )}
+      className={cn(`flex relative transition p-1 flex-col items-center gap-1 h-1/2 rounded`)}
       style={{
         justifyContent: justify,
       }}
     >
+      {monitorIsDragging && (
+        <div
+          className={cn(
+            'z-10 absolute rounded transition top-0 w-64 h-full',
+            which.includes('Right') && 'right-full',
+            which.includes('Left') && 'left-full',
+            isActive && ' bg-castled-accent/10',
+          )}
+        />
+      )}
       {layout[which].map((key) => (
         <LayoutSidebarItem item={key} which={which} key={key} />
       ))}

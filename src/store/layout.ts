@@ -27,6 +27,7 @@ export const useLayoutStore = create<LayoutState>()(
         topRight: 0,
         bottomRight: 0,
       },
+      isDragging: false,
       setLayout: (layout: Layout | ((layout: Layout) => Layout)) => {
         set((state) => ({
           layout: typeof layout === 'function' ? layout(state.layout) : layout,

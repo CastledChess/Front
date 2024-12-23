@@ -7,8 +7,7 @@ import { EngineLines } from '@/pages/analysis/panels/engineLines/engine-lines.ts
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
 import { useLayoutStore } from '@/store/layout.ts';
-import { DroppablePanel } from '@/pages/analysis/droppable-panel.tsx';
-import { LayoutSidebar } from '@/pages/analysis/layoutSidebar.tsx';
+import { LayoutSidebar } from '@/pages/analysis/layout-sidebar.tsx';
 import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
 import React from 'react';
 
@@ -39,9 +38,9 @@ export const Analysis = () => {
             <ResizablePanel defaultSize={50} minSize={15} id="leftPanel" order={1}>
               <ResizablePanelGroup direction="vertical">
                 {selectedLayouts.topLeft !== null && layout.topLeft.length > 0 && (
-                  <DroppablePanel id="topLeft" defaultSize={50} minSize={15} order={2}>
+                  <ResizablePanel id="topLeft" defaultSize={50} minSize={15} order={2}>
                     {panels[layout.topLeft[selectedLayouts.topLeft]]}
-                  </DroppablePanel>
+                  </ResizablePanel>
                 )}
 
                 {selectedLayouts.topLeft !== null &&
@@ -50,9 +49,9 @@ export const Analysis = () => {
                   layout.bottomLeft.length > 0 && <ResizableHandle withHandle />}
 
                 {selectedLayouts.bottomLeft !== null && layout.bottomLeft.length > 0 && (
-                  <DroppablePanel id="bottomLeft" defaultSize={50} minSize={15} order={3}>
+                  <ResizablePanel id="bottomLeft" defaultSize={50} minSize={15} order={3}>
                     {panels[layout.bottomLeft[selectedLayouts.bottomLeft]]}
-                  </DroppablePanel>
+                  </ResizablePanel>
                 )}
               </ResizablePanelGroup>
             </ResizablePanel>
@@ -65,9 +64,9 @@ export const Analysis = () => {
             <ResizablePanel defaultSize={50} minSize={15} id="rightPanel" order={4}>
               <ResizablePanelGroup direction="vertical">
                 {selectedLayouts.topRight !== null && layout.topRight.length > 0 && (
-                  <DroppablePanel id="topRight" defaultSize={50} minSize={15} order={5}>
+                  <ResizablePanel id="topRight" defaultSize={50} minSize={15} order={5}>
                     {panels[layout.topRight[selectedLayouts.topRight]]}
-                  </DroppablePanel>
+                  </ResizablePanel>
                 )}
 
                 {selectedLayouts.topRight !== null &&
@@ -76,9 +75,9 @@ export const Analysis = () => {
                   layout.bottomRight.length > 0 && <ResizableHandle withHandle />}
 
                 {selectedLayouts.bottomRight !== null && layout.bottomRight.length > 0 && (
-                  <DroppablePanel id="bottomRight" defaultSize={50} minSize={15} order={6}>
+                  <ResizablePanel id="bottomRight" defaultSize={50} minSize={15} order={6}>
                     {panels[layout.bottomRight[selectedLayouts.bottomRight]]}
-                  </DroppablePanel>
+                  </ResizablePanel>
                 )}
               </ResizablePanelGroup>
             </ResizablePanel>
