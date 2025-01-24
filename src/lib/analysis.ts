@@ -47,6 +47,10 @@ export const Engines: Engine[] = [
   },
 ];
 
+/**
+ * Retrieves the cached engines.
+ * @returns {Promise<Engine[]>} A promise that resolves to an array of cached engines.
+ */
 export const getCachedEngines = async () => {
   const cachedEngines: Engine[] = [];
 
@@ -59,6 +63,11 @@ export const getCachedEngines = async () => {
   return cachedEngines;
 };
 
+/**
+ * Analyzes the moves locally using the Stockfish engine.
+ * @param {AnalyseMovesLocalParams} params - The parameters for analyzing moves.
+ * @returns {Promise<AnalysisMove>[]} An array of promises that resolve to analysis moves.
+ */
 export const analyseMovesLocal = ({
   moves,
   data,
@@ -102,10 +111,22 @@ export const analyseMovesLocal = ({
   );
 };
 
+/**
+ * Classifies the moves based on the analysis results.
+ * @param {AnalysisMove[]} moves - The array of analysis moves.
+ * @returns {AnalysisMove[]} The array of classified analysis moves.
+ */
 export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
   return moves.map(classifyRegular);
 };
 
+/**
+ * Classifies a single move based on the analysis results.
+ * @param {AnalysisMove} move - The analysis move to classify.
+ * @param {number} index - The index of the move in the array.
+ * @param {AnalysisMove[]} moves - The array of analysis moves.
+ * @returns {AnalysisMove} The classified analysis move.
+ */
 export const classifyRegular = (move: AnalysisMove, index: number, moves: AnalysisMove[]) => {
   const next = moves[index + 1]?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
   const current = move?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
@@ -117,6 +138,13 @@ export const classifyRegular = (move: AnalysisMove, index: number, moves: Analys
   else return { ...move, classification: classifyWithWinChance(move.move, next.winChance!, current.winChance!) };
 };
 
+/**
+ * Classifies a move based on mate evaluation.
+ * @param {Move} move - The move to classify.
+ * @param {number} next - The next mate evaluation.
+ * @param {number} current - The current mate evaluation.
+ * @returns {AnalysisMoveClassification} The classification of the move.
+ */
 const classifyWithMate = (move: Move, next: number, current: number): AnalysisMoveClassification => {
   if (next === null || current === null) return AnalysisMoveClassification.None;
 
@@ -137,6 +165,13 @@ const classifyWithMate = (move: Move, next: number, current: number): AnalysisMo
   return classification;
 };
 
+/**
+ * Classifies a move based on win chance evaluation.
+ * @param {Move} move - The move to classify.
+ * @param {number} next - The next win chance evaluation.
+ * @param {number} current - The current win chance evaluation.
+ * @returns {AnalysisMoveClassification} The classification of the move.
+ */
 const classifyWithWinChance = (move: Move, next: number, current: number): AnalysisMoveClassification => {
   if (!next || !current) return AnalysisMoveClassification.None;
 

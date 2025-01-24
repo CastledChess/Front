@@ -1,8 +1,17 @@
 import { InfoResult } from '@/types/analysis.ts';
 
+/**
+ * Service for parsing UCI (Universal Chess Interface) engine output.
+ */
 export class UciParserService {
   constructor() {}
 
+  /**
+   * Parses the given UCI data string.
+   * @param {string} data - The UCI data string to parse.
+   * @param {boolean} isWhite - Indicates if the player is white.
+   * @returns {InfoResult | { type: string, move: string } | null} The parsed result.
+   */
   public parse(data: string, isWhite: boolean) {
     const tokens: string[] = data.split(' ').reverse();
     const type = tokens.pop();
@@ -11,10 +20,22 @@ export class UciParserService {
     if (type === 'bestmove') return this.parseBestMove(tokens);
   }
 
+  /**
+   * Computes the win chance based on centipawn evaluation.
+   * @param {number} cp - The centipawn evaluation.
+   * @param {boolean} isWhite - Indicates if the player is white.
+   * @returns {number} The computed win chance.
+   */
   private computeWinChance(cp: number, isWhite: boolean) {
     return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * (isWhite ? cp : cp * -1))) - 1);
   }
 
+  /**
+   * Parses the 'info' type UCI data.
+   * @param {string[]} tokens - The tokens of the UCI data string.
+   * @param {boolean} isWhite - Indicates if the player is white.
+   * @returns {InfoResult | null} The parsed info result.
+   */
   private parseInfo(tokens: string[], isWhite: boolean) {
     const info: InfoResult = { type: 'info', pv: [] };
 
@@ -65,6 +86,11 @@ export class UciParserService {
     return info;
   }
 
+  /**
+   * Parses the 'bestmove' type UCI data.
+   * @param {string[]} tokens - The tokens of the UCI data string.
+   * @returns {{ type: string, move: string }} The parsed best move result.
+   */
   private parseBestMove(tokens: string[]) {
     return {
       type: 'bestmove',
