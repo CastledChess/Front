@@ -11,6 +11,8 @@ export default [
       '@typescript-eslint/no-misused-promises': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/prefer-promise-reject-errors': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
     },
     languageOptions: {
       globals: { ...globals.browser, React: 'writable' },
