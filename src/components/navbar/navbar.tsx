@@ -77,7 +77,7 @@ export const Navbar = () => {
           {location.pathname === '/' ? (
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/" className="hover:no-underline  text-castled-accent">
+                <Link to="/dashboard" className="hover:no-underline  text-castled-accent">
                   {t('navbar.dashboard')}
                 </Link>
               </NavigationMenuLink>
@@ -85,7 +85,7 @@ export const Navbar = () => {
           ) : (
             <NavigationMenuItem>
               <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/" className="hover:no-underline hover:text-castled-accent">
+                <Link to="/dashboard" className="hover:no-underline hover:text-castled-accent">
                   {t('navbar.dashboard')}
                 </Link>
               </NavigationMenuLink>

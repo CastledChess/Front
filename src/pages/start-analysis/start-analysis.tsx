@@ -28,6 +28,8 @@ import { useTranslation } from 'react-i18next';
 import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
 import { ChesscomSelect } from '@/pages/start-analysis/chesscom-select.tsx';
 import { LichessorgSelect } from '@/pages/start-analysis/lichessorg-select.tsx';
+import { useAuthStore } from '@/store/auth';
+import { createAnalysis } from '@/api/analysis';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -53,6 +55,7 @@ enum ImportMode {
 
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -75,13 +78,25 @@ export const StartAnalysis = () => {
   const onSubmit = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     setIsLoading(true);
 
-    const analysis = await analyseGame(data);
+    try {
+      const analysis = await analyseGame(data);
+
+      setAnalysis(analysis);
+
+      if (user) {
+        const response = await createAnalysis(analysis);
+        toast.success('Analysis Ready!');
+
+        navigate(`/analysis/${response.data.id}`);
+      } else {
+        navigate('/analysis');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred while analysing the game.');
+    }
 
     setIsLoading(false);
-    setAnalysis(analysis);
-
-    toast.success('Analysis Ready!');
-    navigate('/analysis');
   };
 
   const analyseGame = async (data: z.infer<typeof StartAnalysisFormSchema>) => {

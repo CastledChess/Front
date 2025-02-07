@@ -1,4 +1,4 @@
-﻿import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
 import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
