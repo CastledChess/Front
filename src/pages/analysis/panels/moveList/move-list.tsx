@@ -61,9 +61,9 @@ export const MoveList = () => {
   }, [currentMove]);
 
   return (
-    <div className="p-6 flex flex-col gap-2">
+    <div className="p-6 flex h-full flex-col gap-2">
       <span className="text-xs h-6">{opening && opening.name}</span>
-      <div className="flex max-h-full gap-1 flex-wrap overflow-y-scroll custom-scrollbar">
+      <div className="flex h-full gap-1 flex-wrap overflow-y-scroll custom-scrollbar">
         {analysis?.moves.map((move, index) => (
           <Button
             key={index}

@@ -111,12 +111,11 @@ export const classifyRegular = (move: AnalysisMove, index: number, moves: Analys
 
   if (!next || !current) return { ...move, classification: AnalysisMoveClassification.None };
 
-  if (current.mate)
-    return { ...move, classification: classifyWithMate(move.move, next, current) };
+  if (current.mate) return { ...move, classification: classifyWithMate(move.move, next, current) };
   else return { ...move, classification: classifyWithWinChance(move.move, next, current) };
 };
 
-const classifyWithMate = (move: Move, next:  InfoResult, current:  InfoResult): AnalysisMoveClassification => {
+const classifyWithMate = (move: Move, next: InfoResult, current: InfoResult): AnalysisMoveClassification => {
   if (next.mate === null || current.mate === null) return AnalysisMoveClassification.None;
 
   const mateDelta = (next.mate || current.mate) - current.mate - 1;
@@ -133,8 +132,8 @@ const classifyWithMate = (move: Move, next:  InfoResult, current:  InfoResult): 
   return classification;
 };
 
-const classifyWithWinChance = (move: Move, next:  InfoResult, current:  InfoResult): AnalysisMoveClassification => {
-  if (!next.winChance  || !current.winChance) return AnalysisMoveClassification.None;
+const classifyWithWinChance = (move: Move, next: InfoResult, current: InfoResult): AnalysisMoveClassification => {
+  if (!next.winChance || !current.winChance) return AnalysisMoveClassification.None;
 
   const winChanceDelta = Math.abs((current.winChance - next.winChance) / 100);
 

@@ -10,9 +10,9 @@ import { useLayoutStore } from '@/store/layout.ts';
 import { LayoutSidebar } from '@/pages/analysis/layout-sidebar.tsx';
 import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
 import React from 'react';
+import { Controls } from '@/pages/analysis/panels/controls/controls.tsx';
 
 export const panels: Record<Panel, React.ReactNode> = {
-  chessboard: <ChessboardPanel />,
   engineInterpretation: <EngineInterpretation />,
   engineLines: <EngineLines />,
   moveList: <MoveList />,
@@ -29,42 +29,24 @@ export const Analysis = () => {
   return (
     <div className="h-full w-full flex">
       <DndProvider backend={HTML5Backend}>
-        <div className="flex px-[1px] pb-[1px] w-11 flex-col border-r h-full">
-          <LayoutSidebar which="topLeft" justify="start" />
-          <LayoutSidebar which="bottomLeft" justify="end" />
-        </div>
         <ResizablePanelGroup direction="horizontal">
-          {hasSelectedPanels(selectedLayouts, layout, ['topLeft', 'bottomLeft']) && (
-            <ResizablePanel defaultSize={50} minSize={15} id="leftPanel" order={1}>
-              <ResizablePanelGroup direction="vertical">
-                {selectedLayouts.topLeft !== null && layout.topLeft.length > 0 && (
-                  <ResizablePanel id="topLeft" defaultSize={50} minSize={15} order={2}>
-                    {panels[layout.topLeft[selectedLayouts.topLeft]]}
-                  </ResizablePanel>
-                )}
+          <ResizablePanel defaultSize={20} minSize={20} order={1}>
+            <Controls />
+          </ResizablePanel>
 
-                {selectedLayouts.topLeft !== null &&
-                  selectedLayouts.bottomLeft !== null &&
-                  layout.topLeft.length > 0 &&
-                  layout.bottomLeft.length > 0 && <ResizableHandle withHandle />}
+          <ResizableHandle withHandle />
 
-                {selectedLayouts.bottomLeft !== null && layout.bottomLeft.length > 0 && (
-                  <ResizablePanel id="bottomLeft" defaultSize={50} minSize={15} order={3}>
-                    {panels[layout.bottomLeft[selectedLayouts.bottomLeft]]}
-                  </ResizablePanel>
-                )}
-              </ResizablePanelGroup>
-            </ResizablePanel>
-          )}
+          <ResizablePanel defaultSize={50} minSize={50} order={2}>
+            <ChessboardPanel />
+          </ResizablePanel>
 
-          {hasSelectedPanels(selectedLayouts, layout, ['topLeft', 'bottomLeft']) &&
-            hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && <ResizableHandle withHandle />}
+          {hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && <ResizableHandle withHandle />}
 
           {hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && (
-            <ResizablePanel defaultSize={50} minSize={15} id="rightPanel" order={4}>
+            <ResizablePanel defaultSize={50} minSize={15} id="rightPanel" order={3}>
               <ResizablePanelGroup direction="vertical">
                 {selectedLayouts.topRight !== null && layout.topRight.length > 0 && (
-                  <ResizablePanel id="topRight" defaultSize={50} minSize={15} order={5}>
+                  <ResizablePanel id="topRight" defaultSize={50} minSize={15} order={4}>
                     {panels[layout.topRight[selectedLayouts.topRight]]}
                   </ResizablePanel>
                 )}
@@ -75,7 +57,7 @@ export const Analysis = () => {
                   layout.bottomRight.length > 0 && <ResizableHandle withHandle />}
 
                 {selectedLayouts.bottomRight !== null && layout.bottomRight.length > 0 && (
-                  <ResizablePanel id="bottomRight" defaultSize={50} minSize={15} order={6}>
+                  <ResizablePanel id="bottomRight" defaultSize={50} minSize={15} order={5}>
                     {panels[layout.bottomRight[selectedLayouts.bottomRight]]}
                   </ResizablePanel>
                 )}
