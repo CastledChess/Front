@@ -32,7 +32,7 @@ function App() {
       <Toaster />
       <Router>
         <Navbar />
-        <div className="h-[calc(100vh-4rem)]">
+        <div className="h-[calc(100vh-3rem)]">
           <Routes>
             {/* Global */}
             <Route path="/start-analysis" element={<StartAnalysis />} />
