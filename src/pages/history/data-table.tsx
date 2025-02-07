@@ -9,7 +9,7 @@ import {
   useReactTable,
   getPaginationRowModel,
   getSortedRowModel,
-} from '@tanstack/react-table';;
+} from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useTranslation } from 'react-i18next';
 import { GameDetails } from './columns';
@@ -76,7 +76,9 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
                         ? t(String(cell.row.original.header.Termination).toLowerCase())
                         : null}
                       {/* {cell.column.id === 'moves' ? cell.row.original.header.Round : null} */}
-                      {cell.column.id === 'header_Date' ? format(parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date()), 'dd / MM / yyyy') : null}
+                      {cell.column.id === 'header_Date'
+                        ? format(parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date()), 'dd / MM / yyyy')
+                        : null}
                       {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                     </TableCell>
                   ))}

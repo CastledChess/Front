@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ReactNode } from 'react';
 
 import { Navbar } from '@/components/navbar/navbar.tsx';
-import { AnalysisPage } from '@/pages/analysis/analysis.tsx';
+import { Analysis } from '@/pages/analysis/analysis.tsx';
 import { StartAnalysis } from '@/pages/start-analysis/start-analysis.tsx';
 import { Documentation } from '@/pages/documentation.tsx';
 import { Register } from '@/pages/register/register.tsx';
@@ -40,11 +40,11 @@ function App() {
               path="/analysis/"
               element={
                 <ProtectedRoute allow={!!analysis} redirect={'/start-analysis'}>
-                  <AnalysisPage />
+                  <Analysis />
                 </ProtectedRoute>
               }
             />
-            <Route path="/analysis/:id" element={<AnalysisPage />} />
+            <Route path="/analysis/:id" element={<Analysis />} />
             <Route
               path="/theme"
               element={

@@ -166,165 +166,167 @@ export const StartAnalysis = () => {
 
   return (
     <div className="h-full flex justify-center p-16">
-      <div className="flex flex-col items-center gap-6 lg:w-[35rem] self-center">
+      <div className="flex flex-col items-center gap-6 w-[65rem] self-center">
         <h1 className="text-3xl font-bold my-2">{t('title')}</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6">
-            <Select value={importMode} onValueChange={(v: string) => setImportMode(v as ImportMode)}>
-              <SelectTrigger id="import">
-                <SelectValue placeholder="PGN" />
-              </SelectTrigger>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex gap-6">
+            <div className="w-1/2 flex flex-col gap-6">
+              <Select value={importMode} onValueChange={(v: string) => setImportMode(v as ImportMode)}>
+                <SelectTrigger id="import">
+                  <SelectValue placeholder="PGN" />
+                </SelectTrigger>
 
-              <SelectContent>
-                {Object.values(ImportMode).map((mode) => (
-                  <SelectItem className="flex flex-row items-center gap-4" key={mode} value={mode}>
-                    {mode}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectContent>
+                  {Object.values(ImportMode).map((mode) => (
+                    <SelectItem className="flex flex-row items-center gap-4" key={mode} value={mode}>
+                      {mode}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-            {importMode === ImportMode.CHESS_COM && <ChesscomSelect form={form} />}
+              {importMode === ImportMode.CHESS_COM && <ChesscomSelect form={form} />}
 
-            {importMode === ImportMode.LICHESS_ORG && <LichessorgSelect form={form} />}
+              {importMode === ImportMode.LICHESS_ORG && <LichessorgSelect form={form} />}
 
-            {importMode === ImportMode.PGN && (
+              {importMode === ImportMode.PGN && (
+                <FormField
+                  control={form.control}
+                  name="pgn"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Textarea
+                          placeholder={PGN_PLACEHOLDER}
+                          spellCheck="false"
+                          id="pgn"
+                          className="h-56 resize-none custom-scrollbar"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        {t('pgnDescription')}{' '}
+                        <a className="text-primary" href="https://fr.wikipedia.org/wiki/Portable_Game_Notation">
+                          PGN
+                        </a>
+                        ?
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+            <div className="w-1/2 flex flex-col gap-6">
               <FormField
                 control={form.control}
-                name="pgn"
+                name="classifyMoves"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Textarea
-                        placeholder={PGN_PLACEHOLDER}
-                        spellCheck="false"
-                        id="pgn"
-                        className="h-56 resize-none custom-scrollbar"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {t('pgnDescription')}{' '}
-                      <a className="text-primary" href="https://fr.wikipedia.org/wiki/Portable_Game_Notation">
-                        PGN
-                      </a>
-                      ?
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            <FormField
-              control={form.control}
-              name="classifyMoves"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
-                    <FormLabel>{t('classifyMoves')}</FormLabel>
-                    <FormDescription>{t('classifyMovesDescription')}</FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="engine"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="flex gap-6">
-                      <Select
-                        value={field.value.value}
-                        onValueChange={(e: string) => {
-                          const engine = Engines.find((engine) => engine.value === e);
-
-                          if (engine) setSelectedEngine(engine);
-                          field.onChange(engine);
-                        }}
-                      >
-                        <SelectTrigger id="engine">
-                          {isEngineCached(selectedEngine) ? (
-                            <Check className="h-4 w-4" />
-                          ) : (
-                            <ArrowBigDownDash className="w-4 h-4" />
-                          )}
-                          <SelectValue placeholder="Engine" />
-                        </SelectTrigger>
-
-                        <SelectContent>
-                          {Engines.map((engine) => (
-                            <SelectItem
-                              icon={
-                                isEngineCached(engine) ? (
-                                  <Check className="h-4 w-4" />
-                                ) : (
-                                  <ArrowBigDownDash className="w-4 h-4" />
-                                )
-                              }
-                              className="flex flex-row items-center gap-4"
-                              key={engine.value}
-                              value={engine.value}
-                            >
-                              {engine.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      {!isEngineCached(selectedEngine) && (
-                        <LoaderButton isLoading={isDownloading} type="button" onClick={downloadSelectedEngine}>
-                          <DownloadCloud />
-                        </LoaderButton>
-                      )}
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>{t('classifyMoves')}</FormLabel>
+                      <FormDescription>{t('classifyMovesDescription')}</FormDescription>
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {Engines.find((engine) => engine.name === selectedEngine.name)?.isMultiThreaded && (
+                    <FormControl>
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
-                name="threads"
+                name="engine"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex justify-between">
-                      {t('threads')}
-                      <span>{field.value}</span>
-                    </FormLabel>
                     <FormControl>
-                      <Slider
-                        step={1}
-                        min={1}
-                        max={navigator.hardwareConcurrency || 1}
-                        value={[field.value]}
-                        onValueChange={(values) => field.onChange(values[0])}
-                      />
+                      <div className="flex gap-6">
+                        <Select
+                          value={field.value.value}
+                          onValueChange={(e: string) => {
+                            const engine = Engines.find((engine) => engine.value === e);
+
+                            if (engine) setSelectedEngine(engine);
+                            field.onChange(engine);
+                          }}
+                        >
+                          <SelectTrigger id="engine">
+                            {isEngineCached(selectedEngine) ? (
+                              <Check className="h-4 w-4" />
+                            ) : (
+                              <ArrowBigDownDash className="w-4 h-4" />
+                            )}
+                            <SelectValue placeholder="Engine" />
+                          </SelectTrigger>
+
+                          <SelectContent>
+                            {Engines.map((engine) => (
+                              <SelectItem
+                                icon={
+                                  isEngineCached(engine) ? (
+                                    <Check className="h-4 w-4" />
+                                  ) : (
+                                    <ArrowBigDownDash className="w-4 h-4" />
+                                  )
+                                }
+                                className="flex flex-row items-center gap-4"
+                                key={engine.value}
+                                value={engine.value}
+                              >
+                                {engine.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        {!isEngineCached(selectedEngine) && (
+                          <LoaderButton isLoading={isDownloading} type="button" onClick={downloadSelectedEngine}>
+                            <DownloadCloud />
+                          </LoaderButton>
+                        )}
+                      </div>
                     </FormControl>
-                    <FormDescription>{t('threadsDescription')}</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            )}
 
-            <div className="flex justify-between gap-6 items-center">
-              {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
-              <LoaderButton
-                disabled={!isEngineCached(selectedEngine)}
-                isLoading={isLoading}
-                type="submit"
-                className="ml-auto"
-              >
-                {t('startAnalysis')}
-              </LoaderButton>
+              {Engines.find((engine) => engine.name === selectedEngine.name)?.isMultiThreaded && (
+                <FormField
+                  control={form.control}
+                  name="threads"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex justify-between">
+                        {t('threads')}
+                        <span>{field.value}</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Slider
+                          step={1}
+                          min={1}
+                          max={navigator.hardwareConcurrency || 1}
+                          value={[field.value]}
+                          onValueChange={(values) => field.onChange(values[0])}
+                        />
+                      </FormControl>
+                      <FormDescription>{t('threadsDescription')}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              <div className="flex justify-between gap-6 items-center mt-auto">
+                {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
+                <LoaderButton
+                  disabled={!isEngineCached(selectedEngine)}
+                  isLoading={isLoading}
+                  type="submit"
+                  className="ml-auto"
+                >
+                  {t('startAnalysis')}
+                </LoaderButton>
+              </div>
             </div>
           </form>
         </Form>

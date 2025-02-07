@@ -4,7 +4,7 @@ import {
   classificationToColor,
   classificationToGlyphUrl,
   shouldDisplayClassificationInMoveHistory,
-} from '@/pages/analysis/classifications.ts';
+} from '@/data/classifications.ts';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import { CategoricalChartFunc } from 'recharts/types/chart/generateCategoricalChart';
 import { useMemo } from 'react';
@@ -48,7 +48,7 @@ export const EvalChart = ({ onClick }: EvalChartProps) => {
   }, [analysis]);
 
   return (
-    <div className="h-32 w-full bg-foreground/5 rounded">
+    <div className="h-full w-full bg-foreground/5 rounded">
       <ResponsiveContainer>
         <AreaChart onClick={onClick} data={data}>
           <Tooltip content={<CustomTooltip />} />
