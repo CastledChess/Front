@@ -167,10 +167,10 @@ export const StartAnalysis = () => {
   return (
     <div className="h-full flex justify-center p-16">
       <div className="flex flex-col items-center gap-6 w-[65rem] self-center">
-        <h1 className="text-3xl font-bold my-2">{t('title')}</h1>
+        <h1 className="text-3xl w-full font-bold my-2">{t('title')}</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex gap-6">
-            <div className="w-1/2 flex flex-col gap-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex gap-3">
+            <div className="w-1/2 flex flex-col gap-3">
               <Select value={importMode} onValueChange={(v: string) => setImportMode(v as ImportMode)}>
                 <SelectTrigger id="import">
                   <SelectValue placeholder="PGN" />
@@ -217,12 +217,12 @@ export const StartAnalysis = () => {
                 />
               )}
             </div>
-            <div className="w-1/2 flex flex-col gap-6">
+            <div className="w-1/2 flex flex-col gap-3">
               <FormField
                 control={form.control}
                 name="classifyMoves"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <FormItem className="flex flex-row items-center justify-between rounded-xl bg-gradient-to-b from-castled-secondary/30 to-castled-secondary border p-3 shadow-sm">
                     <div className="space-y-0.5">
                       <FormLabel>{t('classifyMoves')}</FormLabel>
                       <FormDescription>{t('classifyMovesDescription')}</FormDescription>

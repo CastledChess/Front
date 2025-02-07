@@ -12,13 +12,13 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '' }) => {
-  return <div className={`shadow-lg bg-castled-secondary p-6 rounded-lg  ${className}`}>{children}</div>;
+  return <div className={`shadow-lg bg-castled-secondary p-6 rounded-xl  ${className}`}>{children}</div>;
 };
 
 export { Card };
 
 // const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-//   <div ref={ref} className={cn('rounded-lg border bg-card text-card-foreground shadow-sm', className)} {...props} />
+//   <div ref={ref} className={cn('rounded-xl border bg-card text-card-foreground shadow-sm', className)} {...props} />
 // ));
 // Card.displayName = 'Card';
 
