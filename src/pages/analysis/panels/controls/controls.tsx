@@ -176,7 +176,7 @@ export const Controls = () => {
         </Button>
       </div>
 
-      <div className="bg-accent rounded-lg p-4 flex flex-col gap-2">
+      <div className="bg-gradient-to-br from-castled-secondary/30 to-castled-secondary rounded-xl p-4 flex flex-col gap-2">
         {previousMove && (
           <div className="flex items-center gap-2">
             {previousMove.classification !== AnalysisMoveClassification.None && (

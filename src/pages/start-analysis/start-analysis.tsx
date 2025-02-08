@@ -222,7 +222,7 @@ export const StartAnalysis = () => {
                 control={form.control}
                 name="classifyMoves"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-xl bg-gradient-to-b from-castled-secondary/30 to-castled-secondary border p-3 shadow-sm">
+                  <FormItem className="flex flex-row items-center justify-between rounded-xl bg-gradient-to-br from-castled-secondary/30 to-castled-secondary border p-3 shadow-sm">
                     <div className="space-y-0.5">
                       <FormLabel>{t('classifyMoves')}</FormLabel>
                       <FormDescription>{t('classifyMovesDescription')}</FormDescription>
