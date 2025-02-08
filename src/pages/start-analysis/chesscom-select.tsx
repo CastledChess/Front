@@ -148,7 +148,7 @@ export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
     <>
       <Popover open={seachOpen} onOpenChange={setSearchOpen}>
         <PopoverTrigger id="chesscom-search" asChild>
-          <Button variant="outline" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
+          <Button variant="secondary" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
             <ChesscomGame game={games.find((game) => game.uuid === selectedGame)} />
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>

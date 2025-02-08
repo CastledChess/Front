@@ -190,7 +190,7 @@ export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
     <>
       <Popover open={seachOpen} onOpenChange={setSearchOpen}>
         <PopoverTrigger id="lichessorg-search" asChild>
-          <Button variant="outline" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
+          <Button variant="secondary" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
             <LichessorgGame game={games.find((game) => game.id === selectedGame)} />
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
