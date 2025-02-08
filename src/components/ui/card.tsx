@@ -1,9 +1,7 @@
 // import * as React from 'react';
 
-// import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
-// Card.js
-// Card.tsx
 import React from 'react';
 
 interface CardProps {
@@ -12,7 +10,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, className = '' }) => {
-  return <div className={`shadow-lg bg-castled-secondary p-6 rounded-xl  ${className}`}>{children}</div>;
+  return <div className={cn(`shadow-lg bg-castled-secondary p-6 rounded-xl`, className)}>{children}</div>;
 };
 
 export { Card };

@@ -73,34 +73,18 @@ export const Navbar = () => {
 
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
-          {location.pathname === '/' ? (
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/dashboard" className="hover:no-underline  text-castled-accent">
-                  {t('navbar.dashboard')}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          ) : (
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/dashboard" className="hover:no-underline hover:text-castled-accent">
-                  {t('navbar.dashboard')}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          )}
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              {location.pathname === '/start-analysis' ? (
-                <Link to="/start-analysis" className="hover:no-underline text-castled-accent">
-                  {t('navbar.analysis')}
-                </Link>
-              ) : (
-                <Link to="/start-analysis" className="hover:no-underline  hover:text-castled-accent">
-                  {t('navbar.analysis')}
-                </Link>
-              )}
+              <Link to="/" className="hover:no-underline">
+                {t('navbar.dashboard')}
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link to="/start-analysis" className="hover:no-underline">
+                {t('navbar.analysis')}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>

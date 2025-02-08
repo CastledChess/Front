@@ -14,7 +14,6 @@ import { Theme } from '@/pages/theme/theme.tsx';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { Profile } from '@/pages/profile/profile.tsx';
 import { useAuthStore } from '@/store/auth.ts';
-import { History } from '@/pages/history/history-page';
 
 import '@/assets/themes/piece-css/index.ts';
 import '@/assets/themes/board-css/index.css';
@@ -54,27 +53,25 @@ function App() {
               }
             />
             <Route path="/documentation" element={<Documentation />} />
-
             {/* Authentication */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
 
             {/* Connected */}
-            <Route path="/" element={<Dashboard />} />
             <Route
-              path="/profile"
+              path="/"
               element={
-                <ProtectedRoute allow={!!user} redirect="/dashboard">
-                  <Profile />
+                <ProtectedRoute allow={!!user} redirect="/start-analysis">
+                  <Dashboard />
                 </ProtectedRoute>
               }
             />
 
             <Route
-              path="/dashboard"
+              path="/profile"
               element={
-                <ProtectedRoute allow={!!user} redirect="/login">
-                  <History />
+                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                  <Profile />
                 </ProtectedRoute>
               }
             />
