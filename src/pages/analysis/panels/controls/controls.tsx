@@ -206,7 +206,7 @@ export const Controls = () => {
             )}
 
             {previousMove.classification && moveIsBad[previousMove.classification] && (
-              <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(true)}>
+              <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(!displayLine)}>
                 <ZoomIn className="text-castled-accent" />
               </Button>
             )}
