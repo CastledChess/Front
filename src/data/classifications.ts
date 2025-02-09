@@ -72,6 +72,17 @@ export const shouldDisplayClassificationInMoveHistory: KeyValuePair<AnalysisMove
   [AnalysisMoveClassification.None]: false,
 };
 
+export const moveIsBad: KeyValuePair<AnalysisMoveClassification, boolean> = {
+  [AnalysisMoveClassification.Brilliant]: false,
+  [AnalysisMoveClassification.Best]: false,
+  [AnalysisMoveClassification.Excellent]: false,
+  [AnalysisMoveClassification.Good]: false,
+  [AnalysisMoveClassification.Inaccuracy]: true,
+  [AnalysisMoveClassification.Mistake]: true,
+  [AnalysisMoveClassification.Blunder]: true,
+  [AnalysisMoveClassification.None]: false,
+};
+
 export const pieceToValue: KeyValuePair<string, number> = {
   p: 1,
   n: 3,
