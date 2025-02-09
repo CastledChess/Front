@@ -146,6 +146,8 @@ export const classifyRegular = (move: AnalysisMove, index: number, moves: Analys
 const classifyWithMate = (move: Move, next: InfoResult, current: InfoResult): AnalysisMoveClassification => {
   if (next.mate === null || current.mate === null) return AnalysisMoveClassification.None;
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   const mateDelta = (next.mate || current.mate) - current.mate - 1;
 
   let classification = AnalysisMoveClassification.None;
