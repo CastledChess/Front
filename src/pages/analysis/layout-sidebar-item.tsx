@@ -13,7 +13,6 @@ type LayoutSidebarItemProps = {
 };
 
 const panelIcons: Record<keyof typeof panels, string> = {
-  chessboard: 'fa-solid:chess-king',
   engineInterpretation: 'fa6-solid:hands-asl-interpreting',
   engineLines: 'game-icons:striking-arrows',
   moveList: 'ix:move',
