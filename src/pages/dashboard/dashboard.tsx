@@ -24,8 +24,8 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-10 flex flex-col gap-4 content-center">
-      <p className="mt-10 text-4xl">{t('title')}</p>
+    <div className="container h-full p-16 flex flex-col gap-4 content-center">
+      <p className="text-4xl">{t('title')}</p>
       <DataTable columns={columns} data={data || []} />
     </div>
   );

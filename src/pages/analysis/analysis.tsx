@@ -1,5 +1,5 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable.tsx';
-import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
+import { Analysis as AnalysisType } from '@/types/analysis.ts';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { EngineInterpretation } from '@/pages/analysis/panels/engineInterpretation/engine-interpretation.tsx';
@@ -9,8 +9,12 @@ import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.ts
 import { useLayoutStore } from '@/store/layout.ts';
 import { LayoutSidebar } from '@/pages/analysis/layout-sidebar.tsx';
 import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAnalysisStore } from '@/store/analysis.ts';
+import { getAnalysisById } from '@/api/analysis.ts';
 import { Controls } from '@/pages/analysis/panels/controls/controls.tsx';
+import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
 
 export const panels: Record<Panel, React.ReactNode> = {
   engineInterpretation: <EngineInterpretation />,
@@ -25,6 +29,27 @@ const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, ite
 
 export const Analysis = () => {
   const { layout, selectedLayouts } = useLayoutStore();
+  const { analysis, setAnalysis } = useAnalysisStore();
+  const { id } = useParams();
+
+  useEffect(() => {
+    if (analysis?.id == id) return;
+
+    // Fetch analysis
+    const fetchAnalysis = async () => {
+      try {
+        const res = await getAnalysisById(id as string);
+
+        setAnalysis(res.data as AnalysisType);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchAnalysis();
+  }, [id, setAnalysis]);
+
+  if (!analysis) return null;
 
   return (
     <div className="h-full w-full flex">

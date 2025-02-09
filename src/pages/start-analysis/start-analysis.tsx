@@ -28,7 +28,6 @@ import { useTranslation } from 'react-i18next';
 import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
 import { ChesscomSelect } from '@/pages/start-analysis/chesscom-select.tsx';
 import { LichessorgSelect } from '@/pages/start-analysis/lichessorg-select.tsx';
-import { useAuthStore } from '@/store/auth';
 import { createAnalysis } from '@/api/analysis';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
@@ -55,7 +54,6 @@ enum ImportMode {
 
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
-  const { user } = useAuthStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -81,16 +79,12 @@ export const StartAnalysis = () => {
     try {
       const analysis = await analyseGame(data);
 
-      setAnalysis(analysis);
+      const response = await createAnalysis(analysis);
+      toast.success('Analysis Ready!');
 
-      if (user) {
-        const response = await createAnalysis(analysis);
-        toast.success('Analysis Ready!');
+      setAnalysis({ ...analysis, id: response.data.id });
 
-        navigate(`/analysis/${response.data.id}`);
-      } else {
-        navigate('/analysis');
-      }
+      navigate(`/analysis/${response.data.id}`);
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while analysing the game.');

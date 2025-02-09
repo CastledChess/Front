@@ -11,7 +11,6 @@ import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
-import { useAnalysisStore } from '@/store/analysis.ts';
 import { Profile } from '@/pages/profile/profile.tsx';
 import { useAuthStore } from '@/store/auth.ts';
 
@@ -23,7 +22,6 @@ import '@/styles/index.css';
 import '@/styles/scrollbar.css';
 
 function App() {
-  const analysis = useAnalysisStore((state) => state.analysis);
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -34,34 +32,41 @@ function App() {
         <div className="h-[calc(100vh-3rem)]">
           <Routes>
             {/* Global */}
-            <Route path="/start-analysis" element={<StartAnalysis />} />
-            <Route
-              path="/analysis/"
-              element={
-                <ProtectedRoute allow={!!analysis} redirect={'/start-analysis'}>
-                  <Analysis />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/analysis/:id" element={<Analysis />} />
-            <Route
-              path="/theme"
-              element={
-                <ProtectedRoute allow={!!user} redirect="/">
-                  <Theme />
-                </ProtectedRoute>
-              }
-            />
             <Route path="/documentation" element={<Documentation />} />
+
             {/* Authentication */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
 
             {/* Connected */}
             <Route
+              path="/start-analysis"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <StartAnalysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analysis/:id"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <Analysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/theme"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <Theme />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/"
               element={
-                <ProtectedRoute allow={!!user} redirect="/start-analysis">
+                <ProtectedRoute allow={!!user} redirect="/login">
                   <Dashboard />
                 </ProtectedRoute>
               }
@@ -70,7 +75,7 @@ function App() {
             <Route
               path="/profile"
               element={
-                <ProtectedRoute allow={!!user} redirect="/dashboard">
+                <ProtectedRoute allow={!!user} redirect="/login">
                   <Profile />
                 </ProtectedRoute>
               }

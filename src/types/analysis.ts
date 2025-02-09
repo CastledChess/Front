@@ -1,6 +1,7 @@
 import { Move } from 'chess.js';
 
 export type Analysis = {
+  id?: string;
   pgn: string;
   variants: number;
   header: Record<string, string>;
