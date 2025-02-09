@@ -39,8 +39,8 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
   });
 
   return (
-    <div>
-      <div className="rounded-md border">
+    <>
+      <div className="rounded-md border overflow-y-scroll custom-scrollbar h-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -102,6 +102,6 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
           {t('next')}
         </Button>
       </div>
-    </div>
+    </>
   );
 }

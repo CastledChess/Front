@@ -1,4 +1,4 @@
-import { api } from './index';
+import { apiAuthenticated } from './index';
 import { useAuthStore } from '@/store/auth.ts';
 
 export const getHistory = async () => {
@@ -8,7 +8,7 @@ export const getHistory = async () => {
     return Promise.reject('No access token available');
   }
 
-  const data = await api.get('/api/v1/analysis', {
+  const data = await apiAuthenticated.get('/api/v1/analysis', {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -24,7 +24,7 @@ export const getGame = async (id: string) => {
     return Promise.reject('No access token available');
   }
 
-  const data = await api.get(`/api/v1/analysis/${id}`, {
+  const data = await apiAuthenticated.get(`/api/v1/analysis/${id}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -40,7 +40,7 @@ export const deleteGame = async (id: string) => {
     return Promise.reject('No access token available');
   }
 
-  await api.delete(`/api/v1/analysis/${id}/delete`, {
+  await apiAuthenticated.delete(`/api/v1/analysis/${id}/delete`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

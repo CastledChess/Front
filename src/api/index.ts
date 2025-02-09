@@ -1,8 +1,13 @@
 import axios from 'axios';
 import { useAuthStore } from '@/store/auth.ts';
 import { refreshTokens } from '@/api/auth.ts';
-// import { useAuthStore } from '@/store/auth.ts';
-// import { refreshTokens } from '@/api/auth.ts';
+
+export const apiAuthenticated = axios.create({
+  baseURL: import.meta.env.VITE_API_URL as string,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL as string,
@@ -11,7 +16,7 @@ export const api = axios.create({
   },
 });
 
-api.interceptors.request.use(
+apiAuthenticated.interceptors.request.use(
   (request) => {
     const accessToken = useAuthStore.getState().accessToken;
 
@@ -24,7 +29,7 @@ api.interceptors.request.use(
   },
 );
 
-api.interceptors.response.use(
+apiAuthenticated.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
@@ -37,9 +42,9 @@ api.interceptors.response.use(
         useAuthStore.getState().setAccessToken(accessToken as string);
         useAuthStore.getState().setRefreshToken(newRefreshToken as string);
 
-        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        apiAuthenticated.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-        return api(originalRequest);
+        return apiAuthenticated(originalRequest);
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
 
