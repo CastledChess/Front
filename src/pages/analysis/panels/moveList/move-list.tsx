@@ -15,6 +15,8 @@ import { AnalysisMove } from '@/types/analysis.ts';
 import { toPieceNotation } from '@/lib/format.ts';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'chessground/types';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const MoveList = () => {
   const { analysis, chess, chessGround, currentMove, setCurrentMove } = useAnalysisStore();
@@ -53,9 +55,8 @@ export const MoveList = () => {
       <span className="text-xs h-6">{opening && opening.name}</span>
       <div className="flex h-full gap-1 flex-wrap overflow-y-scroll custom-scrollbar">
         {analysis?.moves.map((move, index) => (
-          <>
+          <React.Fragment key={index}>
             <Button
-              key={index}
               className={cn(
                 'flex gap-2 p-1 h-max',
                 currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
@@ -79,7 +80,7 @@ export const MoveList = () => {
             {move.classification && moveIsBad[move.classification] && displayLine && currentMove === index + 1 && (
               <EngineLine moveIndex={index} />
             )}
-          </>
+          </React.Fragment>
         ))}
       </div>
     </div>
@@ -93,6 +94,7 @@ type EngineLineProps = {
 const EngineLine = ({ moveIndex }: EngineLineProps) => {
   const { chess, analysis, chessGround } = useAnalysisStore();
   const { currentLineMove, setDisplayLine, setCurrentLineMove } = useMoveListState();
+  const { t } = useTranslation('moveList');
 
   const getEngineLine = (move: AnalysisMove, chess: Chess) => {
     const c = new Chess(chess.fen());
@@ -237,7 +239,7 @@ const EngineLine = ({ moveIndex }: EngineLineProps) => {
 
   return (
     <div className="text-xs text-gray-500 w-full flex gap-1 flex-col bg-secondary p-2 rounded-l-xl">
-      <p>Suggested Line</p>
+      <p>{t('engineLine')}</p>
       <div className="flex gap-1 flex-wrap">
         {engineLine.map((move, index) => {
           return (
