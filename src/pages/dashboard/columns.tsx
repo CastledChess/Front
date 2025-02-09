@@ -26,6 +26,7 @@ export interface GameDetails {
     Result: string;
     Date: string;
     Round: string;
+    Termination: string;
   };
   id: string;
   pgn: string;

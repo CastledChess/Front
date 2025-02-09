@@ -23,7 +23,6 @@ import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Flag from 'react-flagkit';
-import logo from '@/assets/logo/castled-white-logo.png';
 import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
 
 const documentation: { title: string; href: string; description: string }[] = [
@@ -65,43 +64,27 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="w-full h-16 px-6 gap-6 flex justify-between items-center shadow-lg bg-castled-secondary text-castled-gray">
+    <div className="w-full h-12 px-4 gap-6 flex justify-between items-center border-b bg-castled-primary text-castled-gray">
       <div className="flex items-center">
         <Link to="/">
-          <img src={logo} alt="Castled Logo" className="h-30 w-30" />
+          <img src="/logo.svg" alt="Castled Logo" className="h-6" />
         </Link>
       </div>
 
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
-          {location.pathname === '/' ? (
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/dashboard" className="hover:no-underline  text-castled-accent">
-                  {t('navbar.dashboard')}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          ) : (
-            <NavigationMenuItem>
-              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                <Link to="/dashboard" className="hover:no-underline hover:text-castled-accent">
-                  {t('navbar.dashboard')}
-                </Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
-          )}
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              {location.pathname === '/start-analysis' ? (
-                <Link to="/start-analysis" className="hover:no-underline text-castled-accent">
-                  {t('navbar.analysis')}
-                </Link>
-              ) : (
-                <Link to="/start-analysis" className="hover:no-underline  hover:text-castled-accent">
-                  {t('navbar.analysis')}
-                </Link>
-              )}
+              <Link to="/" className="hover:no-underline">
+                {t('navbar.dashboard')}
+              </Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link to="/start-analysis" className="hover:no-underline">
+                {t('navbar.analysis')}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>

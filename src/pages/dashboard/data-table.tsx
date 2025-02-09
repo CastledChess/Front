@@ -10,10 +10,10 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from '@tanstack/react-table';
-import Moment from 'moment';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useTranslation } from 'react-i18next';
 import { GameDetails } from './columns';
+import { format, parse } from 'date-fns';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -39,8 +39,8 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
   });
 
   return (
-    <div>
-      <div className="rounded-md border">
+    <>
+      <div className="rounded-md border overflow-y-scroll custom-scrollbar h-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -56,7 +56,7 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
                       {header.column.id === 'header_Result'
                         ? flexRender(header.column.columnDef.header, header.getContext())
                         : null}
-                      {header.column.id === 'moves' ? t(String(header.column.id).toLowerCase()) : null}
+                      {/* {header.column.id === 'moves' ? t(String(header.column.id).toLowerCase()) : null} */}
                       {header.column.id === 'header_Date' ? t('date') : null}
                     </TableHead>
                   );
@@ -73,11 +73,11 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
                       {cell.column.id === 'select' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                       {cell.column.id === 'players' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                       {cell.column.id === 'header_Result'
-                        ? t(String(cell.row.original.header.Result).toLowerCase())
+                        ? t(String(cell.row.original.header.Termination).toLowerCase())
                         : null}
-                      {cell.column.id === 'moves' ? cell.row.original.header.Round : null}
+                      {/* {cell.column.id === 'moves' ? cell.row.original.header.Round : null} */}
                       {cell.column.id === 'header_Date'
-                        ? Moment(cell.row.original.header.Date).format(' DD / MM / YYYY')
+                        ? format(parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date()), 'dd / MM / yyyy')
                         : null}
                       {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                     </TableCell>
@@ -102,6 +102,6 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
           {t('next')}
         </Button>
       </div>
-    </div>
+    </>
   );
 }

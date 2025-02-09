@@ -1,0 +1,13 @@
+﻿.chessboard-panel-inner {
+  container-type: size;
+}
+
+@container (min-width: 0px) {
+  .chessboard-container {
+    width: calc(100cqh - 6rem);
+  }
+
+  .eval-bar-container {
+    height: min(calc(100cqw - 3.5rem), 100cqh - 6rem);
+  }
+}

@@ -96,7 +96,7 @@ export const Theme = () => {
         <Label htmlFor="piece-theme">Piece theme</Label>
         <Popover open={pieceThemeOpen} onOpenChange={setPieceThemeOpen}>
           <PopoverTrigger id="piece-theme" asChild>
-            <Button variant="outline" role="combobox" aria-expanded={pieceThemeOpen} className="justify-between">
+            <Button variant="secondary" role="combobox" aria-expanded={pieceThemeOpen} className="justify-between">
               {pieceThemes.find((theme) => theme.value === pieceTheme)?.label ?? 'Select theme...'}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -130,7 +130,7 @@ export const Theme = () => {
         <Label htmlFor="board-theme">Board theme</Label>
         <Popover open={boardThemeOpen} onOpenChange={setBoardThemeOpen}>
           <PopoverTrigger id="board-theme" asChild>
-            <Button variant="outline" role="combobox" aria-expanded={boardThemeOpen} className="justify-between">
+            <Button variant="secondary" role="combobox" aria-expanded={boardThemeOpen} className="justify-between">
               {boardThemes.find((theme) => theme.value === boardTheme)?.label ?? 'Select theme...'}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
