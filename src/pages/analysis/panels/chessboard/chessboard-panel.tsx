@@ -1,8 +1,8 @@
 ﻿import { Evalbar } from '@/components/evalbar/evalbar.tsx';
 import { PlayerInfo } from '@/components/playerinfo/playerinfo.tsx';
 import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.tsx';
-import './chessboard-panel.css';
 import { useAnalysisStore } from '@/store/analysis.ts';
+import './chessboard-panel.css';
 
 export const ChessboardPanel = () => {
   const { analysis, currentMove, orientation } = useAnalysisStore();

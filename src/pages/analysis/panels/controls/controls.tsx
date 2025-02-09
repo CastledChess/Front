@@ -5,13 +5,21 @@ import { Key } from 'chessground/types';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { DrawShape } from 'chessground/draw';
 import { AnalysisMoveClassification } from '@/types/analysis.ts';
-import { classificationToColor, classificationToGlyph, classificationToGlyphUrl } from '@/data/classifications.ts';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pause, Play } from 'lucide-react';
-import { Color, Move } from 'chess.js';
+import {
+  classificationToColor,
+  classificationToGlyph,
+  classificationToGlyphUrl,
+  moveIsBad,
+} from '@/data/classifications.ts';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pause, Play, ZoomIn } from 'lucide-react';
+import { Move } from 'chess.js';
 import { descriptions } from '@/pages/analysis/panels/engineInterpretation/classificationDescription.ts';
+import { useMoveListState } from '@/store/move-list.ts';
+import { toPieceNotation } from '@/lib/format.ts';
 
 export const Controls = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround, orientation, setOrientation } = useAnalysisStore();
+  const { displayLine, setCurrentLineMove, setDisplayLine } = useMoveListState();
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const autoPlayInterval = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,6 +31,7 @@ export const Controls = () => {
     ?.slice(0, analysis?.variants ?? 1);
 
   const handleNextMove = () => {
+    if (displayLine) return;
     if (currentMove >= analysis!.moves.length) return;
 
     chess.move(currMove.move);
@@ -34,6 +43,7 @@ export const Controls = () => {
   };
 
   const handlePrevMove = () => {
+    if (displayLine) return;
     if (currentMove <= 0) return;
 
     chess.undo();
@@ -55,6 +65,8 @@ export const Controls = () => {
   };
 
   const handleSkipToBegin = () => {
+    if (displayLine) return;
+
     const moves = chess.history();
 
     for (let i = 0; i < moves.length; i++) {
@@ -70,6 +82,8 @@ export const Controls = () => {
   };
 
   const handleSkipToEnd = () => {
+    if (displayLine) return;
+
     const moves = analysis!.moves;
 
     for (let i = currentMove; i < moves.length; i++) {
@@ -82,12 +96,26 @@ export const Controls = () => {
     });
   };
 
+  const handleToggleDisplayLine = () => {
+    if (!moveIsBad[previousMove.classification!]) return;
+
+    chessGround?.set({
+      highlight: { custom: new Map<Key, string>() },
+      drawable: { autoShapes: [] },
+    });
+
+    setCurrentLineMove(1);
+    setDisplayLine(!displayLine);
+  };
+
   useHotkeys('right', handleNextMove);
   useHotkeys('left', handlePrevMove);
   useHotkeys('ctrl+left', handleSkipToBegin);
   useHotkeys('ctrl+right', handleSkipToEnd);
   useHotkeys('space', handleToggleAutoPlay);
+  useHotkeys('enter', handleToggleDisplayLine);
   useHotkeys('f', handleFlipBoard);
+
   useEffect(() => {
     if (currentMove >= analysis!.moves.length) setIsAutoPlaying(false);
     if (!isAutoPlaying) clearInterval(autoPlayInterval.current!);
@@ -97,8 +125,16 @@ export const Controls = () => {
   }, [isAutoPlaying, currentMove]);
 
   useEffect(() => {
-    if (currentMove >= analysis!.moves.length) return;
+    if (displayLine) {
+      chessGround?.set({
+        highlight: { custom: new Map<Key, string>([]) },
+        drawable: { autoShapes: [] },
+      });
 
+      return;
+    }
+
+    if (currentMove >= analysis!.moves.length) return;
     if (!previousMove) return;
 
     const autoShapes: DrawShape[] = variants.map((result) => ({
@@ -126,28 +162,6 @@ export const Controls = () => {
       drawable: { autoShapes: autoShapes },
     });
   }, [currentMove]);
-
-  const toPieceNotation = (move: string, color: Color): string => {
-    if (color === 'w') {
-      move = move.replace('N', '♞');
-      move = move.replace('B', '♝');
-      move = move.replace('R', '♜');
-      move = move.replace('Q', '♛');
-      move = move.replace('K', '♚');
-      move = move.replace('P', '♟');
-
-      return move;
-    }
-
-    move = move.replace('N', '♘');
-    move = move.replace('B', '♗');
-    move = move.replace('R', '♖');
-    move = move.replace('Q', '♕');
-    move = move.replace('K', '♔');
-    move = move.replace('P', '♙');
-
-    return move;
-  };
 
   const formatMoveDescription = (move: Move, optimalMove: string, classification: AnalysisMoveClassification) => {
     const notation = toPieceNotation(move.san, move.color);
@@ -189,6 +203,12 @@ export const Controls = () => {
             <span className="font-bold">{toPieceNotation(previousMove.move.san, previousMove.move.color)}</span>
             {previousMove.classification !== AnalysisMoveClassification.None && (
               <span className="font-bold">{previousMove.classification}</span>
+            )}
+
+            {previousMove.classification && moveIsBad[previousMove.classification] && (
+              <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(!displayLine)}>
+                <ZoomIn className="text-castled-accent" />
+              </Button>
             )}
           </div>
         )}
