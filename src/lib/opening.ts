@@ -9,8 +9,8 @@ const worker = new Worker(new URL('../workers/opening.ts', import.meta.url), {
  * @param {string} pgn - The PGN (Portable Game Notation) string of the chess game.
  * @returns {Promise<Opening | undefined>} A promise that resolves to the opening or undefined if not found.
  */
-export const findOpening = (pgn: string): Promise<Opening | undefined> =>
-  new Promise<Opening | undefined>((resolve) => {
+export const findOpening = async (pgn: string): Promise<Opening | undefined> =>
+  await new Promise<Opening | undefined>((resolve) => {
     worker.onmessage = (message: MessageEvent) => {
       if (message.data.error) resolve(undefined);
       resolve(message.data.result as Opening);
