@@ -2,7 +2,7 @@ import tailwindAnimate from 'tailwindcss-animate';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: ['class'],
+  darkMode: ['class', '[data-mode="dark"]'],
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -72,5 +72,5 @@ export default {
       sans: ['Inter', 'sans-serif'],
     },
     plugins: [tailwindAnimate],
-  }
-}
+  },
+};
