@@ -12,8 +12,6 @@ import {
   moveIsBad,
 } from '@/data/classifications.ts';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pause, Play, ZoomIn } from 'lucide-react';
-import { Move } from 'chess.js';
-import { descriptions } from '@/pages/analysis/panels/engineInterpretation/classificationDescription.ts';
 import { useMoveListState } from '@/store/move-list.ts';
 import { toPieceNotation } from '@/lib/format.ts';
 
@@ -163,13 +161,6 @@ export const Controls = () => {
     });
   }, [currentMove]);
 
-  const formatMoveDescription = (move: Move, optimalMove: string, classification: AnalysisMoveClassification) => {
-    const notation = toPieceNotation(move.san, move.color);
-    const sentence = descriptions[classification][Math.floor(Math.random() * descriptions[classification].length)];
-
-    return sentence?.replace('{x}', notation)?.replace('{y}', optimalMove);
-  };
-
   return (
     <div className="flex flex-col gap-1 p-4">
       <div className="flex w-full gap-1">
@@ -211,10 +202,6 @@ export const Controls = () => {
               </Button>
             )}
           </div>
-        )}
-
-        {previousMove && previousMove.classification !== AnalysisMoveClassification.None && variants.length > 0 && (
-          <p>{formatMoveDescription(previousMove.move, variants[0].move!, previousMove.classification!)}</p>
         )}
       </div>
     </div>
