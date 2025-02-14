@@ -69,6 +69,7 @@
     "react-hook-form": "^7.53.1",
     "react-hotkeys-hook": "^4.6.1",
     "react-i18next": "^15.1.1",
+    "react-mosaic-component": "^6.1.1",
     "react-resizable-panels": "^2.1.7",
     "react-router-dom": "^6.26.2",
     "recharts": "^2.13.0",

@@ -1,61 +1,48 @@
-import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
+import { Panel } from '@/types/layout';
+import { MosaicNode } from 'react-mosaic-component';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface LayoutState {
-  layout: Layout;
-  selectedLayouts: SelectedLayouts;
-  setLayout: (layout: Layout | ((layout: Layout) => Layout)) => void;
-  setSelectedLayouts: (
-    selectedLayouts: SelectedLayouts | ((selectedLayouts: SelectedLayouts) => SelectedLayouts),
+  isDragging: boolean;
+  setIsDragging: (isDragging: boolean | ((isDragging: boolean) => boolean)) => void;
+  layout: MosaicNode<Panel> | null;
+  setLayout: (
+    layout: (MosaicNode<Panel> | null) | ((layout: MosaicNode<Panel> | null) => MosaicNode<Panel> | null),
   ) => void;
-  movePanel: (from: LayoutItem, to: LayoutItem, item: Panel, indexFrom: number, indexTo: number) => void;
 }
 
 export const useLayoutStore = create<LayoutState>()(
   persist(
     (set) => ({
-      layout: {
-        topLeft: [],
-        bottomLeft: [],
-        topRight: ['database', 'evalHistory'],
-        bottomRight: ['interpretation', 'moveList'],
-      },
-      selectedLayouts: {
-        topLeft: 0,
-        bottomLeft: null,
-        topRight: 0,
-        bottomRight: 0,
-      },
       isDragging: false,
-      setLayout: (layout: Layout | ((layout: Layout) => Layout)) => {
+      setIsDragging: (isDragging: boolean | ((isDragging: boolean) => boolean)) => {
+        set((state) => ({
+          isDragging: typeof isDragging === 'function' ? isDragging(state.isDragging) : isDragging,
+        }));
+      },
+      layout: {
+        direction: 'row',
+        first: 'database',
+        second: {
+          direction: 'column',
+          first: 'interpretation',
+          second: 'moveList',
+        },
+        splitPercentage: 40,
+      },
+      setLayout: (
+        layout: (MosaicNode<Panel> | null) | ((layout: MosaicNode<Panel> | null) => MosaicNode<Panel> | null),
+      ) => {
         set((state) => ({
           layout: typeof layout === 'function' ? layout(state.layout) : layout,
         }));
-      },
-      setSelectedLayouts: (
-        selectedLayouts: SelectedLayouts | ((selectedLayouts: SelectedLayouts) => SelectedLayouts),
-      ) => {
-        set((state) => ({
-          selectedLayouts:
-            typeof selectedLayouts === 'function' ? selectedLayouts(state.selectedLayouts) : selectedLayouts,
-        }));
-      },
-      movePanel: (from: LayoutItem, to: LayoutItem, item: Panel, indexFrom: number, indexTo: number) => {
-        set((state) => {
-          state.layout[from].splice(indexFrom, 1);
-          state.layout[to].splice(indexTo, 0, item);
-
-          return {
-            layout: state.layout,
-          };
-        });
       },
     }),
     {
       name: 'layout',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ layout: state.layout, selectedLayouts: state.selectedLayouts }),
+      partialize: (state) => ({ layout: state.layout }),
     },
   ),
 );

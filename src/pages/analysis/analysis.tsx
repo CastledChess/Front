@@ -6,9 +6,6 @@ import { Database } from '@/pages/analysis/panels/database/database.tsx';
 import { EngineLines } from '@/pages/analysis/panels/engineLines/engine-lines.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
-import { useLayoutStore } from '@/store/layout.ts';
-import { LayoutSidebar } from '@/pages/analysis/layout-sidebar.tsx';
-import { Layout, LayoutItem, Panel, SelectedLayouts } from '@/types/layout';
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAnalysisStore } from '@/store/analysis.ts';
@@ -18,6 +15,29 @@ import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-p
 import { Interpretation } from './panels/interpretation/interpretation';
 import { isMobile } from 'react-device-detect';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion.tsx';
+import { useLayoutStore } from '@/store/layout.ts';
+import { Panel } from '@/types/layout.ts';
+import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import { Icon } from '@iconify/react';
+import '@/styles/window-tiling.css';
+
+/**
+ * A mapping of panel names to their corresponding icon identifiers.
+ *
+ * @type {Record<keyof typeof panels, string>}
+ *
+ * @property {string} database - Icon identifier for the database panel.
+ * @property {string} engineLines - Icon identifier for the engine lines panel.
+ * @property {string} moveList - Icon identifier for the move list panel.
+ * @property {string} evalHistory - Icon identifier for the evaluation history panel.
+ */
+const panelIcons: Record<keyof typeof panels, string> = {
+  database: 'mdi:database',
+  engineLines: 'game-icons:striking-arrows',
+  moveList: 'ix:move',
+  evalHistory: 'fa-solid:chart-line',
+  interpretation: 'mdi:comment-quote',
+};
 
 /**
  * A record that maps panel names to their corresponding React components.
@@ -36,6 +56,14 @@ export const panels: Record<Panel, React.ReactNode> = {
   interpretation: <Interpretation />,
 };
 
+export const panelTitles: Record<Panel, string> = {
+  database: 'Database',
+  engineLines: 'Engine Lines',
+  moveList: 'Move List',
+  evalHistory: 'Evaluation History',
+  interpretation: 'Interpretation',
+};
+
 /**
  * Checks if there are any selected panels in the given layout.
  *
@@ -44,9 +72,9 @@ export const panels: Record<Panel, React.ReactNode> = {
  * @param items - An array of layout items to check.
  * @returns A boolean indicating whether any of the specified items have selected panels.
  */
-const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, items: LayoutItem[]): boolean => {
-  return items.some((item) => selectedLayouts[item] !== null && layout[item].length > 0);
-};
+// const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, items: LayoutItem[]): boolean => {
+//   return items.some((item) => selectedLayouts[item] !== null && layout[item].length > 0);
+// };
 
 /**
  * The `Analysis` component is responsible for rendering the analysis page.
@@ -79,7 +107,7 @@ const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, ite
  * ```
  */
 export const Analysis = () => {
-  const { layout, selectedLayouts } = useLayoutStore();
+  const { layout, setLayout } = useLayoutStore();
   const { analysis, setAnalysis } = useAnalysisStore();
   const { id } = useParams();
 
@@ -153,45 +181,34 @@ export const Analysis = () => {
     <div className="h-full w-full flex">
       <DndProvider backend={HTML5Backend}>
         <ResizablePanelGroup direction="horizontal">
-          {/*<ResizablePanel defaultSize={20} minSize={20} order={1}>*/}
-          {/*  <Controls />*/}
-          {/*</ResizablePanel>*/}
-
-          {/*<ResizableHandle withHandle />*/}
-
-          <ResizablePanel defaultSize={50} minSize={40} order={2}>
+          <ResizablePanel defaultSize={50} minSize={40} order={0}>
             <ChessboardPanel />
           </ResizablePanel>
 
-          {hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && <ResizableHandle withHandle />}
+          <ResizableHandle withHandle />
 
-          {hasSelectedPanels(selectedLayouts, layout, ['topRight', 'bottomRight']) && (
-            <ResizablePanel defaultSize={50} minSize={15} id="rightPanel" order={3}>
-              <ResizablePanelGroup direction="vertical">
-                {selectedLayouts.topRight !== null && layout.topRight.length > 0 && (
-                  <ResizablePanel id="topRight" defaultSize={50} minSize={15} order={4}>
-                    {panels[layout.topRight[selectedLayouts.topRight]]}
-                  </ResizablePanel>
-                )}
-
-                {selectedLayouts.topRight !== null &&
-                  selectedLayouts.bottomRight !== null &&
-                  layout.topRight.length > 0 &&
-                  layout.bottomRight.length > 0 && <ResizableHandle withHandle />}
-
-                {selectedLayouts.bottomRight !== null && layout.bottomRight.length > 0 && (
-                  <ResizablePanel id="bottomRight" defaultSize={50} minSize={15} order={5}>
-                    {panels[layout.bottomRight[selectedLayouts.bottomRight]]}
-                  </ResizablePanel>
-                )}
-              </ResizablePanelGroup>
-            </ResizablePanel>
-          )}
+          <ResizablePanel defaultSize={50} minSize={40} order={0} className="bg-secondary-bg/30">
+            <Mosaic<Panel>
+              onChange={setLayout}
+              renderTile={(id, path) => (
+                <MosaicWindow<Panel>
+                  path={path}
+                  renderPreview={() => <div></div>}
+                  renderToolbar={() => (
+                    <div className="flex h-full items-center px-2 gap-4 rounded-t-lg w-full bg-secondary-bg">
+                      <Icon icon={panelIcons[id]} /> {panelTitles[id]}
+                    </div>
+                  )}
+                  title={panelTitles[id]}
+                >
+                  {panels[id]}
+                </MosaicWindow>
+              )}
+              value={layout}
+              initialValue={layout}
+            />
+          </ResizablePanel>
         </ResizablePanelGroup>
-        <div className="px-[1px] pb-[1px] w-11 flex flex-col border-l h-full">
-          <LayoutSidebar which="topRight" justify="start" />
-          <LayoutSidebar which="bottomRight" justify="end" />
-        </div>
       </DndProvider>
     </div>
   );
