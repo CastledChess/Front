@@ -9,6 +9,8 @@ interface AnalysisState {
   chess: Chess;
   currentMove: number;
   chessGround: Api | null;
+  orientation: 'white' | 'black';
+  setOrientation: (orientation: 'white' | 'black') => void;
   setCurrentMove: (currentMove: number) => void;
   setChessGround: (chessGround: Api) => void;
   setAnalysis: (analysis: Analysis | null) => void;
@@ -22,9 +24,11 @@ export const useAnalysisStore = create<AnalysisState>()(
       currentMove: 0,
       chess: new Chess(),
       chessGround: null,
+      orientation: 'white',
       setAnalysis: (analysis) => set({ analysis }),
       setChessGround: (chessGround) => set({ chessGround }),
       setCurrentMove: (currentMove) => set({ currentMove }),
+      setOrientation: (orientation) => set({ orientation }),
       clear: () =>
         set({
           analysis: null,
@@ -35,8 +39,8 @@ export const useAnalysisStore = create<AnalysisState>()(
     }),
     {
       name: 'analysis',
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ analysis: state.analysis }),
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: (state) => ({ analysis: state.analysis, orientation: state.orientation }),
     },
   ),
 );

@@ -10,84 +10,104 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils.ts';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar.tsx';
 import { useAuthStore } from '@/store/auth.ts';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button.tsx';
+import { useTranslation } from 'react-i18next';
+import Flag from 'react-flagkit';
+import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
 
 const documentation: { title: string; href: string; description: string }[] = [
   {
-    title: 'Getting Started',
+    title: 'documentation-dropdown.start.title',
     href: '/docs/getting-started',
-    description: 'Learn how to use Castled for your first Analysis!',
+    description: 'documentation-dropdown.start.description',
   },
   {
-    title: 'Engines',
+    title: 'documentation-dropdown.engine.title',
     href: '/docs/engines',
-    description: 'Explore the available engines on Castled and how to configure them',
+    description: 'documentation-dropdown.engine.description',
   },
   {
-    title: 'Variations',
+    title: 'documentation-dropdown.variations.title',
     href: '/docs/variations',
-    description: 'Understand what variations are and how to use them to your advantage',
+    description: 'documentation-dropdown.variations.description',
   },
   {
-    title: 'Evaluation',
+    title: 'documentation-dropdown.evaluation.title',
     href: '/docs/evaluation',
-    description: 'Understand engine evaluation and what it means',
+    description: 'documentation-dropdown.evaluation.description',
   },
 ];
 
 export const Navbar = () => {
   const { user, logout } = useAuthStore((state) => state);
-
+  const { t, i18n } = useTranslation('navbar');
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
-
     navigate('/login');
   };
 
+  const changeLanguage = (language: string) => {
+    i18n.changeLanguage(language);
+  };
+
   return (
-    <div className="max-w-[100vw] h-16 px-6 gap-6 flex justify-end shadow-lg bg-castled-secondary text-castled-accent">
+    <div className="w-full h-12 px-4 gap-6 flex justify-between items-center border-b bg-castled-primary text-castled-gray">
+      <div className="flex items-center">
+        <Link to="/">
+          <img src="/logo.svg" alt="Castled Logo" className="h-6" />
+        </Link>
+      </div>
+
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/">Dashboard</Link>
+              <Link to="/" className="hover:no-underline">
+                {t('navbar.dashboard')}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
             <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/start-analysis">Analysis</Link>
+              <Link to="/start-analysis" className="hover:no-underline">
+                {t('navbar.analysis')}
+              </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/history">History</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>Documentation</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="hover:no-underline hover:text-castled-accent">
+              {t('navbar.documentation')}
+            </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-                {documentation.map((component) => (
-                  <ListItem key={component.title} title={component.title} href={component.href}>
-                    {component.description}
-                  </ListItem>
-                ))}
+              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                {documentation.map((component) => {
+                  const title = t(component.title);
+                  const description = t(component.description);
+
+                  return (
+                    <ListItem
+                      className="hover:text-castled-accent"
+                      key={component.href}
+                      title={title}
+                      href={component.href}
+                    >
+                      {description}
+                    </ListItem>
+                  );
+                })}
               </ul>
             </NavigationMenuContent>
           </NavigationMenuItem>
@@ -95,58 +115,57 @@ export const Navbar = () => {
           {!user && (
             <>
               <NavigationMenuItem>
-                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                  <Link to="/login">Login</Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link to="/register">
-                  <NavigationMenuLink asChild>
-                    <Button>Register</Button>
+                {location.pathname === '/login' ? (
+                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                    <Link to="/register" className="hover:no-underline">
+                      {t('navbar.register')}
+                    </Link>
                   </NavigationMenuLink>
-                </Link>
+                ) : (
+                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                    <Link to="/login" className="hover:no-underline">
+                      {t('navbar.login')}
+                    </Link>
+                  </NavigationMenuLink>
+                )}
               </NavigationMenuItem>
             </>
           )}
+
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar>
+                  <AvatarFallback className="bg-castled-secondary hover:text-castled-accent">
+                    {user.username.toUpperCase()[0]}
+                  </AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="">
+                <DropdownMenuItem className="focus:text-castled-accent ">
+                  <Link to="/profile">{t('account-dropdown.profile')}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="focus:text-castled-accent ">
+                  <Link to="/theme">{t('account-dropdown.theme')}</Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="focus:text-castled-accent">
+                  {t('account-dropdown.support')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="focus:text-castled-accent" onClick={handleLogout}>
+                  {t('account-dropdown.logout')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup className="flex flex-row gap-6 justify-center mx-3">
+                  <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} />
+                  <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} />
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </NavigationMenuList>
       </NavigationMenu>
-
-      {user && (
-        <DropdownMenu>
-          <DropdownMenuTrigger>
-            <Avatar>
-              <AvatarFallback>{user.username.toUpperCase()[0]}</AvatarFallback>
-            </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                Profile
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
-              <Link to="/theme">
-                <DropdownMenuItem>
-                  Theme
-                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </Link>
-              <DropdownMenuItem>
-                Keyboard shortcuts
-                <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
-              Log out
-              <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
     </div>
   );
 };

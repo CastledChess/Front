@@ -1,0 +1,16 @@
+{
+  "title": "Historique de parties",
+  "players": "Joueurs",
+  "result": "Résultat",
+  "moves": "Coups",
+  "date": "Date",
+  "previous": "Précédent",
+  "next": "Suivant",
+  "won": "VICTOIRE",
+  "lost": "DEFAITE",
+  "delete": "Supprimer",
+  "details": "Voir l'analyse",
+  "copyId": "Copier l'ID de la partie",
+  "analysis": "Analyse de la partie",
+  "loading": "Chargement de l'historique des parties..."
+}

@@ -46,6 +46,10 @@ export const Engines: Engine[] = [
   },
 ];
 
+/**
+ * Retrieves the cached engines.
+ * @returns {Promise<Engine[]>} A promise that resolves to an array of cached engines.
+ */
 export const getCachedEngines = async () => {
   const cachedEngines: Engine[] = [];
 
@@ -58,6 +62,11 @@ export const getCachedEngines = async () => {
   return cachedEngines;
 };
 
+/**
+ * Analyzes the moves locally using the Stockfish engine.
+ * @param {AnalyseMovesLocalParams} params - The parameters for analyzing moves.
+ * @returns {Promise<AnalysisMove>[]} An array of promises that resolve to analysis moves.
+ */
 export const analyseMovesLocal = ({
   moves,
   data,
@@ -101,45 +110,52 @@ export const analyseMovesLocal = ({
   );
 };
 
+/**
+ * Classifies the moves based on the analysis results.
+ * @param {AnalysisMove[]} moves - The array of analysis moves.
+ * @returns {AnalysisMove[]} The array of classified analysis moves.
+ */
 export const classifyMoves = (moves: AnalysisMove[]): AnalysisMove[] => {
   return moves.map(classifyRegular);
 };
 
+/**
+ * Classifies a single move based on the analysis results.
+ * @param {AnalysisMove} move - The analysis move to classify.
+ * @param {number} index - The index of the move in the array.
+ * @param {AnalysisMove[]} moves - The array of analysis moves.
+ * @returns {AnalysisMove} The classified analysis move.
+ */
 export const classifyRegular = (move: AnalysisMove, index: number, moves: AnalysisMove[]) => {
   const next = moves[index + 1]?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
   const current = move?.engineResults.sort((a, b) => b.depth! - a.depth!)?.[0];
 
   if (!next || !current) return { ...move, classification: AnalysisMoveClassification.None };
 
-  if (current.mate)
-    return {
-      ...move,
-      classification: classifyWithMate(move.move, current.move, next.mate || current.mate, current.mate),
-    };
-  else
-    return {
-      ...move,
-      classification: classifyWithWinChance(move.move, current.move, next.winChance!, current.winChance!),
-    };
+  if (current.mate) return { ...move, classification: classifyWithMate(move.move, next, current) };
+  else return { ...move, classification: classifyWithWinChance(move.move, next, current) };
 };
 
-const classifyWithMate = (
-  move: Move,
-  nextMove: string | undefined,
-  next: number,
-  current: number,
-): AnalysisMoveClassification => {
-  if (next === null || current === null) return AnalysisMoveClassification.None;
+/**
+ * Classifies a move based on mate evaluation.
+ * @param {Move} move - The move to classify.
+ * @param {InfoResult} next - The next mate evaluation.
+ * @param {InfoResult} current - The current mate evaluation.
+ * @returns {AnalysisMoveClassification} The classification of the move.
+ */
+const classifyWithMate = (move: Move, next: InfoResult, current: InfoResult): AnalysisMoveClassification => {
+  if (next.mate === null || current.mate === null) return AnalysisMoveClassification.None;
 
-  const mateDelta = next - current - 1;
-
-  let classification = AnalysisMoveClassification.None;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
+  const mateDelta = (next.mate || current.mate) - current.mate - 1;
 
   const numMoves = new Chess(move.before).moves().length;
+  let classification = AnalysisMoveClassification.None;
 
   if (numMoves <= 1) classification = AnalysisMoveClassification.Forced;
-  else if (mateDelta <= 0 || move.from + move.to === nextMove) classification = AnalysisMoveClassification.Best;
-  else if (mateDelta === 1) classification = AnalysisMoveClassification.Excellent;
+  if (move.from + move.to === current.move) classification = AnalysisMoveClassification.Best;
+  else if (mateDelta <= 0) classification = AnalysisMoveClassification.Excellent;
   else if (mateDelta === 2) classification = AnalysisMoveClassification.Good;
   else if (mateDelta === 3) classification = AnalysisMoveClassification.Inaccuracy;
   else if (mateDelta === 4) classification = AnalysisMoveClassification.Mistake;
@@ -148,22 +164,23 @@ const classifyWithMate = (
   return classification;
 };
 
-const classifyWithWinChance = (
-  move: Move,
-  nextMove: string | undefined,
-  next: number,
-  current: number,
-): AnalysisMoveClassification => {
-  if (!next || !current) return AnalysisMoveClassification.None;
+/**
+ * Classifies a move based on win chance evaluation.
+ * @param {Move} move - The move to classify.
+ * @param {number} next - The next win chance evaluation.
+ * @param {number} current - The current win chance evaluation.
+ * @returns {AnalysisMoveClassification} The classification of the move.
+ */
+const classifyWithWinChance = (move: Move, next: InfoResult, current: InfoResult): AnalysisMoveClassification => {
+  if (!next.winChance || !current.winChance) return AnalysisMoveClassification.None;
 
-  const winChanceDelta = Math.abs((current - next) / 100);
-
-  let classification = AnalysisMoveClassification.None;
+  const winChanceDelta = Math.abs((current.winChance - next.winChance) / 100);
 
   const numMoves = new Chess(move.before).moves().length;
+  let classification = AnalysisMoveClassification.None;
 
   if (numMoves <= 1) classification = AnalysisMoveClassification.Forced;
-  else if (winChanceDelta <= 0.0 || move.from + move.to === nextMove) classification = AnalysisMoveClassification.Best;
+  if (move.from + move.to === current.move) classification = AnalysisMoveClassification.Best;
   else if (winChanceDelta > 0.0 && winChanceDelta <= 0.02) classification = AnalysisMoveClassification.Excellent;
   else if (winChanceDelta > 0.02 && winChanceDelta <= 0.05) classification = AnalysisMoveClassification.Good;
   else if (winChanceDelta > 0.05 && winChanceDelta <= 0.1) classification = AnalysisMoveClassification.Inaccuracy;

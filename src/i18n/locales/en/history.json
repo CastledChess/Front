@@ -1,0 +1,16 @@
+{
+  "title": "Game history",
+  "players": "Players",
+  "result": "Result",
+  "moves": "Moves",
+  "date": "Date",
+  "previous": "Previous",
+  "next": "Next",
+  "won": "WON",
+  "lost": "LOST",
+  "delete": "Delete",
+  "details": "View game analysis",
+  "copyId": "Copy Game Details ID",
+  "analysis": "Game Analysis",
+  "loading": "Loading game history..."
+}

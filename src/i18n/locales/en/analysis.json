@@ -6,7 +6,10 @@
     "classifyMovesDescription": "Ask the engine to rate each move by classifying them.",
     "threads": "Threads",
     "threadsDescription": "The number of threads the engine should use (more threads = more CPU usage for better performance).",
-    "startAnalysis": "Go!"
+    "startAnalysis": "Go!",
+    "searchPlayer": "Search player...",
+    "noResults": "No results found",
+    "noGameSelected": "No game selected"
   },
   "flipBoard": "Flip board"
 }

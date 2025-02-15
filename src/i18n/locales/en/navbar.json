@@ -1,0 +1,36 @@
+{
+  "navbar": {
+    "dashboard": "Dashboard",
+    "analysis": "Analysis",
+    "history": "History",
+    "documentation": "Documentation",
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register"
+  },
+  "account-dropdown": {
+    "header": "My Account",
+    "profile": "Profile",
+    "theme": "Theme",
+    "support": "Support",
+    "logout": "Logout"
+  },
+  "documentation-dropdown": {
+    "start": {
+      "title": "Get-Started",
+      "description": "Learn how to use Castled for your first analysis!"
+    },
+    "engine": {
+      "title": "Engine",
+      "description": "Explore the available engines on Castled and how to configure them."
+    },
+    "variations": {
+      "title": "Variations",
+      "description": "Understand what variations are and how to use them to your advantage."
+    },
+    "evaluation": {
+      "title": "Evaluation",
+      "description": "Understand engine evaluation and what it means."
+    }
+  }
+}

@@ -4,8 +4,16 @@ import openingsJson from '@/assets/data/openings/all.json';
 
 const openings: Record<string, Opening> = openingsJson;
 
+/**
+ * Handles incoming messages and finds the opening name based on the provided PGN.
+ * @param {MessageEvent} message - The message event containing the PGN data.
+ */
 self.onmessage = (message) => findOpeningName(message.data.pgn);
 
+/**
+ * Finds the name of the opening based on the provided PGN string.
+ * @param {string} pgn - The PGN (Portable Game Notation) string of the chess game.
+ */
 const findOpeningName = (pgn: string) => {
   if (!pgn) return;
 
@@ -15,6 +23,7 @@ const findOpeningName = (pgn: string) => {
   try {
     chessClone.loadPgn(pgn);
 
+    // Traverse the moves backwards to find the opening
     while (!(opening = openings[chessClone.fen().split(' ')[0]])) {
       if (!chessClone.undo()) break;
     }

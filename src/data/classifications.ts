@@ -55,8 +55,32 @@ export const classificationToColor: KeyValuePair<AnalysisMoveClassification, str
   [AnalysisMoveClassification.None]: '',
 };
 
+export const classificationToTailwindColor: KeyValuePair<AnalysisMoveClassification, string> = {
+  [AnalysisMoveClassification.Brilliant]: 'text-sky-500',
+  [AnalysisMoveClassification.Best]: 'text-green-500',
+  [AnalysisMoveClassification.Excellent]: 'text-green-500',
+  [AnalysisMoveClassification.Good]: 'text-green-500',
+  [AnalysisMoveClassification.Inaccuracy]: 'text-yellow-500',
+  [AnalysisMoveClassification.Mistake]: 'text-orange-500',
+  [AnalysisMoveClassification.Blunder]: 'text-red-500',
+  [AnalysisMoveClassification.Forced]: 'gray',
+  [AnalysisMoveClassification.None]: '',
+};
+
 export const shouldDisplayClassificationInMoveHistory: KeyValuePair<AnalysisMoveClassification, boolean> = {
   [AnalysisMoveClassification.Brilliant]: true,
+  [AnalysisMoveClassification.Best]: false,
+  [AnalysisMoveClassification.Excellent]: false,
+  [AnalysisMoveClassification.Good]: false,
+  [AnalysisMoveClassification.Inaccuracy]: true,
+  [AnalysisMoveClassification.Mistake]: true,
+  [AnalysisMoveClassification.Blunder]: true,
+  [AnalysisMoveClassification.Forced]: false,
+  [AnalysisMoveClassification.None]: false,
+};
+
+export const moveIsBad: KeyValuePair<AnalysisMoveClassification, boolean> = {
+  [AnalysisMoveClassification.Brilliant]: false,
   [AnalysisMoveClassification.Best]: false,
   [AnalysisMoveClassification.Excellent]: false,
   [AnalysisMoveClassification.Good]: false,

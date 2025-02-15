@@ -1,22 +1,32 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
-// import { Overview } from '@/pages/dashboard/overview.tsx';
-import { Statistics } from '@/pages/dashboard/statistics.tsx';
+import { useEffect, useState } from 'react';
+import { DataTable } from './data-table';
+import { GameDetails, columns } from './columns';
 import { useTranslation } from 'react-i18next';
+import { getHistory } from '@/api/history.ts';
 
 export const Dashboard = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('history');
+  const [data, setData] = useState<GameDetails[] | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      const history = await getHistory();
+      setData(history as GameDetails[]);
+      setLoading(false);
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>{t('loading')}</div>;
+  }
 
   return (
-    <div className="w-full h-full p-4">
-      <Tabs defaultValue="overview" className="h-full">
-        <TabsList>
-          <TabsTrigger value="overview">{t('analysis')}</TabsTrigger>
-          <TabsTrigger value="statistics">Statistics</TabsTrigger>
-        </TabsList>
-
-        {/* <Overview /> */}
-        <Statistics />
-      </Tabs>
+    <div className="container h-full p-16 flex flex-col gap-4 content-center">
+      <p className="text-4xl">{t('title')}</p>
+      <DataTable columns={columns} data={data || []} />
     </div>
   );
 };

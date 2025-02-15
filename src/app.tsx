@@ -2,8 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ReactNode } from 'react';
 
 import { Navbar } from '@/components/navbar/navbar.tsx';
-import { StartAnalysis } from '@/pages/analysis/start-analysis';
 import { Analysis } from '@/pages/analysis/analysis.tsx';
+import { StartAnalysis } from '@/pages/start-analysis/start-analysis.tsx';
 import { Documentation } from '@/pages/documentation.tsx';
 import { Register } from '@/pages/register/register.tsx';
 import { Dashboard } from '@/pages/dashboard/dashboard.tsx';
@@ -11,7 +11,7 @@ import { NotFound } from '@/pages/not-found.tsx';
 import { Toaster } from '@/components/ui/sonner.tsx';
 import { Login } from '@/pages/login/login.tsx';
 import { Theme } from '@/pages/theme/theme.tsx';
-import { useAnalysisStore } from '@/store/analysis.ts';
+import { Profile } from '@/pages/profile/profile.tsx';
 import { useAuthStore } from '@/store/auth.ts';
 
 import '@/assets/themes/piece-css/index.ts';
@@ -22,7 +22,6 @@ import '@/styles/index.css';
 import '@/styles/scrollbar.css';
 
 function App() {
-  const { analysis } = useAnalysisStore();
   const user = useAuthStore((state) => state.user);
 
   return (
@@ -30,26 +29,9 @@ function App() {
       <Toaster />
       <Router>
         <Navbar />
-        <div className="h-[calc(100vh-4rem)]">
+        <div className="h-[calc(100vh-3rem)]">
           <Routes>
             {/* Global */}
-            <Route path="/start-analysis" element={<StartAnalysis />} />
-            <Route
-              path="/analysis"
-              element={
-                <ProtectedRoute allow={!!analysis} redirect="/start-analysis">
-                  <Analysis />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/theme"
-              element={
-                <ProtectedRoute allow={!!user} redirect="/">
-                  <Theme />
-                </ProtectedRoute>
-              }
-            />
             <Route path="/documentation" element={<Documentation />} />
 
             {/* Authentication */}
@@ -57,7 +39,47 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             {/* Connected */}
-            <Route path="/" element={<Dashboard />} />
+            <Route
+              path="/start-analysis"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <StartAnalysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analysis/:id"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <Analysis />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/theme"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <Theme />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute allow={!!user} redirect="/login">
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
             {/* 404 */}
             <Route path="/*" element={<NotFound />} />
