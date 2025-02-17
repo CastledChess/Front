@@ -18,19 +18,19 @@
   "documentation-dropdown": {
     "start": {
       "title": "Commencer",
-      "description": "Apprenez à utiliser Castled pour votre première analyse !"
+      "description": "Apprenez à utiliser Castled pour votre première analyse!"
     },
-    "engine": {
-      "title": "Moteur",
-      "description": "Explorez les moteurs disponibles sur Castled et comment les configurer."
+    "database": {
+      "title": "Base de données",
+      "description": "Apprenez à utiliser la fonctionnalité de base de données à son plein potentiel"
     },
-    "variations": {
-      "title": "Variantes",
-      "description": "Comprenez ce que sont les variantes et comment les utiliser à votre avantage."
+    "controls": {
+      "title": "Contrôles",
+      "description": "Comprendre comment utiliser le menu des contrôles et les raccourcis clavier."
     },
     "evaluation": {
       "title": "Évaluation",
-      "description": "Comprenez l'évaluation du moteur et ce qu'elle signifie."
+      "description": "Comprendre l'évaluation du moteur et l'historique des évaluations."
     }
   }
 }

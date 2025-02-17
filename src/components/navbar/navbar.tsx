@@ -28,22 +28,22 @@ import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
 const documentation: { title: string; href: string; description: string }[] = [
   {
     title: 'documentation-dropdown.start.title',
-    href: '/docs/getting-started',
+    href: 'https://castled.app/docs',
     description: 'documentation-dropdown.start.description',
   },
   {
-    title: 'documentation-dropdown.engine.title',
-    href: '/docs/engines',
-    description: 'documentation-dropdown.engine.description',
+    title: 'documentation-dropdown.controls.title',
+    href: 'https://castled.app/docs/analysis/controls',
+    description: 'documentation-dropdown.controls.description',
   },
   {
-    title: 'documentation-dropdown.variations.title',
-    href: '/docs/variations',
-    description: 'documentation-dropdown.variations.description',
+    title: 'documentation-dropdown.database.title',
+    href: 'https://castled.app/docs/analysis/database',
+    description: 'documentation-dropdown.database.description',
   },
   {
     title: 'documentation-dropdown.evaluation.title',
-    href: '/docs/evaluation',
+    href: 'https://castled.app/docs/analysis/evaluation',
     description: 'documentation-dropdown.evaluation.description',
   },
 ];
