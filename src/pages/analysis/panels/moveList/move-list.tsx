@@ -62,7 +62,7 @@ export const MoveList = () => {
   return (
     <div className="p-6 flex h-full flex-col gap-2">
       <span className="text-xs h-6">{opening && opening.name}</span>
-      <div className="flex h-full gap-1 flex-wrap overflow-y-scroll custom-scrollbar">
+      <div className="flex h-full flex-wrap gap-1 justify-start content-start overflow-y-scroll custom-scrollbar">
         {analysis?.moves.map((move, index) => (
           <React.Fragment key={index}>
             <Button
@@ -71,7 +71,6 @@ export const MoveList = () => {
               }}
               className={cn(
                 'flex gap-2 p-1 h-max',
-                index != analysis?.moves.length - 1 && 'flex-grow',
                 currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
               )}
               variant="ghost"

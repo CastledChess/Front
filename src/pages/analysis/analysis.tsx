@@ -2,7 +2,7 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Analysis as AnalysisType } from '@/types/analysis.ts';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { EngineInterpretation } from '@/pages/analysis/panels/engineInterpretation/engine-interpretation.tsx';
+import { Database } from '@/pages/analysis/panels/database/database.tsx';
 import { EngineLines } from '@/pages/analysis/panels/engineLines/engine-lines.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
@@ -17,7 +17,7 @@ import { Controls } from '@/pages/analysis/panels/controls/controls.tsx';
 import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
 
 export const panels: Record<Panel, React.ReactNode> = {
-  engineInterpretation: <EngineInterpretation />,
+  database: <Database />,
   engineLines: <EngineLines />,
   moveList: <MoveList />,
   evalHistory: <EvalHistory />,
@@ -61,7 +61,7 @@ export const Analysis = () => {
 
           <ResizableHandle withHandle />
 
-          <ResizablePanel defaultSize={50} minSize={50} order={2}>
+          <ResizablePanel defaultSize={50} minSize={40} order={2}>
             <ChessboardPanel />
           </ResizablePanel>
 
