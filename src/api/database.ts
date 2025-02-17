@@ -1,6 +1,5 @@
-// TODO: replace with authenticatedApi once POC is migrated on main api
-import axios from 'axios';
+import { apiAuthenticated } from '@/api/index.ts';
 
 export const queryPosition = async (fen: string) => {
-  return await axios.get(`http://localhost:3001/pos?fen=${fen}`);
+  return await apiAuthenticated.get(`/pos?fen=${fen}`);
 };
