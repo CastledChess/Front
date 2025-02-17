@@ -13,7 +13,7 @@ type LayoutSidebarItemProps = {
 };
 
 const panelIcons: Record<keyof typeof panels, string> = {
-  engineInterpretation: 'fa6-solid:hands-asl-interpreting',
+  database: 'mdi:database',
   engineLines: 'game-icons:striking-arrows',
   moveList: 'ix:move',
   evalHistory: 'fa-solid:chart-line',

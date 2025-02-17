@@ -20,17 +20,17 @@
       "title": "Get-Started",
       "description": "Learn how to use Castled for your first analysis!"
     },
-    "engine": {
-      "title": "Engine",
-      "description": "Explore the available engines on Castled and how to configure them."
+    "database": {
+      "title": "Database",
+      "description": "Learn how to use the database feature to its full potential"
     },
-    "variations": {
-      "title": "Variations",
-      "description": "Understand what variations are and how to use them to your advantage."
+    "controls": {
+      "title": "Controls",
+      "description": "Understand how to use the controls menu and the hotkeys."
     },
     "evaluation": {
       "title": "Evaluation",
-      "description": "Understand engine evaluation and what it means."
+      "description": "Understand engine evaluation and evaluation history."
     }
   }
 }

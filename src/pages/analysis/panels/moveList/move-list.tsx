@@ -7,7 +7,7 @@ import {
   shouldDisplayClassificationInMoveHistory,
 } from '@/data/classifications.ts';
 import { cn } from '@/lib/utils.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Opening } from '@/types/opening.ts';
 import { findOpening } from '@/lib/opening.ts';
 import { useMoveListState } from '@/store/move-list.ts';
@@ -22,6 +22,7 @@ export const MoveList = () => {
   const { analysis, chess, chessGround, currentMove, setCurrentMove } = useAnalysisStore();
   const { displayLine } = useMoveListState();
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
+  const moveRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const handleSkipToMove = (index: number) => {
     const moves = chess.history();
@@ -42,21 +43,32 @@ export const MoveList = () => {
   };
 
   useEffect(() => {
-    findOpening(chess.pgn())
-      .then((opening) => setOpening(opening))
-      .catch(console.error);
+    moveRefs.current[currentMove]?.scrollIntoView({ behavior: 'instant', block: 'center' });
+  }, [currentMove]);
+
+  useEffect(() => {
+    const queryOpening = async () => {
+      const opening = await findOpening(analysis!.pgn);
+
+      setOpening(opening);
+    };
+
+    queryOpening();
     /** When a custom svg (classification) is rendered twice at the same square on two different moves
      * it does not trigger a re-render and does not animate the second one, this fixes the issue */
     chessGround?.redrawAll();
-  }, [currentMove]);
+  }, []);
 
   return (
     <div className="p-6 flex h-full flex-col gap-2">
       <span className="text-xs h-6">{opening && opening.name}</span>
-      <div className="flex h-full gap-1 flex-wrap overflow-y-scroll custom-scrollbar">
+      <div className="flex h-full flex-wrap gap-1 justify-start content-start overflow-y-scroll custom-scrollbar">
         {analysis?.moves.map((move, index) => (
           <React.Fragment key={index}>
             <Button
+              ref={(el) => {
+                moveRefs.current[index] = el;
+              }}
               className={cn(
                 'flex gap-2 p-1 h-max',
                 currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
