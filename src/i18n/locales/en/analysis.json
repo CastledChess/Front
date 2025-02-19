@@ -9,7 +9,15 @@
     "startAnalysis": "Go!",
     "searchPlayer": "Search player...",
     "noResults": "No results found",
-    "noGameSelected": "No game selected"
+    "noGameSelected": "No game selected",
+    "hashSizeTitle": "Hash Size",
+    "hashSizeDescription": "The amount of memory the engine should use for its hash table (more memory = better performance).",
+    "timePerMove": "Time per move",
+    "timePerMoveDescription": "The amount of time the engine should spend on each move.",
+    "depthPerMove": "Depth per move",
+    "depthPerMoveDescription": "The maximum depth the engine should search for each move.",
+    "advancedOptions": "Advanced Options",
+    "advancedOptionsDescription": "Configure the analysis engine's settings."
   },
   "flipBoard": "Flip board"
 }
