@@ -23,6 +23,7 @@ import { Calendar } from '@/components/ui/calendar.tsx';
 import { useTranslation } from 'react-i18next';
 
 type ChesscomSelectProps = {
+  isLoading: boolean;
   form: UseFormReturn<z.infer<typeof StartAnalysisFormSchema>>;
 };
 
@@ -108,7 +109,7 @@ const CustomDateCaptionLabel = ({
 
 const MAX_RANGE_DAYS = 31;
 
-export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
+export const LichessorgSelect = ({ form, isLoading }: ChesscomSelectProps) => {
   const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
   const [games, setGames] = useState<LichessOrgGame[]>([]);
   const [seachOpen, setSearchOpen] = useState(false);
@@ -189,7 +190,7 @@ export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
   return (
     <>
       <Popover open={seachOpen} onOpenChange={setSearchOpen}>
-        <PopoverTrigger id="lichessorg-search" asChild>
+        <PopoverTrigger disabled={isLoading} id="lichessorg-search" asChild>
           <Button variant="secondary" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
             <LichessorgGame game={games.find((game) => game.id === selectedGame)} />
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -218,7 +219,7 @@ export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
                 />
 
                 <Popover open={dateOpen} onOpenChange={setDateOpen}>
-                  <PopoverTrigger id="lichessorg-search-date" asChild>
+                  <PopoverTrigger disabled={isLoading} id="lichessorg-search-date" asChild>
                     <Button
                       variant="ghost"
                       role="combobox"
@@ -270,7 +271,7 @@ export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
               </>
             ) : (
               <>
-                <CommandInput placeholder={t('searchPlayer')} />
+                <CommandInput disabled={isLoading} placeholder={t('searchPlayer')} />
                 <CommandList className="custom-scrollbar">
                   <CommandGroup>
                     {autoCompletedUsernames.map((username) => (
@@ -299,7 +300,7 @@ export const LichessorgSelect = ({ form }: ChesscomSelectProps) => {
           disabled
           spellCheck="false"
           id="pgn"
-          className="h-56 resize-none custom-scrollbar"
+          className="h-full resize-none custom-scrollbar"
           value={games.find((g) => g.id === selectedGame)?.pgn}
         />
       )}

@@ -1,4 +1,4 @@
-import { LoaderButton } from '@/components/ui/button.tsx';
+import { Button, LoaderButton } from '@/components/ui/button.tsx';
 import {
   Form,
   FormControl,
@@ -21,14 +21,22 @@ import { useEffect, useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
 import { analyseMovesLocal, classifyMoves, Engine, Engines, getCachedEngines } from '@/lib/analysis.ts';
-import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
+import { AnalysisMethod, StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx';
 import { useTranslation } from 'react-i18next';
-import { ArrowBigDownDash, Check, DownloadCloud } from 'lucide-react';
+import { ArrowBigDownDash, Check, Cog, DownloadCloud, Layers, Timer } from 'lucide-react';
 import { ChesscomSelect } from '@/pages/start-analysis/chesscom-select.tsx';
 import { LichessorgSelect } from '@/pages/start-analysis/lichessorg-select.tsx';
 import { createAnalysis } from '@/api/analysis';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog.tsx';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -67,6 +75,12 @@ export const StartAnalysis = () => {
   const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
     resolver: zodResolver(StartAnalysisFormSchema),
     defaultValues: {
+      analysisSettings: {
+        method: AnalysisMethod.TIME_PER_MOVE,
+        time: 0.1,
+        depth: 12,
+        hashSize: 1,
+      },
       classifyMoves: true,
       engine: selectedEngine,
       threads: 1,
@@ -75,6 +89,8 @@ export const StartAnalysis = () => {
 
   const onSubmit = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     setIsLoading(true);
+
+    console.log(data);
 
     try {
       const analysis = await analyseGame(data);
@@ -159,13 +175,17 @@ export const StartAnalysis = () => {
   }, []);
 
   return (
-    <div className="h-full flex justify-center p-16">
-      <div className="flex flex-col items-center gap-6 w-[65rem] self-center">
+    <div className="h-full flex justify-center p-28 pt-14">
+      <div className="flex flex-col gap-6 w-[65rem] h-full">
         <h1 className="text-3xl w-full font-bold my-2">{t('title')}</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex gap-3">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex-1 flex gap-3">
             <div className="w-1/2 flex flex-col gap-3">
-              <Select value={importMode} onValueChange={(v: string) => setImportMode(v as ImportMode)}>
+              <Select
+                disabled={isLoading}
+                value={importMode}
+                onValueChange={(v: string) => setImportMode(v as ImportMode)}
+              >
                 <SelectTrigger id="import">
                   <SelectValue placeholder="PGN" />
                 </SelectTrigger>
@@ -179,40 +199,44 @@ export const StartAnalysis = () => {
                 </SelectContent>
               </Select>
 
-              {importMode === ImportMode.CHESS_COM && <ChesscomSelect form={form} />}
+              {importMode === ImportMode.CHESS_COM && <ChesscomSelect isLoading={isLoading} form={form} />}
 
-              {importMode === ImportMode.LICHESS_ORG && <LichessorgSelect form={form} />}
+              {importMode === ImportMode.LICHESS_ORG && <LichessorgSelect isLoading={isLoading} form={form} />}
 
               {importMode === ImportMode.PGN && (
                 <FormField
+                  disabled={isLoading}
                   control={form.control}
                   name="pgn"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Textarea
-                          placeholder={PGN_PLACEHOLDER}
-                          spellCheck="false"
-                          id="pgn"
-                          className="h-56 resize-none custom-scrollbar"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
+                    <FormItem className="h-full flex flex-col gap-3">
+                      <FormDescription className="min-h-[1rem]">
                         {t('pgnDescription')}{' '}
                         <a className="text-primary" href="https://fr.wikipedia.org/wiki/Portable_Game_Notation">
                           PGN
                         </a>
                         ?
                       </FormDescription>
+                      <FormControl>
+                        <Textarea
+                          disabled={isLoading}
+                          placeholder={PGN_PLACEHOLDER}
+                          spellCheck="false"
+                          id="pgn"
+                          className="flex-1 h-full resize-none custom-scrollbar"
+                          {...field}
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               )}
             </div>
-            <div className="w-1/2 flex flex-col gap-3">
+
+            <div className="w-1/2 flex flex-col gap-3 h-full">
               <FormField
+                disabled={isLoading}
                 control={form.control}
                 name="classifyMoves"
                 render={({ field }) => (
@@ -222,11 +246,12 @@ export const StartAnalysis = () => {
                       <FormDescription>{t('classifyMovesDescription')}</FormDescription>
                     </div>
                     <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      <Switch disabled={isLoading} checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name="engine"
@@ -235,6 +260,7 @@ export const StartAnalysis = () => {
                     <FormControl>
                       <div className="flex gap-6">
                         <Select
+                          disabled={isLoading}
                           value={field.value.value}
                           onValueChange={(e: string) => {
                             const engine = Engines.find((engine) => engine.value === e);
@@ -296,6 +322,7 @@ export const StartAnalysis = () => {
                       </FormLabel>
                       <FormControl>
                         <Slider
+                          disabled={isLoading}
                           step={1}
                           min={1}
                           max={navigator.hardwareConcurrency || 1}
@@ -310,14 +337,143 @@ export const StartAnalysis = () => {
                 />
               )}
 
-              <div className="flex justify-between gap-6 items-center mt-auto">
+              <div className="flex justify-end gap-6 items-center mt-auto">
+                <Dialog>
+                  {!isLoading && (
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" className="justify-start w-max">
+                        <Cog />
+                        {t('advancedOptions')}
+                      </Button>
+                    </DialogTrigger>
+                  )}
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>{t('advancedOptions')}</DialogTitle>
+                      <DialogDescription>{t('advancedOptionsDescription')}</DialogDescription>
+                    </DialogHeader>
+
+                    <FormField
+                      control={form.control}
+                      name="analysisSettings.hashSize"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex justify-between">
+                            {t('hashSizeTitle')}
+                            <span>{field.value} MB</span>
+                          </FormLabel>
+                          <FormControl>
+                            <Slider
+                              step={1}
+                              min={1}
+                              max={1024}
+                              value={[field.value]}
+                              onValueChange={(values) => field.onChange(values[0])}
+                            />
+                          </FormControl>
+                          <FormDescription>{t('hashSizeDescription')}</FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="analysisSettings.method"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Select
+                              value={field.value}
+                              onValueChange={(e: AnalysisMethod) => {
+                                field.onChange(e);
+                              }}
+                            >
+                              <SelectTrigger id="method">
+                                <SelectValue placeholder="Search Method" />
+                              </SelectTrigger>
+
+                              <SelectContent>
+                                <SelectItem
+                                  icon={<Timer />}
+                                  className="flex flex-row items-center gap-4"
+                                  key={AnalysisMethod.DEPTH_PER_MOVE}
+                                  value={AnalysisMethod.DEPTH_PER_MOVE}
+                                >
+                                  {t('depthPerMove')}
+                                </SelectItem>
+                                <SelectItem
+                                  icon={<Layers />}
+                                  className="flex flex-row items-center gap-4"
+                                  key={AnalysisMethod.TIME_PER_MOVE}
+                                  value={AnalysisMethod.TIME_PER_MOVE}
+                                >
+                                  {t('timePerMove')}
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {form.watch('analysisSettings.method') === AnalysisMethod.TIME_PER_MOVE && (
+                      <FormField
+                        control={form.control}
+                        name="analysisSettings.time"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex justify-between">
+                              {t('timePerMove')}
+                              <span>{field.value.toFixed(2)} s</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Slider
+                                step={0.05}
+                                min={0.05}
+                                max={1}
+                                value={[field.value]}
+                                onValueChange={(values) => field.onChange(values[0])}
+                              />
+                            </FormControl>
+                            <FormDescription>{t('timePerMoveDescription')}</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {form.watch('analysisSettings.method') === AnalysisMethod.DEPTH_PER_MOVE && (
+                      <FormField
+                        control={form.control}
+                        name="analysisSettings.depth"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex justify-between">
+                              {t('depthPerMove')}
+                              <span>{field.value}</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Slider
+                                step={1}
+                                min={8}
+                                max={20}
+                                value={[field.value]}
+                                onValueChange={(values) => field.onChange(values[0])}
+                              />
+                            </FormControl>
+                            <FormDescription>{t('depthPerMoveDescription')}</FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </DialogContent>
+                </Dialog>
+
                 {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
-                <LoaderButton
-                  disabled={!isEngineCached(selectedEngine)}
-                  isLoading={isLoading}
-                  type="submit"
-                  className="ml-auto"
-                >
+                <LoaderButton disabled={!isEngineCached(selectedEngine)} isLoading={isLoading} type="submit">
                   {t('startAnalysis')}
                 </LoaderButton>
               </div>
