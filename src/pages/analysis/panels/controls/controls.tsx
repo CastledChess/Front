@@ -15,6 +15,41 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pause, Play, Zo
 import { useMoveListState } from '@/store/move-list.ts';
 import { toPieceNotation } from '@/lib/format.ts';
 
+/**
+ * The `Controls` component provides a set of controls for navigating and interacting with a chess analysis.
+ * It includes buttons for moving to the next and previous moves, skipping to the beginning and end of the game,
+ * toggling autoplay, flipping the board orientation, and displaying move lines.
+ *
+ * @component
+ *
+ * @example
+ * ```tsx
+ * <Controls />
+ * ```
+ *
+ * @returns {JSX.Element} The rendered controls component.
+ *
+ * @remarks
+ * This component uses various hooks and state management to handle the chess analysis and board interactions.
+ * It also supports keyboard shortcuts for navigation and interaction.
+ *
+ * @hook
+ * - `useAnalysisStore` - Provides the current move, analysis data, chess instance, and board orientation.
+ * - `useMoveListState` - Manages the state of the move list, including the current line move and display line state.
+ * - `useState` - Manages the autoplay state.
+ * - `useRef` - Holds a reference to the autoplay interval.
+ * - `useHotkeys` - Binds keyboard shortcuts to the control functions.
+ * - `useEffect` - Handles side effects for autoplay and move line display.
+ *
+ * @function
+ * - `handleNextMove` - Advances to the next move in the analysis.
+ * - `handlePrevMove` - Reverts to the previous move in the analysis.
+ * - `handleToggleAutoPlay` - Toggles the autoplay state.
+ * - `handleFlipBoard` - Flips the board orientation.
+ * - `handleSkipToBegin` - Skips to the beginning of the game.
+ * - `handleSkipToEnd` - Skips to the end of the game.
+ * - `handleToggleDisplayLine` - Toggles the display of move lines.
+ */
 export const Controls = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround, orientation, setOrientation } = useAnalysisStore();
   const { displayLine, setCurrentLineMove, setDisplayLine } = useMoveListState();

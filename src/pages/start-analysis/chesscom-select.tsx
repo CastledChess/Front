@@ -27,6 +27,40 @@ type ChesscomSelectProps = {
   form: UseFormReturn<z.infer<typeof StartAnalysisFormSchema>>;
 };
 
+/**
+ * Represents a game from Chess.com.
+ * 
+ * @typedef {Object} ChessComGame
+ * 
+ * @property {Object} accuracies - The accuracies of the players.
+ * @property {number} accuracies.white - The accuracy of the white player.
+ * @property {number} accuracies.black - The accuracy of the black player.
+ * 
+ * @property {Object} black - Information about the black player.
+ * @property {number} black.rating - The rating of the black player.
+ * @property {string} black.result - The result for the black player.
+ * @property {string} black.username - The username of the black player.
+ * @property {string} black.uuid - The UUID of the black player.
+ * 
+ * @property {Object} white - Information about the white player.
+ * @property {number} white.rating - The rating of the white player.
+ * @property {string} white.result - The result for the white player.
+ * @property {string} white.username - The username of the white player.
+ * @property {string} white.uuid - The UUID of the white player.
+ * 
+ * @property {string} eco - The ECO (Encyclopaedia of Chess Openings) code of the game.
+ * @property {number} end_time - The end time of the game in Unix timestamp format.
+ * @property {string} fen - The FEN (Forsyth-Edwards Notation) string of the game.
+ * @property {string} initial_setup - The initial setup of the game.
+ * @property {string} pgn - The PGN (Portable Game Notation) string of the game.
+ * @property {boolean} rated - Indicates if the game is rated.
+ * @property {string} rules - The rules of the game.
+ * @property {string} tcn - The TCN (Telegraph Chess Notation) string of the game.
+ * @property {string} time_class - The time class of the game (e.g., blitz, rapid).
+ * @property {string} time_control - The time control of the game.
+ * @property {string} url - The URL of the game.
+ * @property {string} uuid - The UUID of the game.
+ */
 export type ChessComGame = {
   accuracies: { white: number; black: number };
   black: { rating: number; result: string; username: string; uuid: string };

@@ -4,6 +4,26 @@ import { AnalysisChessboard } from '@/components/chessboard/analysis-chessboard.
 import { useAnalysisStore } from '@/store/analysis.ts';
 import './chessboard-panel.css';
 
+/**
+ * ChessboardPanel component renders the main analysis panel for a chess game.
+ * It includes the evaluation bar, chessboard, and player information.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * // Usage example
+ * <ChessboardPanel />
+ *
+ * @remarks
+ * This component uses the `useAnalysisStore` hook to retrieve the analysis data,
+ * current move, and board orientation. It conditionally renders player information
+ * based on the orientation and analysis data.
+ *
+ * @see Evalbar
+ * @see PlayerInfo
+ * @see AnalysisChessboard
+ */
 export const ChessboardPanel = () => {
   const { analysis, currentMove, orientation } = useAnalysisStore();
 

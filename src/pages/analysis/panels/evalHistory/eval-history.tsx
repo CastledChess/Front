@@ -2,6 +2,23 @@ import { EvalChart } from '@/components/evalchart/evalchart.tsx';
 import { CategoricalChartState } from 'recharts/types/chart/types';
 import { useAnalysisStore } from '@/store/analysis.ts';
 
+/**
+ * EvalHistory component renders the evaluation history chart and handles user interactions with it.
+ *
+ * @returns {JSX.Element} The rendered EvalHistory component.
+ *
+ * @remarks
+ * This component uses the `useAnalysisStore` hook to access the current analysis state, chess instance, and chessGround instance.
+ * It provides functionality to skip to a specific move in the chess game when the user interacts with the evaluation chart.
+ *
+ * @example
+ * ```tsx
+ * <EvalHistory />
+ * ```
+ *
+ * @component
+ * @category Analysis
+ */
 export const EvalHistory = () => {
   const { setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
 

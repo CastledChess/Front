@@ -4,6 +4,19 @@ import { GameDetails, columns } from './columns';
 import { useTranslation } from 'react-i18next';
 import { getHistory } from '@/api/history.ts';
 
+/**
+ * Dashboard component that fetches and displays game history data.
+ *
+ * This component uses the `useTranslation` hook to handle translations
+ * and the `useState` and `useEffect` hooks to manage state and side effects.
+ * It fetches game history data asynchronously and displays a loading message
+ * while the data is being fetched. Once the data is fetched, it displays
+ * the data in a table format.
+ *
+ * @component
+ * 
+ * @returns {JSX.Element} The rendered component.
+ */
 export const Dashboard = () => {
   const { t } = useTranslation('history');
   const [data, setData] = useState<GameDetails[] | null>(null);

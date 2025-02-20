@@ -18,6 +18,44 @@ import { Key } from 'chessground/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+/**
+ * MoveList component renders a list of chess moves and allows users to navigate through them.
+ * It uses the `useAnalysisStore` and `useMoveListState` hooks to manage the state of the analysis and move list.
+ * 
+ * @component
+ * 
+ * @returns {JSX.Element} The rendered component.
+ * 
+ * @example
+ * ```tsx
+ * <MoveList />
+ * ```
+ * 
+ * @remarks
+ * - The component displays the name of the opening if available.
+ * - It allows users to skip to a specific move by clicking on the corresponding button.
+ * - The current move is highlighted and scrolled into view.
+ * - The component fetches the opening information asynchronously on mount.
+ * 
+ * @hook
+ * - `useAnalysisStore` - Provides analysis, chess, chessGround, currentMove, and setCurrentMove.
+ * - `useMoveListState` - Provides displayLine.
+ * 
+ * @function handleSkipToMove
+ * - Skips to the specified move index, updates the chess board, and sets the current move.
+ * 
+ * @function queryOpening
+ * - Fetches the opening information based on the PGN of the analysis.
+ * 
+ * @param {number} index - The index of the move to skip to.
+ * 
+ * @state {Opening | undefined} opening - The current opening information.
+ * @state {React.RefObject<(HTMLButtonElement | null)[]>} moveRefs - References to the move buttons.
+ * 
+ * @effect
+ * - Scrolls the current move into view whenever the current move changes.
+ * - Fetches the opening information and redraws the chess board on mount.
+ */
 export const MoveList = () => {
   const { analysis, chess, chessGround, currentMove, setCurrentMove } = useAnalysisStore();
   const { displayLine } = useMoveListState();

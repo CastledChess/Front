@@ -73,6 +73,31 @@ export type LichessOrgGame = {
   pgn: string;
 };
 
+/**
+ * Component to display a Lichess.org game summary.
+ *
+ * @param {Object} props - The component props.
+ * @param {LichessOrgGame | undefined} props.game - The Lichess.org game data.
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @remarks
+ * This component uses the `useTranslation` hook from `react-i18next` to handle translations.
+ * If no game is selected, it displays a message indicating that no game is selected.
+ * It displays the names and ratings of the players, and the time since the last move.
+ *
+ * @example
+ * ```tsx
+ * const game = {
+ *   players: {
+ *     white: { user: { name: 'Player1' }, rating: 1500 },
+ *     black: { user: { name: 'Player2' }, rating: 1400 }
+ *   },
+ *   lastMoveAt: '2023-10-01T12:00:00Z'
+ * };
+ * 
+ * <LichessorgGame game={game} />
+ * ```
+ */
 const LichessorgGame = ({ game }: { game: LichessOrgGame | undefined }) => {
   const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
 

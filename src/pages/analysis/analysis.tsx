@@ -16,6 +16,15 @@ import { getAnalysisById } from '@/api/analysis.ts';
 import { Controls } from '@/pages/analysis/panels/controls/controls.tsx';
 import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
 
+/**
+ * A record that maps panel names to their corresponding React components.
+ * 
+ * @type {Record<Panel, React.ReactNode>}
+ * @property {React.ReactNode} database - The component for the database panel.
+ * @property {React.ReactNode} engineLines - The component for the engine lines panel.
+ * @property {React.ReactNode} moveList - The component for the move list panel.
+ * @property {React.ReactNode} evalHistory - The component for the evaluation history panel.
+ */
 export const panels: Record<Panel, React.ReactNode> = {
   database: <Database />,
   engineLines: <EngineLines />,
@@ -23,10 +32,48 @@ export const panels: Record<Panel, React.ReactNode> = {
   evalHistory: <EvalHistory />,
 };
 
+/**
+ * Checks if there are any selected panels in the given layout.
+ *
+ * @param selectedLayouts - An object representing the selected layouts.
+ * @param layout - An object representing the layout configuration.
+ * @param items - An array of layout items to check.
+ * @returns A boolean indicating whether any of the specified items have selected panels.
+ */
 const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, items: LayoutItem[]): boolean => {
   return items.some((item) => selectedLayouts[item] !== null && layout[item].length > 0);
 };
 
+/**
+ * The `Analysis` component is responsible for rendering the analysis page.
+ * It fetches the analysis data based on the `id` parameter from the URL and displays
+ * a layout with draggable and resizable panels.
+ *
+ * @component
+ * @returns {JSX.Element | null} The rendered analysis page or null if analysis data is not available.
+ *
+ * @remarks
+ * This component uses several custom hooks and components:
+ * - `useLayoutStore` to get the layout and selected layouts.
+ * - `useAnalysisStore` to get and set the analysis data.
+ * - `useParams` to get the `id` parameter from the URL.
+ * - `useEffect` to fetch the analysis data when the `id` changes.
+ *
+ * The layout consists of a main panel with a chessboard and optional side panels
+ * that can be resized and rearranged using the `ResizablePanelGroup` and `ResizablePanel` components.
+ * The `DndProvider` is used to enable drag-and-drop functionality.
+ *
+ * @example
+ * ```tsx
+ * import { Analysis } from './analysis';
+ *
+ * const App = () => (
+ *   <div>
+ *     <Analysis />
+ *   </div>
+ * );
+ * ```
+ */
 export const Analysis = () => {
   const { layout, selectedLayouts } = useLayoutStore();
   const { analysis, setAnalysis } = useAnalysisStore();
