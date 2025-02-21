@@ -9,7 +9,15 @@
     "startAnalysis": "Go!",
     "searchPlayer": "Rechercher un joueur...",
     "noResults": "Aucun résultat trouvé",
-    "noGameSelected": "Aucune partie sélectionnée"
+    "noGameSelected": "Aucune partie sélectionnée",
+    "hashSizeTitle": "Taille du hash",
+    "hashSizeDescription": "La quantité de mémoire que le moteur doit utiliser pour sa table de hash (plus de mémoire = meilleures performances).",
+    "timePerMove": "Temps par coup",
+    "timePerMoveDescription": "La quantité de temps que le moteur doit passer sur chaque.",
+    "depthPerMove": "Profondeur par coup",
+    "depthPerMoveDescription": "La profondeur maximale que le moteur doit rechercher pour chaque coup.",
+    "advancedOptions": "Options avancées",
+    "advancedOptionsDescription": "Configurer les paramètres du moteur d'analyse."
   },
   "flipBoard": "Retourner l'échiquier"
 }

@@ -24,9 +24,11 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="container h-full p-16 flex flex-col gap-4 content-center">
-      <p className="text-4xl">{t('title')}</p>
-      <DataTable columns={columns} data={data || []} />
+    <div className="w-full h-full p-16 flex content-center">
+      <div className="container flex flex-col gap-4 overflow-y-auto">
+        <p className="text-4xl">{t('title')}</p>
+        <DataTable columns={columns} data={data || []} />
+      </div>
     </div>
   );
 };

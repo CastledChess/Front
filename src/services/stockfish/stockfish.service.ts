@@ -4,6 +4,7 @@ export type StockfishServiceOptions = {
   enableLogs?: boolean;
   engine?: Engine;
   threads?: number;
+  hashSize?: number;
 };
 
 /**
@@ -20,7 +21,7 @@ export class StockfishService {
    *
    * @param {StockfishServiceOptions} options - Configuration options for the service.
    */
-  constructor({ enableLogs = false, engine = Engines[0], threads = 1 }: StockfishServiceOptions = {}) {
+  constructor({ enableLogs = false, engine = Engines[0], threads = 1, hashSize = 1 }: StockfishServiceOptions = {}) {
     this.worker = new Worker(engine?.value);
 
     if (enableLogs) this.worker.addEventListener('message', (message) => console.log(message.data));
@@ -38,6 +39,7 @@ export class StockfishService {
     this.worker.postMessage('setoption name UCI_ShowWDL value true');
 
     if (engine?.isMultiThreaded) this.worker.postMessage(`setoption name Threads value ${threads}`);
+    this.worker.postMessage(`setoption name Hash value ${hashSize}`);
   }
 
   /**

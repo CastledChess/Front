@@ -23,6 +23,7 @@ import { CaptionLabelProps, DateRange } from 'react-day-picker';
 import { useTranslation } from 'react-i18next';
 
 type ChesscomSelectProps = {
+  isLoading: boolean;
   form: UseFormReturn<z.infer<typeof StartAnalysisFormSchema>>;
 };
 
@@ -80,7 +81,7 @@ const CustomDateCaptionLabel = ({
 
 const MAX_RANGE_DAYS = 31;
 
-export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
+export const ChesscomSelect = ({ form, isLoading }: ChesscomSelectProps) => {
   const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
   const [games, setGames] = useState<ChessComGame[]>([]);
   const [seachOpen, setSearchOpen] = useState(false);
@@ -147,7 +148,7 @@ export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
   return (
     <>
       <Popover open={seachOpen} onOpenChange={setSearchOpen}>
-        <PopoverTrigger id="chesscom-search" asChild>
+        <PopoverTrigger disabled={isLoading} id="chesscom-search" asChild>
           <Button variant="secondary" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
             <ChesscomGame game={games.find((game) => game.uuid === selectedGame)} />
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -159,10 +160,10 @@ export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => debouncedSearchGames(e.target.value)}
             shouldFilter={false}
           >
-            <CommandInput placeholder={t('searchPlayer')} />
+            <CommandInput disabled={isLoading} placeholder={t('searchPlayer')} />
 
             <Popover open={dateOpen} onOpenChange={setDateOpen}>
-              <PopoverTrigger id="chesscom-search-date" asChild>
+              <PopoverTrigger disabled={isLoading} id="chesscom-search-date" asChild>
                 <Button variant="ghost" role="combobox" aria-expanded={seachOpen} className="justify-between w-full">
                   From {dateRange?.from?.toLocaleDateString()} to {dateRange?.to?.toLocaleDateString()}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -213,7 +214,7 @@ export const ChesscomSelect = ({ form }: ChesscomSelectProps) => {
           disabled
           spellCheck="false"
           id="pgn"
-          className="h-56 resize-none custom-scrollbar"
+          className="h-full resize-none custom-scrollbar"
           value={games.find((g) => g.uuid === selectedGame)?.pgn}
         />
       )}

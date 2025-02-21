@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { AnalysisMove, AnalysisMoveClassification, InfoResult } from '@/types/analysis.ts';
-import { StartAnalysisFormSchema } from '@/schema/analysis.ts';
+import { AnalysisMethod, StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
 import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
 import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
@@ -72,8 +72,17 @@ export const analyseMovesLocal = ({
   data,
   reportProgress,
 }: AnalyseMovesLocalParams): Promise<AnalysisMove>[] => {
-  const stockfish = new StockfishService({ engine: data.engine, threads: data.threads });
+  const stockfish = new StockfishService({
+    engine: data.engine,
+    threads: data.threads,
+    hashSize: data.analysisSettings.hashSize,
+    enableLogs: true,
+  });
   const parser = new UciParserService();
+  const goCommand =
+    data.analysisSettings.method === AnalysisMethod.TIME_PER_MOVE
+      ? `go movetime ${data.analysisSettings.time * 1000}`
+      : `go depth ${data.analysisSettings.depth}`;
 
   return moves.map(
     async ({ move, fen }) =>
@@ -85,7 +94,7 @@ export const analyseMovesLocal = ({
         });
 
         stockfish.pushCommand({
-          command: `go movetime 100`,
+          command: goCommand,
           callback: (data) => {
             const result = parser.parse(data, move.color === 'w');
 
