@@ -235,12 +235,56 @@ piece.fading {
   @apply bg-red-400/50 text-red-50;
 }
 
+.purple {
+  @apply bg-purple-400/50 text-purple-50;
+}
+
+.pink {
+  @apply bg-pink-400/50 text-pink-50;
+}
+
 .yellow {
   @apply bg-yellow-400/50 text-yellow-50;
 }
 
 .orange {
   @apply bg-amber-400/50 text-green-50;
+}
+
+.pressure-1 {
+  @apply bg-purple-500/5;
+}
+
+.pressure-2 {
+  @apply bg-purple-500/10;
+}
+
+.pressure-3 {
+  @apply bg-purple-500/15;
+}
+
+.pressure-4 {
+  @apply bg-purple-500/20;
+}
+
+.pressure-5 {
+  @apply bg-purple-500/30;
+}
+
+.pressure-6 {
+  @apply bg-purple-500/40;
+}
+
+.pressure-7 {
+  @apply bg-purple-500/50;
+}
+
+.pressure-8 {
+  @apply bg-purple-500/60;
+}
+
+.pressure-9 {
+  @apply bg-purple-500/70;
 }
 
 @keyframes brilliant {
