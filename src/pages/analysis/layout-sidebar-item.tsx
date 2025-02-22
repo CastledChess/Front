@@ -17,6 +17,7 @@ const panelIcons: Record<keyof typeof panels, string> = {
   engineLines: 'game-icons:striking-arrows',
   moveList: 'ix:move',
   evalHistory: 'fa-solid:chart-line',
+  interpretation: 'mdi:comment-quote',
 };
 
 export const LayoutSidebarItem = ({ item, which }: LayoutSidebarItemProps) => {

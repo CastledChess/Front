@@ -15,12 +15,14 @@ import { useAnalysisStore } from '@/store/analysis.ts';
 import { getAnalysisById } from '@/api/analysis.ts';
 import { Controls } from '@/pages/analysis/panels/controls/controls.tsx';
 import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
+import { Interpretation } from './panels/interpretation/interpretation';
 
 export const panels: Record<Panel, React.ReactNode> = {
   database: <Database />,
   engineLines: <EngineLines />,
   moveList: <MoveList />,
   evalHistory: <EvalHistory />,
+  interpretation: <Interpretation />,
 };
 
 const hasSelectedPanels = (selectedLayouts: SelectedLayouts, layout: Layout, items: LayoutItem[]): boolean => {
