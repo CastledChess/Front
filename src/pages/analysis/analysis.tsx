@@ -134,27 +134,31 @@ export const Analysis = () => {
 
           <ResizablePanel defaultSize={50} minSize={40} order={0} className="bg-secondary-bg/30">
             <Mosaic<Panel>
+              value={layout}
+              initialValue={layout}
               onChange={setLayout}
               renderTile={(id, path) => (
                 <MosaicWindow<Panel>
                   path={path}
-                  renderPreview={() => <div></div>}
-                  renderToolbar={() => (
-                    <div className="flex h-full items-center px-2 gap-4 rounded-t-lg w-full bg-secondary-bg">
-                      <Icon icon={panelIcons[id]} /> {panelTitles[id]}
-                    </div>
-                  )}
+                  renderPreview={() => <div />}
+                  renderToolbar={() => <PanelToolbar id={id} />}
                   title={panelTitles[id]}
                 >
                   {panels[id]}
                 </MosaicWindow>
               )}
-              value={layout}
-              initialValue={layout}
             />
           </ResizablePanel>
         </ResizablePanelGroup>
       </DndProvider>
+    </div>
+  );
+};
+
+const PanelToolbar = ({ id }: { id: Panel }) => {
+  return (
+    <div className="flex h-full items-center px-2 gap-4 rounded-t-lg w-full bg-secondary-bg">
+      <Icon icon={panelIcons[id]} /> {panelTitles[id]}
     </div>
   );
 };
