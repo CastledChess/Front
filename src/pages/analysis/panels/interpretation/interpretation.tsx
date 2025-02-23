@@ -9,14 +9,14 @@ import { AttackUndefendedPiece } from '@/pages/analysis/panels/interpretation/co
 import { ReinforcesPiece } from '@/pages/analysis/panels/interpretation/comments/reinforce-piece.tsx';
 
 export const Interpretation = () => {
-  const { currentMove, chess, analysis, chessGround } = useAnalysisStore();
+  const { currentMove, analysis, chessGround } = useAnalysisStore();
   const previousMove = analysis!.moves[currentMove - 1];
   const moveEffects = useRef<MoveEffects[]>([]);
 
   const getSquareWeights = (move: AnalysisMove) => {
     const c = new Chess(move.move.after);
     const weights: SquareWeights = Array.from(SQUARES).reduce((acc, curr) => {
-      acc[curr] = { attacked: 0, controlled: 0, defended: 0 };
+      acc[curr] = { attacked: 0, controlledWhite: 0, controlledBlack: 0, defended: 0 };
       return acc;
     }, {} as SquareWeights);
 
@@ -46,7 +46,7 @@ export const Interpretation = () => {
         const square = makeSquare(sq);
         const piece = c.get(square);
 
-        if (!piece) weights[square].controlled += pieceValues[currPiece.role];
+        if (!piece) weights[square].controlledWhite += pieceValues[currPiece.role];
         else weights[square][piece.color === 'b' ? 'attacked' : 'defended'] += pieceValues[currPiece.role];
       }
     }
@@ -66,7 +66,7 @@ export const Interpretation = () => {
         const square = makeSquare(sq);
         const piece = c.get(square);
 
-        if (!piece) weights[square].controlled += pieceValues[currPiece.role];
+        if (!piece) weights[square].controlledBlack += pieceValues[currPiece.role];
         else weights[square][piece.color === 'w' ? 'attacked' : 'defended'] += pieceValues[currPiece.role];
       }
     }
@@ -85,17 +85,15 @@ export const Interpretation = () => {
       return;
     }
 
-    // const customHighlights = new Map<Key, string>(chessGround?.state.highlight.custom?.entries());
-
     for (const square of SQUARES) {
       const previousSw = previousMe.squareWeights[square];
       const piece = c.get(square);
 
       if (!piece) continue;
+
       if (move.move.to === square || move.move.from === square) continue;
 
       const previousAttackedDefendedDelta = previousSw.attacked - previousSw.defended;
-      const pressure = sw[square].attacked - sw[square].defended;
       const attackedDelta = sw[square].attacked - previousSw.attacked;
       const defendedDelta = sw[square].defended - previousSw.defended;
 
@@ -108,6 +106,7 @@ export const Interpretation = () => {
       ) {
         me.effects.push({
           square,
+          move: move.move,
           piece: piece.type,
           color: piece.color,
           type: CommentType.AttackUndefendedPiece,
@@ -123,6 +122,7 @@ export const Interpretation = () => {
       ) {
         me.effects.push({
           square,
+          move: move.move,
           piece: piece.type,
           color: piece.color,
           type: CommentType.ReinforcesPiece,
@@ -175,6 +175,8 @@ export const Interpretation = () => {
                 return <AttackUndefendedPiece key={index} {...effect} />;
               case CommentType.ReinforcesPiece:
                 return <ReinforcesPiece key={index} {...effect} />;
+              case CommentType.ControlsCenter:
+                return <p key={index}>Controls center</p>;
             }
           })}
         </div>

@@ -1,10 +1,10 @@
-import { PieceSymbol, Square } from 'chess.js';
+import { Move, PieceSymbol, Square } from 'chess.js';
 
 export type SquareWeights = {
-  [K in Square]: { attacked: number; controlled: number; defended: number };
+  [K in Square]: { attacked: number; controlledWhite: number; controlledBlack: number; defended: number };
 };
 
-export type MoveEffect = { square: Square; piece: PieceSymbol; color: string; type: CommentType };
+export type MoveEffect = { piece: PieceSymbol; color: string; move: Move; square: Square; type: CommentType };
 
 export type MoveEffects = {
   squareWeights: SquareWeights;
@@ -12,6 +12,7 @@ export type MoveEffects = {
 };
 
 export enum CommentType {
-  AttackUndefendedPiece,
-  ReinforcesPiece,
+  AttackUndefendedPiece = 'AttackUndefendedPiece',
+  ReinforcesPiece = 'ReinforcesPiece',
+  ControlsCenter = 'ControlsCenter',
 }
