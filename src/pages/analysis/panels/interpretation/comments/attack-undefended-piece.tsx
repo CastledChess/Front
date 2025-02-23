@@ -5,7 +5,8 @@ import { useInterpretationComment } from '@/pages/analysis/panels/interpretation
 export const AttackUndefendedPiece = (props: MoveEffect) => {
   const { handlePointerEnter, handlePointerLeave } = useInterpretationComment({
     moveEffect: props,
-    highlight: 'red',
+    color: 'red',
+    type: 'shape',
   });
 
   return (

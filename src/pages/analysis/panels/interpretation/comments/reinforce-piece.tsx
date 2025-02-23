@@ -5,7 +5,8 @@ import { useInterpretationComment } from '@/pages/analysis/panels/interpretation
 export const ReinforcesPiece = (props: MoveEffect) => {
   const { handlePointerEnter, handlePointerLeave } = useInterpretationComment({
     moveEffect: props,
-    highlight: 'orange',
+    color: 'orange',
+    type: 'highlight',
   });
 
   return (
