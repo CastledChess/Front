@@ -1,5 +1,5 @@
 ﻿import { useAnalysisStore } from '@/store/analysis.ts';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Chess, SQUARES } from 'chess.js';
 import { parseFen } from 'chessops/fen';
 import { attacks, makeSquare, parseSquare } from 'chessops';
@@ -7,11 +7,13 @@ import { AnalysisMove } from '@/types/analysis.ts';
 import { CommentType, MoveEffects, SquareWeights } from '@/types/interpretation';
 import { AttackUndefendedPiece } from '@/pages/analysis/panels/interpretation/comments/attack-undefended-piece.tsx';
 import { ReinforcesPiece } from '@/pages/analysis/panels/interpretation/comments/reinforce-piece.tsx';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group.tsx';
 
 export const Interpretation = () => {
   const { currentMove, analysis, chessGround } = useAnalysisStore();
   const previousMove = analysis!.moves[currentMove - 1];
   const moveEffects = useRef<MoveEffects[]>([]);
+  const [highlightMode, setHighlightMode] = useState('pressure');
 
   const getSquareWeights = (move: AnalysisMove) => {
     const c = new Chess(move.move.after);
@@ -141,12 +143,8 @@ export const Interpretation = () => {
     console.log(moveEffects.current);
   };
 
-  useEffect(() => {
-    getMoveEffects();
-  }, [analysis]);
-
-  useEffect(() => {
-    const customHighlights = new Map(chessGround?.state.highlight.custom?.entries());
+  const handleDisplayPressure = () => {
+    const customHighlights = new Map();
 
     for (const square of SQUARES) {
       const pressure =
@@ -161,11 +159,50 @@ export const Interpretation = () => {
     chessGround?.set({
       highlight: { custom: customHighlights },
     });
-  }, [currentMove]);
+  };
+
+  const handleDisplayAttacks = () => {
+    const customHighlights = new Map();
+
+    for (const square of SQUARES) {
+      const attacked = moveEffects.current[currentMove - 1]?.squareWeights[square].attacked;
+
+      if (attacked > 0) {
+        customHighlights.set(square, `attack-${attacked}`);
+      }
+    }
+
+    chessGround?.set({
+      highlight: { custom: customHighlights },
+    });
+  };
+
+  useEffect(() => {
+    getMoveEffects();
+  }, [analysis]);
+
+  useEffect(() => {
+    switch (highlightMode) {
+      case 'pressure':
+        handleDisplayPressure();
+        break;
+      case 'attacks':
+        handleDisplayAttacks();
+        break;
+    }
+  }, [currentMove, highlightMode]);
 
   return (
     <div className="flex flex-col h-full gap-6 p-6 bg-pressure-6">
       <span className="font-semibold">Interpretation</span>
+      <ToggleGroup type="single" value={highlightMode} onValueChange={setHighlightMode}>
+        <ToggleGroupItem value="pressure" aria-label="Pressure">
+          Pressure
+        </ToggleGroupItem>
+        <ToggleGroupItem value="attacks" aria-label="Attacks">
+          Attacks
+        </ToggleGroupItem>
+      </ToggleGroup>
 
       {previousMove && (
         <div className="flex flex-col gap-2">
