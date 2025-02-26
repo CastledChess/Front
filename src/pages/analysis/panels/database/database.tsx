@@ -1,8 +1,9 @@
 ﻿import { useAnalysisStore } from '@/store/analysis.ts';
-import { HTMLProps, useEffect, useMemo, useRef, useState } from 'react';
+import { HTMLProps, useMemo, useRef } from 'react';
 import { queryPosition } from '@/api/database.ts';
 import { DrawShape } from 'chessground/draw';
 import { cn } from '@/lib/utils.ts';
+import { useQuery } from '@tanstack/react-query';
 
 type DatabaseMove = {
   san: string;
@@ -21,20 +22,16 @@ type RafinedDatabaseMove = DatabaseMove & {
 
 export const Database = () => {
   const { chess, chessGround } = useAnalysisStore();
-  const [databaseMoves, setDatabaseMoves] = useState<RafinedDatabaseMove[]>([]);
   const autoShapes = useRef<DrawShape | null>(null);
 
   const moves = useMemo(() => chess.moves({ verbose: true }), [chess.fen()]);
 
-  useEffect(() => {
-    const handleQueryPosition = async () => {
+  const handleQueryPosition = async () =>
+    new Promise<RafinedDatabaseMove[]>(async (resolve) => {
       try {
         const { data } = (await queryPosition(chess.fen())) as { data: DatabaseMove[] };
 
-        if (!data) {
-          setDatabaseMoves([]);
-          return;
-        }
+        if (!data) resolve([]);
 
         const moves = data
           .map((m: DatabaseMove) => {
@@ -50,15 +47,17 @@ export const Database = () => {
           })
           .sort((a, b) => (a.total < b.total ? 1 : -1));
 
-        setDatabaseMoves(moves);
+        resolve(moves);
       } catch (err) {
         console.error(err);
-        setDatabaseMoves([]);
+        resolve([]);
       }
-    };
+    });
 
-    handleQueryPosition();
-  }, [chess.fen()]);
+  const { isPending, data: databaseMoves } = useQuery({
+    queryKey: ['elitedb', chess.fen()],
+    queryFn: handleQueryPosition,
+  });
 
   const handleDisplayMoveArrow = (san: string) => {
     const move = moves.find((move) => move.san === san);
@@ -96,35 +95,49 @@ export const Database = () => {
           </tr>
         </thead>
         <tbody>
-          {databaseMoves.length === 0 && (
+          {databaseMoves?.length === 0 && !isPending && (
             <tr>
               <td className="p-1 pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
                 No data available
               </td>
             </tr>
           )}
-          {databaseMoves.map((move) => (
-            <tr
-              key={move.san}
-              className="hover:bg-white/10 cursor-default"
-              onPointerEnter={() => handleDisplayMoveArrow(move.san)}
-              onPointerLeave={handleClearMoveArrow}
-            >
-              <td className="p-1 pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
-                {move.san}
-              </td>
-              <td className="p-1 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
-                {new Intl.NumberFormat().format(move.total)}
-              </td>
-              <td className="p-1 pr-6">
-                <div className="flex w-full overflow-hidden rounded-xl border">
-                  <MoveRepartition amount={move.whitePercent} className="bg-white text-background" />
-                  <MoveRepartition amount={move.drawPercent} className="bg-castled-accent text-background" />
-                  <MoveRepartition amount={move.blackPercent} className="bg-secondary text-foreground" />
-                </div>
-              </td>
-            </tr>
-          ))}
+          {isPending
+            ? new Array(10).fill(0).map((_, i) => (
+                <tr key={i} className="animate-pulse h-[26px]">
+                  <td className="p-1 pl-6 w-1">
+                    <div className=" h-4 bg-white/10 rounded-xl" />
+                  </td>
+                  <td className="p-1 w-1">
+                    <div className="h-4 bg-white/10 rounded-xl" />
+                  </td>
+                  <td className="p-1 pr-6 w-full">
+                    <div className="h-4 bg-white/10 rounded-xl" />
+                  </td>
+                </tr>
+              ))
+            : databaseMoves?.map((move) => (
+                <tr
+                  key={move.san}
+                  className="animate-fade-in hover:bg-white/10 cursor-default"
+                  onPointerEnter={() => handleDisplayMoveArrow(move.san)}
+                  onPointerLeave={handleClearMoveArrow}
+                >
+                  <td className="p-1 pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
+                    {move.san}
+                  </td>
+                  <td className="p-1 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
+                    {new Intl.NumberFormat().format(move.total)}
+                  </td>
+                  <td className="p-1 pr-6">
+                    <div className="flex w-full overflow-hidden rounded-xl border">
+                      <MoveRepartition amount={move.whitePercent} className="bg-white text-background" />
+                      <MoveRepartition amount={move.drawPercent} className="bg-castled-accent text-background" />
+                      <MoveRepartition amount={move.blackPercent} className="bg-secondary text-foreground" />
+                    </div>
+                  </td>
+                </tr>
+              ))}
         </tbody>
       </table>
     </div>
