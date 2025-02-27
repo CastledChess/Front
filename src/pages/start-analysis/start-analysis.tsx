@@ -60,6 +60,67 @@ enum ImportMode {
   LICHESS_ORG = 'Lichess.org',
 }
 
+/**
+ * The `StartAnalysis` component is responsible for initiating a chess game analysis.
+ * It provides a form for users to input their game data and select analysis settings.
+ * The component handles the submission of the form, processes the game data, and navigates
+ * to the analysis results page upon successful analysis.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <StartAnalysis />
+ * ```
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @remarks
+ * This component uses various hooks and state management to handle form submission,
+ * progress tracking, and engine selection. It also supports different import modes
+ * for game data, including PGN, Chess.com, and Lichess.org.
+ *
+ * @function
+ * @name StartAnalysis
+ *
+ * @hook
+ * @name useAnalysisStore
+ * @description Retrieves the analysis store context.
+ *
+ * @hook
+ * @name useNavigate
+ * @description Provides navigation functionality.
+ *
+ * @hook
+ * @name useState
+ * @description Manages local state within the component.
+ *
+ * @hook
+ * @name useTranslation
+ * @description Provides translation functionality.
+ *
+ * @hook
+ * @name useForm
+ * @description Manages form state and validation.
+ *
+ * @hook
+ * @name useEffect
+ * @description Executes side effects in the component.
+ *
+ * @param {Object} form - The form object managed by `useForm`.
+ * @param {Function} onSubmit - The function to handle form submission.
+ * @param {Function} analyseGame - The function to process and analyze the game data.
+ * @param {Function} reportProgress - The function to report analysis progress.
+ * @param {Function} checkCachedEngines - The function to check for cached engines.
+ * @param {Function} isEngineCached - The function to check if a selected engine is cached.
+ * @param {Function} downloadSelectedEngine - The function to download the selected engine.
+ *
+ * @state {boolean} isLoading - Indicates if the analysis is in progress.
+ * @state {boolean} isDownloading - Indicates if the engine is being downloaded.
+ * @state {Object} progress - Tracks the progress of the analysis.
+ * @state {Engine} selectedEngine - The currently selected engine for analysis.
+ * @state {Engine[]} cachedEngines - The list of cached engines.
+ * @state {ImportMode} importMode - The current import mode for game data.
+ */
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
   const navigate = useNavigate();

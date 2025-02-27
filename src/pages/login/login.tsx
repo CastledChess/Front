@@ -11,6 +11,40 @@ import { useTranslation } from 'react-i18next';
 import lichessIcon from '@/assets/icons/lichess.svg?url';
 import chessComIcon from '@/assets/icons/chesscom.svg?url';
 
+/**
+ * The `Login` component renders a login form for users to authenticate.
+ * It uses `react-hook-form` for form handling and validation with a schema defined using `zod`.
+ * The component also integrates with `react-i18next` for internationalization and `react-router-dom` for navigation.
+ *
+ * @component
+ * @example
+ * // Usage example:
+ * // <Login />
+ *
+ * @returns {JSX.Element} The rendered login form component.
+ *
+ * @remarks
+ * - The form includes fields for email and password, with validation and error handling.
+ * - On successful login, the user is navigated to the home page.
+ * - If login fails, error messages are displayed for the email and password fields.
+ * - The component also provides links for password recovery and registration.
+ * - Social login buttons for Lichess and Chess.com are included but not yet functional.
+ *
+ * @handler
+ * - `onSubmit`: Handles form submission for user login.
+ * - `navigate`: Navigates to the home page on successful login.
+ *
+ * @dependencies
+ * - `react-hook-form`: For form state management and validation.
+ * - `zod`: For schema-based validation.
+ * - `@hookform/resolvers/zod`: To integrate `zod` with `react-hook-form`.
+ * - `react-router-dom`: For navigation.
+ * - `react-i18next`: For internationalization.
+ * - Custom UI components: `Form`, `FormControl`, `FormField`, `FormItem`, `FormMessage`, `Input`, `Button`.
+ * - Custom API function: `login`.
+ * - Assets: `lichessIcon`, `chessComIcon`.
+ */
+
 export const Login = () => {
   const { t } = useTranslation('login');
   const form = useForm<z.infer<typeof LoginSchema>>({

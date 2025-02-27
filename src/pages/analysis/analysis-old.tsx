@@ -31,6 +31,60 @@ import { EvalChart } from '@/components/evalchart/evalchart.tsx';
 import { CategoricalChartState } from 'recharts/types/chart/types';
 import { useTranslation } from 'react-i18next';
 
+/**
+ * The `Analysis` component is responsible for rendering the chess analysis page.
+ * It provides functionalities to navigate through chess moves, auto-play moves,
+ * flip the chessboard, and display move evaluations and classifications.
+ *
+ * @component
+ * @example
+ * return (
+ *   <Analysis />
+ * )
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @remarks
+ * This component uses several hooks and utilities to manage the state and behavior of the chess analysis:
+ * - `useAnalysisStore`: Custom hook to access the analysis store.
+ * - `useState`: React hook to manage local state.
+ * - `useRef`: React hook to create mutable object references.
+ * - `useTranslation`: Hook from `react-i18next` for internationalization.
+ * - `useEffect`: React hook to perform side effects.
+ * - `useHotkeys`: Custom hook to handle keyboard shortcuts.
+ *
+ * @function handleNextMove
+ * Advances to the next move in the analysis.
+ *
+ * @function handlePrevMove
+ * Reverts to the previous move in the analysis.
+ *
+ * @function handleToggleAutoPlay
+ * Toggles the auto-play functionality.
+ *
+ * @function handleFlipBoard
+ * Flips the orientation of the chessboard.
+ *
+ * @function handleSkipToBegin
+ * Skips to the beginning of the move list.
+ *
+ * @function handleSkipToEnd
+ * Skips to the end of the move list.
+ *
+ * @function handleSkipToMove
+ * Skips to a specific move in the move list.
+ *
+ * @function handleClickEvalChart
+ * Handles clicks on the evaluation chart to navigate to a specific move.
+ *
+ * @param {CategoricalChartState} nextState - The state of the evaluation chart.
+ *
+ * @function formatMoves
+ * Formats the moves into pairs of white and black moves.
+ *
+ * @param {AnalysisMove[]} moves - The list of moves to format.
+ * @returns {{ whiteMove: AnalysisMove; blackMove: AnalysisMove }[]} The formatted moves.
+ */
 export const Analysis = () => {
   const { currentMove, setCurrentMove, analysis, chess, chessGround } = useAnalysisStore();
   const [orientation, setOrientation] = useState<'white' | 'black'>('white');

@@ -20,6 +20,39 @@ type RafinedDatabaseMove = DatabaseMove & {
   total: number;
 };
 
+/**
+ * The `Database` component is responsible for displaying chess moves from a database
+ * and their statistics. It fetches the moves based on the current position in the chess game
+ * and displays them in a table format. Each move shows the total number of times it has been played
+ * and the percentage of outcomes (white win, draw, black win).
+ *
+ * The component also highlights the move on the chessboard when the user hovers over a move in the table.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @example
+ * <Database />
+ *
+ * @remarks
+ * This component uses the `useAnalysisStore` hook to access the chess game state and the chessboard.
+ * It also uses the `queryPosition` function to fetch the moves from the database.
+ *
+ * @hook
+ * - `useAnalysisStore` - Retrieves the current chess game state and chessboard instance.
+ * - `useState` - Manages the state of the database moves.
+ * - `useMemo` - Memoizes the list of moves based on the current position.
+ * - `useEffect` - Fetches the moves from the database whenever the position changes.
+ *
+ * @function handleQueryPosition
+ * Fetches the moves from the database based on the current position and updates the state.
+ *
+ * @function handleDisplayMoveArrow
+ * Highlights the move on the chessboard when the user hovers over a move in the table.
+ *
+ * @function handleClearMoveArrow
+ * Clears the highlighted move on the chessboard when the user stops hovering over a move in the table.
+ */
 export const Database = () => {
   const { chess, chessGround } = useAnalysisStore();
   const autoShapes = useRef<DrawShape | null>(null);

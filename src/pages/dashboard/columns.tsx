@@ -32,6 +32,37 @@ export interface GameDetails {
   pgn: string;
 }
 
+/**
+ * Defines the column configuration for the GameDetails table.
+ *
+ * @type {ColumnDef<GameDetails>[]}
+ *
+ * @property {Object} id - The column definition for the selection checkbox.
+ * @property {Function} id.header - Renders the header checkbox for selecting all rows.
+ * @property {Function} id.cell - Renders the checkbox for selecting individual rows.
+ *
+ * @property {Object} accessorKey - The column definition for displaying players.
+ * @property {string} accessorKey.players - The key for accessing player data.
+ * @property {string} accessorKey.header - The header title for the players column.
+ * @property {Function} accessorKey.cell - Renders the cell content for players.
+ *
+ * @property {Object} accessorKey - The column definition for displaying the result.
+ * @property {string} accessorKey.header.Result - The key for accessing result data.
+ * @property {Function} accessorKey.header - Renders the header with sorting functionality for the result column.
+ * @property {boolean} accessorKey.enableSorting - Enables sorting for the result column.
+ *
+ * @property {Object} accessorKey - The column definition for displaying moves.
+ * @property {string} accessorKey.moves - The key for accessing moves data.
+ * @property {Function} accessorKey.header - Renders the header with sorting functionality for the moves column.
+ *
+ * @property {Object} accessorKey - The column definition for displaying the date.
+ * @property {string} accessorKey.header.Date - The key for accessing date data.
+ * @property {Function} accessorKey.header - Renders the header with sorting functionality for the date column.
+ * @property {boolean} accessorKey.enableSorting - Enables sorting for the date column.
+ *
+ * @property {Object} id - The column definition for the actions dropdown menu.
+ * @property {Function} id.cell - Renders the actions dropdown menu for each row.
+ */
 export const columns: ColumnDef<GameDetails>[] = [
   {
     id: 'select',

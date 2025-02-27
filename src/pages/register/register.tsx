@@ -11,6 +11,27 @@ import { useTranslation } from 'react-i18next';
 import lichessIcon from '@/assets/icons/lichess.svg?url';
 import chessComIcon from '@/assets/icons/chesscom.svg?url';
 
+/**
+ * Register component renders a registration form for new users.
+ *
+ * This component uses the `useForm` hook from `react-hook-form` and `zodResolver`
+ * to handle form validation and submission. It also utilizes the `useTranslation`
+ * hook from `react-i18next` for internationalization.
+ *
+ * The form includes fields for email, username, password, and confirm password.
+ * On successful registration, the user is navigated to the home page. If registration
+ * fails, errors are logged to the console.
+ *
+ * @component
+ * <Register />
+ *
+ * @example
+ * return (
+ *  <Register />
+ * )
+ *
+ * @returns {JSX.Element} The rendered registration form component.
+ */
 export const Register = () => {
   const { t } = useTranslation('register');
   const form = useForm<z.infer<typeof RegisterSchema>>({

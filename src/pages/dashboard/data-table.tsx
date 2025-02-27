@@ -20,6 +20,31 @@ interface DataTableProps<TData> {
   data: TData[];
 }
 
+/**
+ * DataTable component for displaying and managing a table with sorting, pagination, and row selection capabilities.
+ *
+ * @template TData - The type of data being displayed in the table, extending GameDetails.
+ * @param {DataTableProps<TData>} props - The properties for the DataTable component.
+ * @param {ColumnDef<TData>[]} props.columns - The column definitions for the table.
+ * @param {TData[]} props.data - The data to be displayed in the table.
+ *
+ * @returns {JSX.Element} The rendered DataTable component.
+ *
+ * @example
+ * ```tsx
+ * const columns = [
+ *   { accessorKey: 'name', header: 'Name' },
+ *   { accessorKey: 'age', header: 'Age' },
+ * ];
+ * const data = [
+ *   { name: 'John Doe', age: 30 },
+ *   { name: 'Jane Smith', age: 25 },
+ * ];
+ *
+ * <DataTable columns={columns} data={data} />
+ * ```
+ */
+
 export function DataTable<TData extends GameDetails>({ columns, data }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -37,6 +62,8 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
     },
     onSortingChange: setSorting, // Met à jour l'état du tri
   });
+
+  console.log(data);
 
   return (
     <>
@@ -77,7 +104,12 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
                         : null}
                       {/* {cell.column.id === 'moves' ? cell.row.original.header.Round : null} */}
                       {cell.column.id === 'header_Date'
-                        ? format(parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date()), 'dd / MM / yyyy')
+                        ? format(
+                            cell.row.original.header.Date
+                              ? parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date())
+                              : new Date(),
+                            'dd / MM / yyyy',
+                          )
                         : null}
                       {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                     </TableCell>
