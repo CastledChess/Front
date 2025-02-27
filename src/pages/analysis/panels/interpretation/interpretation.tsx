@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Button } from '@/components/ui/button.tsx';
 import { pieceColorToColorName, pieceSymbolToPieceName } from '@/lib/interpretation.ts';
 import { DrawShape } from 'chessground/draw';
+import { SquareHighlight } from '@/components/squareHighlight/square-highlight.tsx';
 
 const pieceValues = {
   p: 5,
@@ -28,9 +29,24 @@ export const Interpretation = () => {
   const getPieceRoleSentence = (role: AllPieceRoles) => {
     switch (role.type) {
       case RoleType.SupportsPiece:
-        return `Supports the ${pieceColorToColorName[role.toPiece.color]} ${pieceSymbolToPieceName[role.toPiece.type]} on ${role.toSquare} that is being ${role.reason.type} by the ${pieceColorToColorName[role.reason.piece.color]} ${pieceSymbolToPieceName[role.reason.piece.type]} on ${role.reason.square}`;
+        return (
+          <span className="flex gap-2 items-center">
+            Supports the {pieceColorToColorName[role.toPiece.color]} {pieceSymbolToPieceName[role.toPiece.type]} on{' '}
+            <SquareHighlight className="bg-castled-accent/10 rounded" square={role.toSquare}>
+              {role.toSquare}
+            </SquareHighlight>{' '}
+            that is being {role.reason.type} by the {pieceColorToColorName[role.reason.piece.color]}{' '}
+            {pieceSymbolToPieceName[role.reason.piece.type]} on
+            <SquareHighlight square={role.reason.square}>{role.reason.square}</SquareHighlight>
+          </span>
+        );
       case RoleType.XRaysPiece:
-        return `X-Rays the ${pieceColorToColorName[role.toPiece.color]} ${pieceSymbolToPieceName[role.toPiece.type]} on ${role.toSquare}`;
+        return (
+          <span className="flex gap-2 items-center">
+            X-Rays the {pieceColorToColorName[role.toPiece.color]} {pieceSymbolToPieceName[role.toPiece.type]} on{' '}
+            <SquareHighlight square={role.toSquare}>{role.toSquare}</SquareHighlight>
+          </span>
+        );
       default:
         return null;
     }
@@ -173,14 +189,11 @@ export const Interpretation = () => {
 
     pieceRoles.current = [];
     analysis.moves.map(getRoles);
-    console.log(pieceRoles.current);
   };
 
   useEffect(() => {
     getMovesRoles();
   }, [analysis]);
-
-  console.log(pieceRoles.current[currentMove - 1]);
 
   const handlePointerEnterRole = ({ fromSquare, toSquare }: AllPieceRoles) => {
     if (!chessGround) return;
@@ -219,13 +232,13 @@ export const Interpretation = () => {
                 </CollapsibleTrigger>
 
                 <CollapsibleContent className="p-2 space-y-2 bg-castled-secondary border-l-4 border-foreground/10 rounded-l ml-2">
-                  <ul className="list-disc list-inside">
-                    {roles.map((role) => (
+                  <ul>
+                    {roles.map((role, index) => (
                       <li
-                        key={role.toSquare}
+                        key={role.toSquare + index}
                         onPointerLeave={handlePointerLeaveRole}
                         onPointerEnter={() => handlePointerEnterRole(role)}
-                        className="hover:bg-castled-primary/50 text-sm cursor-default p-1 rounded"
+                        className="hover:bg-castled-primary/50 text-sm cursor-default flex"
                       >
                         {getPieceRoleSentence(role)}
                       </li>
