@@ -235,12 +235,92 @@ piece.fading {
   @apply bg-red-400/50 text-red-50;
 }
 
+.purple {
+  @apply bg-purple-400/50 text-purple-50;
+}
+
+.pink {
+  @apply bg-pink-400/50 text-pink-50;
+}
+
 .yellow {
   @apply bg-yellow-400/50 text-yellow-50;
 }
 
 .orange {
   @apply bg-amber-400/50 text-green-50;
+}
+
+.pressure-1 {
+  @apply bg-purple-500/20;
+}
+
+.pressure-2 {
+  @apply bg-purple-500/30;
+}
+
+.pressure-3 {
+  @apply bg-purple-500/40;
+}
+
+.pressure-4 {
+  @apply bg-purple-500/50;
+}
+
+.pressure-5 {
+  @apply bg-purple-500/60;
+}
+
+.pressure-6 {
+  @apply bg-purple-500/70;
+}
+
+.pressure-7 {
+  @apply bg-purple-500/80;
+}
+
+.pressure-8 {
+  @apply bg-purple-500/90;
+}
+
+.pressure-9 {
+  @apply bg-purple-500;
+}
+
+.attack-1 {
+  @apply bg-red-500/20;
+}
+
+.attack-2 {
+  @apply bg-red-500/30;
+}
+
+.attack-3 {
+  @apply bg-red-500/40;
+}
+
+.attack-4 {
+  @apply bg-red-500/50;
+}
+
+.attack-5 {
+  @apply bg-red-500/60;
+}
+
+.attack-6 {
+  @apply bg-red-500/70;
+}
+
+.attack-7 {
+  @apply bg-red-500/80;
+}
+
+.attack-8 {
+  @apply bg-red-500/90;
+}
+
+.attack-9 {
+  @apply bg-red-500;
 }
 
 @keyframes brilliant {

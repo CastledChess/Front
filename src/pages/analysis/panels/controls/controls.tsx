@@ -150,13 +150,13 @@ export const Controls = () => {
       });
     }
 
+    const customHighlight = new Map<Key, string>([
+      [previousMove.move.from as Key, classificationToColor[previousMove.classification!]],
+      [previousMove.move.to as Key, classificationToColor[previousMove.classification!]],
+    ]);
+
     chessGround?.set({
-      highlight: {
-        custom: new Map<Key, string>([
-          [previousMove.move.from as Key, classificationToColor[previousMove.classification!]],
-          [previousMove.move.to as Key, classificationToColor[previousMove.classification!]],
-        ]),
-      },
+      highlight: { custom: customHighlight },
       drawable: { autoShapes: autoShapes },
     });
   }, [currentMove]);
