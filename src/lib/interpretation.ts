@@ -6,3 +6,8 @@ export const pieceSymbolToPieceName = {
   q: 'Queen',
   k: 'King',
 };
+
+export const pieceColorToColorName = {
+  w: 'White',
+  b: 'Black',
+};

@@ -38,6 +38,8 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
     onSortingChange: setSorting, // Met à jour l'état du tri
   });
 
+  console.log(data);
+
   return (
     <>
       <div className="rounded-md border overflow-y-scroll custom-scrollbar h-full">
@@ -77,7 +79,12 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
                         : null}
                       {/* {cell.column.id === 'moves' ? cell.row.original.header.Round : null} */}
                       {cell.column.id === 'header_Date'
-                        ? format(parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date()), 'dd / MM / yyyy')
+                        ? format(
+                            cell.row.original.header.Date
+                              ? parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date())
+                              : new Date(),
+                            'dd / MM / yyyy',
+                          )
                         : null}
                       {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                     </TableCell>

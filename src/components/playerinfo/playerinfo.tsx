@@ -5,6 +5,8 @@ type PlayerInfoProps = {
 };
 
 export const PlayerInfo = ({ player }: PlayerInfoProps) => {
+  if (!player.username) return null;
+
   return (
     <div className="flex gap-2 items-center h-10">
       <Avatar>

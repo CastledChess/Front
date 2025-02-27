@@ -1,220 +1,239 @@
 ﻿import { useAnalysisStore } from '@/store/analysis.ts';
-import { useEffect, useRef, useState } from 'react';
-import { Chess, SQUARES } from 'chess.js';
+import { useEffect, useRef } from 'react';
+import { Chess, Piece, Square, SQUARES } from 'chess.js';
 import { parseFen } from 'chessops/fen';
 import { attacks, makeSquare, parseSquare } from 'chessops';
 import { AnalysisMove } from '@/types/analysis.ts';
-import { CommentType, MoveEffects, SquareWeights } from '@/types/interpretation';
-import { AttackUndefendedPiece } from '@/pages/analysis/panels/interpretation/comments/attack-undefended-piece.tsx';
-import { ReinforcesPiece } from '@/pages/analysis/panels/interpretation/comments/reinforce-piece.tsx';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group.tsx';
+import { RoleType, PieceRoles, SquareWeights, PieceRolesRecord, AllPieceRoles, Reason } from '@/types/interpretation';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Button } from '@/components/ui/button.tsx';
+import { pieceColorToColorName, pieceSymbolToPieceName } from '@/lib/interpretation.ts';
+import { DrawShape } from 'chessground/draw';
+
+const pieceValues = {
+  p: 5,
+  n: 4,
+  b: 4,
+  r: 3,
+  q: 2,
+  k: 1,
+};
 
 export const Interpretation = () => {
-  const { currentMove, analysis, chessGround } = useAnalysisStore();
+  const { currentMove, analysis, chess, chessGround } = useAnalysisStore();
   const previousMove = analysis!.moves[currentMove - 1];
-  const moveEffects = useRef<MoveEffects[]>([]);
-  const [highlightMode, setHighlightMode] = useState('pressure');
+  const pieceRoles = useRef<PieceRoles[]>([]);
+  const customAutoShapes = useRef<DrawShape[]>(structuredClone(chessGround?.state.drawable.autoShapes) || []);
 
-  const getSquareWeights = (move: AnalysisMove) => {
+  const getPieceRoleSentence = (role: AllPieceRoles) => {
+    switch (role.type) {
+      case RoleType.SupportsPiece:
+        return `Supports the ${pieceColorToColorName[role.toPiece.color]} ${pieceSymbolToPieceName[role.toPiece.type]} on ${role.toSquare} that is being ${role.reason.type} by the ${pieceColorToColorName[role.reason.piece.color]} ${pieceSymbolToPieceName[role.reason.piece.type]} on ${role.reason.square}`;
+      case RoleType.XRaysPiece:
+        return `X-Rays the ${pieceColorToColorName[role.toPiece.color]} ${pieceSymbolToPieceName[role.toPiece.type]} on ${role.toSquare}`;
+      default:
+        return null;
+    }
+  };
+
+  const getRoles = (move: AnalysisMove) => {
     const c = new Chess(move.move.after);
-    const weights: SquareWeights = Array.from(SQUARES).reduce((acc, curr) => {
-      acc[curr] = { attacked: 0, controlledWhite: 0, controlledBlack: 0, defended: 0 };
-      return acc;
-    }, {} as SquareWeights);
+
+    const pr: PieceRoles = {
+      squareWeights: Array.from(SQUARES).reduce((acc, curr) => {
+        acc[curr] = { attacked: 0, controlledWhite: 0, controlledBlack: 0, defended: 0 };
+        return acc;
+      }, {} as SquareWeights),
+      roles: {} as PieceRolesRecord,
+    };
 
     const splittedFen = c.fen().split(' ');
 
-    const pieceValues = {
-      pawn: 5,
-      knight: 4,
-      bishop: 4,
-      rook: 3,
-      queen: 2,
-      king: 1,
-    };
+    const xRayedPieces = new Map<Square, { square: Square; piece: Piece }>();
+    const attackedPieces = new Map<Square, { square: Square; piece: Piece }>();
 
-    splittedFen[1] = 'w';
-    const positionWhite = parseFen(splittedFen.join(' ')).unwrap();
+    for (const color of ['w', 'b']) {
+      splittedFen[1] = color;
+      const position = parseFen(splittedFen.join(' ')).unwrap();
 
-    for (const currSquare of SQUARES) {
-      const squareIndex = parseSquare(currSquare);
-      const currPiece = positionWhite.board.get(squareIndex);
+      for (const fromSquare of SQUARES) {
+        const fromSquareIndex = parseSquare(fromSquare);
+        const fromPiece = position.board.get(fromSquareIndex);
 
-      if (!currPiece || currPiece.color === 'black') continue;
+        if (!fromPiece) continue;
 
-      const rays = attacks(currPiece, squareIndex, positionWhite.board.occupied);
+        const raysUnoccupied = attacks(fromPiece, fromSquareIndex, position.board.pawn);
+        const raysOccupied = attacks(fromPiece, fromSquareIndex, position.board.occupied);
+        const xRays = raysUnoccupied.diff(raysOccupied);
 
-      for (const sq of rays) {
-        const square = makeSquare(sq);
-        const piece = c.get(square);
+        if ((color === 'b' && fromPiece.color === 'white') || (color === 'w' && fromPiece.color === 'black')) {
+          for (const toSquareIndex of xRays) {
+            const toSquare = makeSquare(toSquareIndex);
+            const toPiece = c.get(toSquare);
+            const fromPiece = c.get(fromSquare);
 
-        if (!piece) weights[square].controlledWhite += pieceValues[currPiece.role];
-        else weights[square][piece.color === 'b' ? 'attacked' : 'defended'] += pieceValues[currPiece.role];
+            if (!toPiece) continue;
+
+            if (toPiece.color === color) {
+              xRayedPieces.set(toSquare, { square: fromSquare, piece: fromPiece });
+
+              pr.roles[fromSquare] = [
+                ...(pr.roles[fromSquare] || []),
+                {
+                  type: RoleType.XRaysPiece,
+                  fromSquare,
+                  toSquare,
+                  fromPiece,
+                  toPiece,
+                },
+              ];
+            }
+          }
+
+          for (const toSquareIndex of raysOccupied) {
+            const toSquare = makeSquare(toSquareIndex);
+            const toPiece = c.get(toSquare);
+            const fromPiece = c.get(fromSquare);
+
+            if (!toPiece) continue;
+
+            if (toPiece.color === color) {
+              attackedPieces.set(toSquare, { square: fromSquare, piece: fromPiece });
+            }
+          }
+        }
       }
     }
 
-    splittedFen[1] = 'b';
-    const positionBlack = parseFen(splittedFen.join(' ')).unwrap();
+    for (const color of ['w', 'b']) {
+      splittedFen[1] = color;
+      const position = parseFen(splittedFen.join(' ')).unwrap();
 
-    for (const currSquare of SQUARES) {
-      const squareIndex = parseSquare(currSquare);
-      const currPiece = positionBlack.board.get(squareIndex);
+      for (const fromSquare of SQUARES) {
+        const fromSquareIndex = parseSquare(fromSquare);
+        const fromPiece = position.board.get(fromSquareIndex);
 
-      if (!currPiece || currPiece.color === 'white') continue;
+        if (!fromPiece) continue;
 
-      const rays = attacks(currPiece, squareIndex, positionBlack.board.occupied);
+        const raysOccupied = attacks(fromPiece, fromSquareIndex, position.board.occupied);
 
-      for (const sq of rays) {
-        const square = makeSquare(sq);
-        const piece = c.get(square);
+        if ((color === 'b' && fromPiece.color === 'white') || (color === 'w' && fromPiece.color === 'black')) continue;
 
-        if (!piece) weights[square].controlledBlack += pieceValues[currPiece.role];
-        else weights[square][piece.color === 'w' ? 'attacked' : 'defended'] += pieceValues[currPiece.role];
+        for (const toSquareIndex of raysOccupied) {
+          const toSquare = makeSquare(toSquareIndex);
+          const toPiece = c.get(toSquare);
+          const fromPiece = c.get(fromSquare);
+
+          if (!toPiece) pr.squareWeights[toSquare].controlledWhite += pieceValues[fromPiece.type];
+          else {
+            pr.squareWeights[toSquare][toPiece.color !== color ? 'attacked' : 'defended'] +=
+              pieceValues[fromPiece.type];
+          }
+
+          const isXRayed = xRayedPieces.get(toSquare);
+          const isAttacked = attackedPieces.get(toSquare);
+
+          if (toPiece.color === color && toPiece.type !== 'k') {
+            if (isXRayed) {
+              pr.roles[fromSquare] = [
+                ...(pr.roles[fromSquare] || []),
+                {
+                  type: RoleType.SupportsPiece,
+                  fromSquare,
+                  toSquare,
+                  fromPiece,
+                  toPiece,
+                  reason: { type: Reason.XRayed, ...isXRayed },
+                },
+              ];
+            }
+            if (isAttacked) {
+              pr.roles[fromSquare] = [
+                ...(pr.roles[fromSquare] || []),
+                {
+                  type: RoleType.SupportsPiece,
+                  fromSquare,
+                  toSquare,
+                  fromPiece,
+                  toPiece,
+                  reason: { type: Reason.Attacked, ...isAttacked },
+                },
+              ];
+            }
+          }
+        }
       }
     }
 
-    return weights;
+    pieceRoles.current.push(pr);
   };
 
-  const getMoveEffect = (move: AnalysisMove, index: number) => {
-    const previousMe = moveEffects.current[index - 1];
-    const sw = getSquareWeights(move);
-    const me: MoveEffects = { squareWeights: sw, effects: [] };
-    const c = new Chess(move.move.after);
-
-    if (!previousMe) {
-      moveEffects.current.push(me);
-      return;
-    }
-
-    for (const square of SQUARES) {
-      const previousSw = previousMe.squareWeights[square];
-      const piece = c.get(square);
-
-      if (!piece) continue;
-
-      if (move.move.to === square || move.move.from === square) continue;
-
-      const previousAttackedDefendedDelta = previousSw.attacked - previousSw.defended;
-      const attackedDelta = sw[square].attacked - previousSw.attacked;
-      const defendedDelta = sw[square].defended - previousSw.defended;
-
-      if (
-        sw[square].defended === 0 &&
-        sw[square].attacked > 0 &&
-        attackedDelta > 0 &&
-        piece.color === c.turn() &&
-        piece.type !== 'k'
-      ) {
-        me.effects.push({
-          square,
-          move: move.move,
-          piece: piece.type,
-          color: piece.color,
-          type: CommentType.AttackUndefendedPiece,
-        });
-      }
-
-      if (
-        previousAttackedDefendedDelta > 0 &&
-        defendedDelta > 0 &&
-        move.move.to !== square &&
-        move.move.from !== square &&
-        piece.color !== c.turn()
-      ) {
-        me.effects.push({
-          square,
-          move: move.move,
-          piece: piece.type,
-          color: piece.color,
-          type: CommentType.ReinforcesPiece,
-        });
-      }
-    }
-
-    moveEffects.current.push(me);
-  };
-
-  const getMoveEffects = () => {
+  const getMovesRoles = () => {
     if (!analysis) return;
 
-    moveEffects.current = [];
-    analysis.moves.map(getMoveEffect);
-    console.log(moveEffects.current);
-  };
-
-  const handleDisplayPressure = () => {
-    const customHighlights = new Map();
-
-    for (const square of SQUARES) {
-      const pressure =
-        moveEffects.current[currentMove - 1]?.squareWeights[square].attacked -
-        moveEffects.current[currentMove - 1]?.squareWeights[square].defended;
-
-      if (pressure > 0) {
-        customHighlights.set(square, `pressure-${pressure}`);
-      }
-    }
-
-    chessGround?.set({
-      highlight: { custom: customHighlights },
-    });
-  };
-
-  const handleDisplayAttacks = () => {
-    const customHighlights = new Map();
-
-    for (const square of SQUARES) {
-      const attacked = moveEffects.current[currentMove - 1]?.squareWeights[square].attacked;
-
-      if (attacked > 0) {
-        customHighlights.set(square, `attack-${attacked}`);
-      }
-    }
-
-    chessGround?.set({
-      highlight: { custom: customHighlights },
-    });
+    pieceRoles.current = [];
+    analysis.moves.map(getRoles);
+    console.log(pieceRoles.current);
   };
 
   useEffect(() => {
-    getMoveEffects();
+    getMovesRoles();
   }, [analysis]);
 
-  useEffect(() => {
-    switch (highlightMode) {
-      case 'pressure':
-        handleDisplayPressure();
-        break;
-      case 'attacks':
-        handleDisplayAttacks();
-        break;
-    }
-  }, [currentMove, highlightMode]);
+  console.log(pieceRoles.current[currentMove - 1]);
+
+  const handlePointerEnterRole = ({ fromSquare, toSquare }: AllPieceRoles) => {
+    if (!chessGround) return;
+
+    customAutoShapes.current = structuredClone(chessGround.state.drawable.autoShapes);
+    const newCustomAutoShapes = structuredClone(chessGround.state.drawable.autoShapes);
+
+    newCustomAutoShapes.push({
+      orig: fromSquare,
+      dest: toSquare,
+      brush: 'blue',
+    });
+
+    chessGround.setAutoShapes(newCustomAutoShapes);
+  };
+
+  const handlePointerLeaveRole = () => chessGround?.setAutoShapes(customAutoShapes.current);
 
   return (
     <div className="flex flex-col h-full gap-6 p-6 bg-pressure-6">
       <span className="font-semibold">Interpretation</span>
-      <ToggleGroup type="single" value={highlightMode} onValueChange={setHighlightMode}>
-        <ToggleGroupItem value="pressure" aria-label="Pressure">
-          Pressure
-        </ToggleGroupItem>
-        <ToggleGroupItem value="attacks" aria-label="Attacks">
-          Attacks
-        </ToggleGroupItem>
-      </ToggleGroup>
 
       {previousMove && (
-        <div className="flex flex-col gap-2">
-          {moveEffects.current[currentMove - 1].effects.map((effect, index) => {
-            switch (effect.type) {
-              case CommentType.AttackUndefendedPiece:
-                return <AttackUndefendedPiece key={index} {...effect} />;
-              case CommentType.ReinforcesPiece:
-                return <ReinforcesPiece key={index} {...effect} />;
-              case CommentType.ControlsCenter:
-                return <p key={index}>Controls center</p>;
-            }
+        <div className="flex flex-col gap-2 overflow-y-auto h-full custom-scrollbar">
+          {Object.entries(pieceRoles.current[currentMove - 1].roles).map(([square, roles]) => {
+            const piece = chess.get(square as Square);
+
+            if (!piece) return null;
+
+            return (
+              <Collapsible key={square}>
+                <CollapsibleTrigger asChild>
+                  <Button variant="link" className="p-0" size="sm">
+                    The {pieceColorToColorName[piece.color]} {pieceSymbolToPieceName[piece.type]} on {square}...
+                  </Button>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="p-2 space-y-2 bg-castled-secondary border-l-4 border-foreground/10 rounded-l ml-2">
+                  <ul className="list-disc list-inside">
+                    {roles.map((role) => (
+                      <li
+                        key={role.toSquare}
+                        onPointerLeave={handlePointerLeaveRole}
+                        onPointerEnter={() => handlePointerEnterRole(role)}
+                        className="hover:bg-castled-primary/50 text-sm cursor-default p-1 rounded"
+                      >
+                        {getPieceRoleSentence(role)}
+                      </li>
+                    ))}
+                  </ul>
+                </CollapsibleContent>
+              </Collapsible>
+            );
           })}
         </div>
       )}
