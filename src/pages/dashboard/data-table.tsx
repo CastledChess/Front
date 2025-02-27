@@ -20,6 +20,32 @@ interface DataTableProps<TData> {
   data: TData[];
 }
 
+/**
+ * DataTable component for displaying and managing a table with sorting, pagination, and row selection capabilities.
+ *
+ * @template TData - The type of data being displayed in the table, extending GameDetails.
+ * @param {DataTableProps<TData>} props - The properties for the DataTable component.
+ * @param {ColumnDef<TData>[]} props.columns - The column definitions for the table.
+ * @param {TData[]} props.data - The data to be displayed in the table.
+ *
+ * @returns {JSX.Element} The rendered DataTable component.
+ *
+ * @example
+ * ```tsx
+ * const columns = [
+ *   { accessorKey: 'name', header: 'Name' },
+ *   { accessorKey: 'age', header: 'Age' },
+ * ];
+ * const data = [
+ *   { name: 'John Doe', age: 30 },
+ *   { name: 'Jane Smith', age: 25 },
+ * ];
+ * 
+ * <DataTable columns={columns} data={data} />
+ * ```
+ */
+
+
 export function DataTable<TData extends GameDetails>({ columns, data }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});

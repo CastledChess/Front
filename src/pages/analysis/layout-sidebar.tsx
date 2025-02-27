@@ -9,6 +9,26 @@ type LayoutSidebarProps = {
   justify?: 'start' | 'end' | 'center';
 };
 
+/**
+ * LayoutSidebar component is responsible for rendering a sidebar layout that supports drag-and-drop functionality.
+ * It allows items to be moved between different sections of the layout.
+ *
+ * @param {Object} props - The properties object.
+ * @param {string} props.justify - The CSS justify-content property to align the sidebar content.
+ * @param {string} props.which - The identifier for the current sidebar section.
+ *
+ * @returns {JSX.Element} The rendered sidebar layout component.
+ *
+ * @component
+ *
+ * @example
+ * // Usage example:
+ * <LayoutSidebar justify="center" which="leftSidebar" />
+ *
+ * @typedef {Object} LayoutSidebarProps
+ * @property {string} justify - The CSS justify-content property to align the sidebar content.
+ * @property {string} which - The identifier for the current sidebar section.
+ */
 export const LayoutSidebar = ({ justify, which }: LayoutSidebarProps) => {
   const { layout, movePanel } = useLayoutStore();
 

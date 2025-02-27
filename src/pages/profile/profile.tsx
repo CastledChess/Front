@@ -13,11 +13,57 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button.tsx';
 import { Input } from '@/components/ui/input';
 
+/**
+ * Profile component renders the user's profile page.
+ * It includes functionalities for viewing and editing user details,
+ * uploading a profile picture, and logging out.
+ *
+ * @component
+ * @example
+ * return (
+ *   <Profile />
+ * )
+ *
+ * @returns {JSX.Element} The rendered profile page component.
+ *
+ * @remarks
+ * This component uses the following hooks:
+ * - `useTranslation` from 'react-i18next' for internationalization.
+ * - `useAuthStore` from 'zustand' for authentication state management.
+ * - `useNavigate` from 'react-router-dom' for navigation.
+ * - `useState` from 'react' for managing local state.
+ * - `useForm` from 'react-hook-form' for form handling.
+ *
+ * The component also uses the following components:
+ * - `Avatar`, `AvatarImage` from 'some-avatar-library' for displaying the user's profile picture.
+ * - `Card` from 'some-card-library' for displaying the profile information.
+ * - `Form`, `FormField`, `FormItem`, `FormControl`, `FormMessage` from 'some-form-library' for form handling.
+ * - `Button` from 'some-button-library' for rendering buttons.
+ *
+ * The component handles the following actions:
+ * - `onSubmit`: Handles form submission for updating user details.
+ * - `handleLogout`: Logs out the user and navigates to the login page.
+ * - `handleEditToggle`: Toggles the edit mode for the form.
+ * - `handlePhotoChange`: Handles the change event for the profile picture input.
+ *
+ * @dependencies
+ * - `react`
+ * - `react-i18next`
+ * - `zustand`
+ * - `react-router-dom`
+ * - `react-hook-form`
+ * - `zod`
+ * - `some-avatar-library`
+ * - `some-card-library`
+ * - `some-form-library`
+ * - `some-button-library`
+ */
 export const Profile = () => {
   const { t } = useTranslation('profile');
   const { logout, user } = useAuthStore((state) => state);
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
@@ -30,6 +76,8 @@ export const Profile = () => {
     },
   });
 
+
+  
   const onSubmit = async (data: z.infer<typeof ProfileSchema>) => {
     console.log(data);
     setIsEditing(false);
