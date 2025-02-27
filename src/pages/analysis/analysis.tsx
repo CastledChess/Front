@@ -32,6 +32,8 @@ export const Analysis = () => {
   const { analysis, setAnalysis } = useAnalysisStore();
   const { id } = useParams();
 
+  console.log(analysis);
+
   useEffect(() => {
     if (analysis?.id == id) return;
 
