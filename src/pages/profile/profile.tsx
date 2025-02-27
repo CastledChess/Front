@@ -64,7 +64,6 @@ export const Profile = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
 
-
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
@@ -76,8 +75,6 @@ export const Profile = () => {
     },
   });
 
-
-  
   const onSubmit = async (data: z.infer<typeof ProfileSchema>) => {
     console.log(data);
     setIsEditing(false);

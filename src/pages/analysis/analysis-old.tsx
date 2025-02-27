@@ -33,7 +33,7 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * The `Analysis` component is responsible for rendering the chess analysis page.
- * It provides functionalities to navigate through chess moves, auto-play moves, 
+ * It provides functionalities to navigate through chess moves, auto-play moves,
  * flip the chessboard, and display move evaluations and classifications.
  *
  * @component

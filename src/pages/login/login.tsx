@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import lichessIcon from '@/assets/icons/lichess.svg?url';
 import chessComIcon from '@/assets/icons/chesscom.svg?url';
 
-
 /**
  * The `Login` component renders a login form for users to authenticate.
  * It uses `react-hook-form` for form handling and validation with a schema defined using `zod`.
@@ -46,7 +45,6 @@ import chessComIcon from '@/assets/icons/chesscom.svg?url';
  * - Assets: `lichessIcon`, `chessComIcon`.
  */
 
-
 export const Login = () => {
   const { t } = useTranslation('login');
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -57,7 +55,7 @@ export const Login = () => {
       password: '',
     },
   });
-    
+
   const navigate = useNavigate();
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {

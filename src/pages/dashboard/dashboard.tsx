@@ -14,7 +14,7 @@ import { getHistory } from '@/api/history.ts';
  * the data in a table format.
  *
  * @component
- * 
+ *
  * @returns {JSX.Element} The rendered component.
  */
 export const Dashboard = () => {

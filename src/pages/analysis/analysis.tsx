@@ -19,7 +19,7 @@ import { Interpretation } from './panels/interpretation/interpretation';
 
 /**
  * A record that maps panel names to their corresponding React components.
- * 
+ *
  * @type {Record<Panel, React.ReactNode>}
  * @property {React.ReactNode} database - The component for the database panel.
  * @property {React.ReactNode} engineLines - The component for the engine lines panel.
@@ -80,6 +80,8 @@ export const Analysis = () => {
   const { layout, selectedLayouts } = useLayoutStore();
   const { analysis, setAnalysis } = useAnalysisStore();
   const { id } = useParams();
+
+  console.log(analysis);
 
   useEffect(() => {
     if (analysis?.id == id) return;

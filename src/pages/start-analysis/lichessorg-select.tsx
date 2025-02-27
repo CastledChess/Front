@@ -94,7 +94,7 @@ export type LichessOrgGame = {
  *   },
  *   lastMoveAt: '2023-10-01T12:00:00Z'
  * };
- * 
+ *
  * <LichessorgGame game={game} />
  * ```
  */

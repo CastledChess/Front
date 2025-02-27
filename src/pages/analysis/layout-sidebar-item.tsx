@@ -21,9 +21,9 @@ type LayoutSidebarItemProps = {
 
 /**
  * A mapping of panel names to their corresponding icon identifiers.
- * 
+ *
  * @type {Record<keyof typeof panels, string>}
- * 
+ *
  * @property {string} database - Icon identifier for the database panel.
  * @property {string} engineLines - Icon identifier for the engine lines panel.
  * @property {string} moveList - Icon identifier for the move list panel.
@@ -39,23 +39,23 @@ const panelIcons: Record<keyof typeof panels, string> = {
 
 /**
  * Component representing an item in the layout sidebar.
- * 
+ *
  * @param {Object} props - The properties object.
  * @param {string} props.item - The identifier of the item.
  * @param {string} props.which - The category or type of the item.
- * 
+ *
  * @returns {JSX.Element} The rendered sidebar item component.
- * 
+ *
  * @component
- * 
+ *
  * @example
  * // Usage example:
  * <LayoutSidebarItem item="exampleItem" which="exampleType" />
- * 
+ *
  * @remarks
  * This component supports drag-and-drop functionality using the `useDrag` and `useDrop` hooks from `react-dnd`.
  * It also manages the selection state of the item within the layout.
- * 
+ *
  * @see {@link useLayoutStore} for the layout store context.
  */
 export const LayoutSidebarItem = ({ item, which }: LayoutSidebarItemProps) => {

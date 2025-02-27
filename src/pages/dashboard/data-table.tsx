@@ -40,11 +40,10 @@ interface DataTableProps<TData> {
  *   { name: 'John Doe', age: 30 },
  *   { name: 'Jane Smith', age: 25 },
  * ];
- * 
+ *
  * <DataTable columns={columns} data={data} />
  * ```
  */
-
 
 export function DataTable<TData extends GameDetails>({ columns, data }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
