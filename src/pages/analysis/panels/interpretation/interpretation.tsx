@@ -1,5 +1,5 @@
 ﻿import { useAnalysisStore } from '@/store/analysis.ts';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Chess, Piece, Square, SQUARES } from 'chess.js';
 import { parseFen } from 'chessops/fen';
 import { attacks, makeSquare, parseSquare } from 'chessops';
@@ -23,14 +23,14 @@ const pieceValues = {
 export const Interpretation = () => {
   const { currentMove, analysis, chess, chessGround } = useAnalysisStore();
   const previousMove = analysis!.moves[currentMove - 1];
-  const pieceRoles = useRef<PieceRoles[]>([]);
+  const [pieceRoles, setPieceRoles] = useState<PieceRoles[]>([]);
   const customAutoShapes = useRef<DrawShape[]>(structuredClone(chessGround?.state.drawable.autoShapes) || []);
 
   const getPieceRoleSentence = (role: AllPieceRoles) => {
     switch (role.type) {
       case RoleType.SupportsPiece:
         return (
-          <span className="flex gap-2 items-center">
+          <span className="flex gap-2 items-center flex-wrap">
             Supports the {pieceColorToColorName[role.toPiece.color]} {pieceSymbolToPieceName[role.toPiece.type]} on{' '}
             <SquareHighlight className="bg-castled-accent/10 rounded" square={role.toSquare}>
               {role.toSquare}
@@ -181,13 +181,13 @@ export const Interpretation = () => {
       }
     }
 
-    pieceRoles.current.push(pr);
+    setPieceRoles((prev) => [...prev, pr]);
   };
 
   const getMovesRoles = () => {
     if (!analysis) return;
 
-    pieceRoles.current = [];
+    setPieceRoles([]);
     analysis.moves.map(getRoles);
   };
 
@@ -218,36 +218,37 @@ export const Interpretation = () => {
 
       {previousMove && (
         <div className="flex flex-col gap-2 overflow-y-auto h-full custom-scrollbar">
-          {Object.entries(pieceRoles.current[currentMove - 1].roles).map(([square, roles]) => {
-            const piece = chess.get(square as Square);
+          {pieceRoles[currentMove - 1]?.roles &&
+            Object.entries(pieceRoles[currentMove - 1].roles).map(([square, roles]) => {
+              const piece = chess.get(square as Square);
 
-            if (!piece) return null;
+              if (!piece) return null;
 
-            return (
-              <Collapsible key={square}>
-                <CollapsibleTrigger asChild>
-                  <Button variant="link" className="p-0" size="sm">
-                    The {pieceColorToColorName[piece.color]} {pieceSymbolToPieceName[piece.type]} on {square}...
-                  </Button>
-                </CollapsibleTrigger>
+              return (
+                <Collapsible key={square}>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="link" className="p-0" size="sm">
+                      The {pieceColorToColorName[piece.color]} {pieceSymbolToPieceName[piece.type]} on {square}...
+                    </Button>
+                  </CollapsibleTrigger>
 
-                <CollapsibleContent className="p-2 space-y-2 bg-castled-secondary border-l-4 border-foreground/10 rounded-l ml-2">
-                  <ul>
-                    {roles.map((role, index) => (
-                      <li
-                        key={role.toSquare + index}
-                        onPointerLeave={handlePointerLeaveRole}
-                        onPointerEnter={() => handlePointerEnterRole(role)}
-                        className="hover:bg-castled-primary/50 text-sm cursor-default flex"
-                      >
-                        {getPieceRoleSentence(role)}
-                      </li>
-                    ))}
-                  </ul>
-                </CollapsibleContent>
-              </Collapsible>
-            );
-          })}
+                  <CollapsibleContent className="p-2 space-y-2 bg-castled-secondary border-l-4 border-foreground/10 rounded-l ml-2">
+                    <ul>
+                      {roles.map((role, index) => (
+                        <li
+                          key={role.toSquare + index}
+                          onPointerLeave={handlePointerLeaveRole}
+                          onPointerEnter={() => handlePointerEnterRole(role)}
+                          className="hover:bg-castled-primary/50 text-sm cursor-default flex"
+                        >
+                          {getPieceRoleSentence(role)}
+                        </li>
+                      ))}
+                    </ul>
+                  </CollapsibleContent>
+                </Collapsible>
+              );
+            })}
         </div>
       )}
     </div>
