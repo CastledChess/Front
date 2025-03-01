@@ -12,8 +12,8 @@ import {
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useTranslation } from 'react-i18next';
-import { GameDetails } from './columns';
 import { format, parse } from 'date-fns';
+import { Analysis } from '@/types/analysis.ts';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -45,7 +45,11 @@ interface DataTableProps<TData> {
  * ```
  */
 
-export function DataTable<TData extends GameDetails>({ columns, data }: DataTableProps<TData>) {
+export function DataTable<TData extends Analysis>({
+  columns,
+  data,
+  isLoading,
+}: DataTableProps<TData> & { isLoading?: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const { t } = useTranslation('history');
@@ -63,11 +67,9 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
     onSortingChange: setSorting, // Met à jour l'état du tri
   });
 
-  console.log(data);
-
   return (
     <>
-      <div className="rounded-md border overflow-y-scroll custom-scrollbar h-full">
+      <div className="rounded-md border overflow-y-auto custom-scrollbar h-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -92,7 +94,16 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading && (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            )}
+
+            {!isLoading &&
+              table.getRowModel().rows?.length > 0 &&
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
@@ -115,8 +126,9 @@ export function DataTable<TData extends GameDetails>({ columns, data }: DataTabl
                     </TableCell>
                   ))}
                 </TableRow>
-              ))
-            ) : (
+              ))}
+
+            {!isLoading && table.getRowModel().rows?.length <= 0 && (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.

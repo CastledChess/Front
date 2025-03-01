@@ -15,27 +15,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import i18next from 'i18next';
 import { deleteGame } from '@/api/history';
-
-export interface GameDetails {
-  createdAt: string;
-  header: {
-    Black: string;
-    White: string;
-    BlackElo: string;
-    WhiteElo: string;
-    Result: string;
-    Date: string;
-    Round: string;
-    Termination: string;
-  };
-  id: string;
-  pgn: string;
-}
+import { Link } from 'react-router-dom';
+import { Analysis } from '@/types/analysis';
+import { useHistoryState } from '@/store/history.ts';
 
 /**
  * Defines the column configuration for the GameDetails table.
  *
- * @type {ColumnDef<GameDetails>[]}
+ * @type {ColumnDef<Analysis>[]}
  *
  * @property {Object} id - The column definition for the selection checkbox.
  * @property {Function} id.header - Renders the header checkbox for selecting all rows.
@@ -63,20 +50,20 @@ export interface GameDetails {
  * @property {Object} id - The column definition for the actions dropdown menu.
  * @property {Function} id.cell - Renders the actions dropdown menu for each row.
  */
-export const columns: ColumnDef<GameDetails>[] = [
+export const columns: ColumnDef<Analysis>[] = [
   {
     id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-        onCheckedChange={(value: any) => table.toggleAllPageRowsSelected(!!value)}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
-        onCheckedChange={(value: any) => row.toggleSelected(!!value)}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
       />
     ),
@@ -126,28 +113,37 @@ export const columns: ColumnDef<GameDetails>[] = [
     cell: ({ row }) => {
       const gameDetails = row.original;
 
+      const handleDeleteGame = async () => {
+        try {
+          await deleteGame(gameDetails.id as string);
+
+          useHistoryState
+            .getState()
+            .setAnalyses((prevAnalyses) => prevAnalyses.filter((analysis) => analysis.id !== gameDetails.id));
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(gameDetails.id)}>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(gameDetails.id as string)}>
               {i18next.t('history:copyId')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <a href={`/analysis/${gameDetails.id}`} target="_blank" rel="noreferrer">
+            <DropdownMenuItem asChild>
+              <Link to={`/analysis/${gameDetails.id}`} rel="noreferrer">
                 {i18next.t('history:analysis')}
-              </a>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <div onClick={() => deleteGame(gameDetails.id)}>{i18next.t('history:delete')}</div>
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDeleteGame}>{i18next.t('history:delete')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

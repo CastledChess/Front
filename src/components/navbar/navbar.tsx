@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Flag from 'react-flagkit';
 import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
+import { Button } from '@/components/ui/button.tsx';
 
 const documentation: { title: string; href: string; description: string }[] = [
   {
@@ -65,11 +66,10 @@ export const Navbar = () => {
 
   return (
     <div className="w-full h-12 px-4 gap-6 flex justify-between items-center border-b bg-castled-primary text-castled-gray">
-      <div className="flex items-center">
-        <Link to="/">
-          <img src="/logo.svg" alt="Castled Logo" className="h-6" />
-        </Link>
-      </div>
+      <Link to="/" className="h-full flex gap-2 font-bold items-center">
+        <img src="/logo.svg" alt="Castled Logo" className="h-6" />
+        Castled
+      </Link>
 
       <NavigationMenu>
         <NavigationMenuList className="gap-2">
@@ -135,19 +135,23 @@ export const Navbar = () => {
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <Avatar>
+                <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-castled-secondary hover:text-castled-accent">
-                    {user.username.toUpperCase()[0]}
+                    {user.username[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="">
-                <DropdownMenuItem className="focus:text-castled-accent ">
-                  <Link to="/profile">{t('account-dropdown.profile')}</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:text-castled-accent ">
-                  <Link to="/theme">{t('account-dropdown.theme')}</Link>
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-48">
+                <Link to="/profile">
+                  <DropdownMenuItem className="focus:text-castled-accent">
+                    {t('account-dropdown.profile')}
+                  </DropdownMenuItem>
+                </Link>
+                <Link to="/theme">
+                  <DropdownMenuItem className="focus:text-castled-accent">
+                    {t('account-dropdown.theme')}
+                  </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="focus:text-castled-accent">
                   {t('account-dropdown.support')}
@@ -157,9 +161,13 @@ export const Navbar = () => {
                   {t('account-dropdown.logout')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuGroup className="flex flex-row gap-6 justify-center mx-3">
-                  <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} />
-                  <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} />
+                <DropdownMenuGroup className="flex p-1 gap-1">
+                  <Button variant="ghost" className="w-full">
+                    <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} /> FR
+                  </Button>
+                  <Button variant="ghost" className="w-full">
+                    <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} /> UK
+                  </Button>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>

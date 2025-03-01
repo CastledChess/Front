@@ -1,5 +1,4 @@
 import { apiAuthenticated } from './index';
-import { useAuthStore } from '@/store/auth.ts';
 
 /**
  * Fetches the analysis history for the authenticated user.
@@ -8,17 +7,7 @@ import { useAuthStore } from '@/store/auth.ts';
  * @throws {Promise<string>} - A promise that rejects with an error message if no access token is available.
  */
 export const getHistory = async () => {
-  const accessToken = useAuthStore.getState().accessToken;
-
-  if (!accessToken) {
-    return Promise.reject('No access token available');
-  }
-
-  const data = await apiAuthenticated.get('/api/v1/analysis', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const data = await apiAuthenticated.get('/api/v1/analysis');
 
   return data.data.items;
 };
@@ -31,17 +20,7 @@ export const getHistory = async () => {
  * @throws {Promise<string>} - A promise that rejects with an error message if no access token is available.
  */
 export const getGame = async (id: string) => {
-  const accessToken = useAuthStore.getState().accessToken;
-
-  if (!accessToken) {
-    return Promise.reject('No access token available');
-  }
-
-  const data = await apiAuthenticated.get(`/api/v1/analysis/${id}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  const data = await apiAuthenticated.get(`/api/v1/analysis/${id}`);
 
   return data.data;
 };
@@ -54,15 +33,5 @@ export const getGame = async (id: string) => {
  * @throws {Promise<string>} - A promise that rejects with an error message if no access token is available.
  */
 export const deleteGame = async (id: string) => {
-  const accessToken = useAuthStore.getState().accessToken;
-
-  if (!accessToken) {
-    return Promise.reject('No access token available');
-  }
-
-  await apiAuthenticated.delete(`/api/v1/analysis/${id}/delete`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  await apiAuthenticated.delete(`/api/v1/analysis/${id}/delete`);
 };
