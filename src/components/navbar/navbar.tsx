@@ -25,6 +25,8 @@ import { useTranslation } from 'react-i18next';
 import Flag from 'react-flagkit';
 import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
 import { Button } from '@/components/ui/button.tsx';
+import { BrowserView, MobileView } from 'react-device-detect';
+import { Menu } from 'lucide-react';
 
 const documentation: { title: string; href: string; description: string }[] = [
   {
@@ -72,76 +74,92 @@ export const Navbar = () => {
       </Link>
 
       <NavigationMenu>
-        <NavigationMenuList className="gap-2">
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/" className="hover:no-underline">
-                {t('navbar.dashboard')}
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link to="/start-analysis" className="hover:no-underline">
-                {t('navbar.analysis')}
-              </Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger className="hover:no-underline hover:text-castled-accent">
-              {t('navbar.documentation')}
-            </NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                {documentation.map((component) => {
-                  const title = t(component.title);
-                  const description = t(component.description);
+        <NavigationMenuList className="flex gap-2">
+          <BrowserView className="flex gap-2">
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/" className="hover:no-underline">
+                  {t('navbar.dashboard')}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                <Link to="/start-analysis" className="hover:no-underline">
+                  {t('navbar.analysis')}
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger className="hover:no-underline hover:text-castled-accent">
+                {t('navbar.documentation')}
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                  {documentation.map((component) => {
+                    const title = t(component.title);
+                    const description = t(component.description);
 
-                  return (
-                    <ListItem
-                      className="hover:text-castled-accent"
-                      key={component.href}
-                      title={title}
-                      href={component.href}
-                    >
-                      {description}
-                    </ListItem>
-                  );
-                })}
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
+                    return (
+                      <ListItem
+                        className="hover:text-castled-accent"
+                        key={component.href}
+                        title={title}
+                        href={component.href}
+                      >
+                        {description}
+                      </ListItem>
+                    );
+                  })}
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-          {!user && (
-            <>
-              <NavigationMenuItem>
-                {location.pathname === '/login' ? (
-                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link to="/register" className="hover:no-underline">
-                      {t('navbar.register')}
-                    </Link>
-                  </NavigationMenuLink>
-                ) : (
-                  <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link to="/login" className="hover:no-underline">
-                      {t('navbar.login')}
-                    </Link>
-                  </NavigationMenuLink>
-                )}
-              </NavigationMenuItem>
-            </>
-          )}
+            {!user && (
+              <>
+                <NavigationMenuItem>
+                  {location.pathname === '/login' ? (
+                    <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                      <Link to="/register" className="hover:no-underline">
+                        {t('navbar.register')}
+                      </Link>
+                    </NavigationMenuLink>
+                  ) : (
+                    <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                      <Link to="/login" className="hover:no-underline">
+                        {t('navbar.login')}
+                      </Link>
+                    </NavigationMenuLink>
+                  )}
+                </NavigationMenuItem>
+              </>
+            )}
+          </BrowserView>
 
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-castled-secondary hover:text-castled-accent">
-                    {user.username[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <BrowserView>
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-castled-secondary hover:text-castled-accent">
+                      {user.username[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </BrowserView>
+
+                <MobileView>
+                  <Menu />
+                </MobileView>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
+                <MobileView>
+                  <Link to="/">
+                    <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.dashboard')}</DropdownMenuItem>
+                  </Link>
+                  <Link to="/start-analysis">
+                    <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.analysis')}</DropdownMenuItem>
+                  </Link>
+                </MobileView>
                 <Link to="/profile">
                   <DropdownMenuItem className="focus:text-castled-accent">
                     {t('account-dropdown.profile')}

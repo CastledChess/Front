@@ -14,6 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useTranslation } from 'react-i18next';
 import { format, parse } from 'date-fns';
 import { Analysis } from '@/types/analysis.ts';
+import { Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -130,8 +132,13 @@ export function DataTable<TData extends Analysis>({
 
             {!isLoading && table.getRowModel().rows?.length <= 0 && (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24  text-center">
+                  <Link to="/start-analysis">
+                    <Button variant="outline">
+                      <Plus />
+                      New Analysis
+                    </Button>
+                  </Link>
                 </TableCell>
               </TableRow>
             )}
