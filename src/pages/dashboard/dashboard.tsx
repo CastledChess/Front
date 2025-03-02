@@ -35,9 +35,9 @@ export const Dashboard = () => {
   }, []);
 
   return (
-    <div className="w-full h-full p-16 flex justify-center">
+    <div className="w-full h-full md:p-16 p-4 flex justify-center">
       <div className="container flex flex-col gap-4 overflow-y-auto">
-        <p className="text-4xl">{t('title')}</p>
+        <p className="text-2xl md:text-4xl">{t('title')}</p>
         <DataTable isLoading={loading} columns={columns} data={analyses || []} />
       </div>
     </div>

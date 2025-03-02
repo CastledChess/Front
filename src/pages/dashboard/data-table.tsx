@@ -16,6 +16,7 @@ import { format, parse } from 'date-fns';
 import { Analysis } from '@/types/analysis.ts';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { BrowserView } from 'react-device-detect';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -88,7 +89,8 @@ export function DataTable<TData extends Analysis>({
                         ? flexRender(header.column.columnDef.header, header.getContext())
                         : null}
                       {/* {header.column.id === 'moves' ? t(String(header.column.id).toLowerCase()) : null} */}
-                      {header.column.id === 'header_Date' ? t('date') : null}
+
+                      <BrowserView>{header.column.id === 'header_Date' ? t('date') : null}</BrowserView>
                     </TableHead>
                   );
                 })}
@@ -116,14 +118,16 @@ export function DataTable<TData extends Analysis>({
                         ? t(String(cell.row.original.header.Termination).toLowerCase())
                         : null}
                       {/* {cell.column.id === 'moves' ? cell.row.original.header.Round : null} */}
-                      {cell.column.id === 'header_Date'
-                        ? format(
-                            cell.row.original.header.Date
-                              ? parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date())
-                              : new Date(),
-                            'dd / MM / yyyy',
-                          )
-                        : null}
+                      <BrowserView>
+                        {cell.column.id === 'header_Date'
+                          ? format(
+                              cell.row.original.header.Date
+                                ? parse(cell.row.original.header.Date, 'yyyy.MM.dd', new Date())
+                                : new Date(),
+                              'dd / MM / yyyy',
+                            )
+                          : null}
+                      </BrowserView>
                       {cell.column.id === 'actions' ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                     </TableCell>
                   ))}
