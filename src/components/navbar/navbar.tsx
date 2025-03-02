@@ -136,9 +136,9 @@ export const Navbar = () => {
             )}
           </BrowserView>
 
-          {user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              {user && (
                 <BrowserView>
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-castled-secondary hover:text-castled-accent">
@@ -146,50 +146,54 @@ export const Navbar = () => {
                     </AvatarFallback>
                   </Avatar>
                 </BrowserView>
+              )}
 
-                <MobileView>
-                  <Menu />
-                </MobileView>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <MobileView>
-                  <Link to="/">
-                    <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.dashboard')}</DropdownMenuItem>
+              <MobileView>
+                <Menu />
+              </MobileView>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {user && (
+                <>
+                  <MobileView>
+                    <Link to="/">
+                      <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.dashboard')}</DropdownMenuItem>
+                    </Link>
+                    <Link to="/start-analysis">
+                      <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.analysis')}</DropdownMenuItem>
+                    </Link>
+                  </MobileView>
+                  {/*<Link to="/profile">*/}
+                  {/*  <DropdownMenuItem className="focus:text-castled-accent">*/}
+                  {/*    {t('account-dropdown.profile')}*/}
+                  {/*  </DropdownMenuItem>*/}
+                  {/*</Link>*/}
+                  <Link to="/theme">
+                    <DropdownMenuItem className="focus:text-castled-accent">
+                      {t('account-dropdown.theme')}
+                    </DropdownMenuItem>
                   </Link>
-                  <Link to="/start-analysis">
-                    <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.analysis')}</DropdownMenuItem>
-                  </Link>
-                </MobileView>
-                <Link to="/profile">
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem className="focus:text-castled-accent">
-                    {t('account-dropdown.profile')}
+                    {t('account-dropdown.support')}
                   </DropdownMenuItem>
-                </Link>
-                <Link to="/theme">
-                  <DropdownMenuItem className="focus:text-castled-accent">
-                    {t('account-dropdown.theme')}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="focus:text-castled-accent" onClick={handleLogout}>
+                    {t('account-dropdown.logout')}
                   </DropdownMenuItem>
-                </Link>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="focus:text-castled-accent">
-                  {t('account-dropdown.support')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="focus:text-castled-accent" onClick={handleLogout}>
-                  {t('account-dropdown.logout')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup className="flex p-1 gap-1">
-                  <Button variant="ghost" className="w-full">
-                    <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} /> FR
-                  </Button>
-                  <Button variant="ghost" className="w-full">
-                    <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} /> UK
-                  </Button>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
+                  <DropdownMenuSeparator />
+                </>
+              )}
+              <DropdownMenuGroup className="flex p-1 gap-1">
+                <Button variant="ghost" className="w-full">
+                  <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} /> FR
+                </Button>
+                <Button variant="ghost" className="w-full">
+                  <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} /> UK
+                </Button>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </NavigationMenuList>
       </NavigationMenu>
     </div>

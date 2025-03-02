@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button.tsx';
 import { login } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import lichessIcon from '@/assets/icons/lichess.svg?url';
-import chessComIcon from '@/assets/icons/chesscom.svg?url';
+// import lichessIcon from '@/assets/icons/lichess.svg?url';
+// import chessComIcon from '@/assets/icons/chesscom.svg?url';
 
 /**
  * The `Login` component renders a login form for users to authenticate.
@@ -72,8 +72,8 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex justify-center items-center bg-background h-full py-20">
-      <div className="flex flex-col w-96">
+    <div className="flex justify-center lg:items-center bg-background h-full lg:py-20">
+      <div className="flex flex-col w-full px-4 lg:px-0 lg:w-96">
         <h1 className="text-4xl my-8">{t('login')}</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 w-full">
@@ -119,16 +119,16 @@ export const Login = () => {
           </Link>
         </div>
 
-        <div className="flex mt-4 space-x-4 w-full">
-          <Button variant="secondary" className="w-full">
-            <img src={lichessIcon} alt="Lichess" className="h-6" />
-            <span>Lichess</span>
-          </Button>
+        {/*<div className="flex mt-4 space-x-4 w-full">*/}
+        {/*  <Button variant="secondary" className="w-full">*/}
+        {/*    <img src={lichessIcon} alt="Lichess" className="h-6" />*/}
+        {/*    <span>Lichess</span>*/}
+        {/*  </Button>*/}
 
-          <Button variant="secondary" className="w-full">
-            <img src={chessComIcon} alt="Chess.com" className="h-6" />
-          </Button>
-        </div>
+        {/*  <Button variant="secondary" className="w-full">*/}
+        {/*    <img src={chessComIcon} alt="Chess.com" className="h-6" />*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
       </div>
     </div>
   );
