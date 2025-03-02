@@ -4,6 +4,7 @@ import { queryPosition } from '@/api/database.ts';
 import { DrawShape } from 'chessground/draw';
 import { cn } from '@/lib/utils.ts';
 import { useQuery } from '@tanstack/react-query';
+import { isBrowser } from 'react-device-detect';
 
 type DatabaseMove = {
   san: string;
@@ -122,7 +123,7 @@ export const Database = () => {
       <table className="w-full">
         <thead>
           <tr className="text-sm text-castled-gray">
-            <th className="text-left p-1 pl-6 whitespace-nowrap w-auto font-light">Move</th>
+            <th className="text-left p-1 lg:pl-6 whitespace-nowrap w-auto font-light">Move</th>
             <th className="text-left p-1 whitespace-nowrap w-auto font-light">Total</th>
             <th className="text-left p-1 pr-6 font-light">White/Draw/Black</th>
           </tr>
@@ -130,7 +131,7 @@ export const Database = () => {
         <tbody>
           {databaseMoves?.length === 0 && !isPending && (
             <tr>
-              <td className="p-1 pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
+              <td className="p-1 lg:pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
                 No data available
               </td>
             </tr>
@@ -138,7 +139,7 @@ export const Database = () => {
           {isPending
             ? new Array(10).fill(0).map((_, i) => (
                 <tr key={i} className="animate-pulse h-[26px]">
-                  <td className="p-1 pl-6 w-1">
+                  <td className="p-1 lg:pl-6 w-1">
                     <div className=" h-4 bg-white/10 rounded-xl" />
                   </td>
                   <td className="p-1 w-1">
@@ -153,16 +154,17 @@ export const Database = () => {
                 <tr
                   key={move.san}
                   className="animate-fade-in hover:bg-white/10 cursor-default"
-                  onPointerEnter={() => handleDisplayMoveArrow(move.san)}
-                  onPointerLeave={handleClearMoveArrow}
+                  onPointerEnter={() => isBrowser && handleDisplayMoveArrow(move.san)}
+                  onClick={() => (handleClearMoveArrow(), handleDisplayMoveArrow(move.san))}
+                  onPointerLeave={() => isBrowser && handleClearMoveArrow}
                 >
-                  <td className="p-1 pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
+                  <td className="p-1 lg:pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
                     {move.san}
                   </td>
                   <td className="p-1 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
                     {new Intl.NumberFormat().format(move.total)}
                   </td>
-                  <td className="p-1 pr-6">
+                  <td className="p-1 lg:pr-6">
                     <div className="flex w-full overflow-hidden rounded-xl border">
                       <MoveRepartition amount={move.whitePercent} className="bg-white text-background" />
                       <MoveRepartition amount={move.drawPercent} className="bg-castled-accent text-background" />

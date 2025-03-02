@@ -48,7 +48,7 @@ export const EvalChart = ({ onClick }: EvalChartProps) => {
   }, [analysis]);
 
   return (
-    <div className="h-full w-full bg-foreground/5 rounded">
+    <div className="h-full w-full bg-foreground/5 min-h-32 rounded">
       <ResponsiveContainer>
         <AreaChart onClick={onClick} data={data}>
           <Tooltip content={<CustomTooltip />} />

@@ -16,6 +16,8 @@ import { getAnalysisById } from '@/api/analysis.ts';
 import { Controls } from '@/pages/analysis/panels/controls/controls.tsx';
 import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-panel.tsx';
 import { Interpretation } from './panels/interpretation/interpretation';
+import { isMobile } from 'react-device-detect';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion.tsx';
 
 /**
  * A record that maps panel names to their corresponding React components.
@@ -99,6 +101,53 @@ export const Analysis = () => {
   }, [id, setAnalysis]);
 
   if (!analysis) return null;
+
+  if (isMobile) {
+    return (
+      <div className="w-full h-full flex flex-col">
+        <div className="h-[100vw] my-4 flex flex-shrink-0">
+          <ChessboardPanel />
+        </div>
+        <Accordion type="single" collapsible className="flex-1 px-2 overflow-y-auto custom-scrollbar">
+          <AccordionItem value="intepretation">
+            <AccordionTrigger>Interpretation</AccordionTrigger>
+
+            <AccordionContent>
+              <Interpretation />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="database">
+            <AccordionTrigger>Database</AccordionTrigger>
+
+            <AccordionContent>
+              <Database />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="move-list">
+            <AccordionTrigger>Move List</AccordionTrigger>
+
+            <AccordionContent>
+              <MoveList />
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="eval-history">
+            <AccordionTrigger>Evaluation History</AccordionTrigger>
+
+            <AccordionContent>
+              <EvalHistory />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <div className="sticky bottom-0 z-10 w-full bg-background">
+          <Controls />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full flex">

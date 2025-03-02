@@ -45,7 +45,7 @@ export const EvalHistory = () => {
   };
 
   return (
-    <div className="p-6 h-full w-full">
+    <div className="lg:p-6 h-full w-full">
       <EvalChart onClick={handleClickEvalChart} />
     </div>
   );

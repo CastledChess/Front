@@ -28,9 +28,9 @@ export const ChessboardPanel = () => {
   const { analysis, currentMove, orientation } = useAnalysisStore();
 
   return (
-    <div className="flex h-full items-center justify-center p-6 relative chessboard-panel">
+    <div className="flex h-full w-full items-center justify-center p-0 lg:p-6 relative chessboard-panel">
       <div className="h-full flex flex-col w-full">
-        <div className="flex gap-6 items-center justify-center flex-grow relative chessboard-panel-inner">
+        <div className="flex gap-2 lg:gap-6 items-center justify-center flex-grow relative chessboard-panel-inner">
           <div className="eval-bar-container">
             <Evalbar
               orientation={orientation}

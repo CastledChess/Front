@@ -197,7 +197,7 @@ export const Controls = () => {
   }, [currentMove]);
 
   return (
-    <div className="flex flex-col gap-1 p-4">
+    <div className="flex flex-col gap-1 p-2 lg:p-4 h-14">
       <div className="flex w-full gap-1">
         <Button variant="secondary" className="w-full" onClick={handleSkipToBegin}>
           <ChevronsLeft />
@@ -216,29 +216,29 @@ export const Controls = () => {
         </Button>
       </div>
 
-      <div className="bg-gradient-to-br from-castled-secondary/30 to-castled-secondary rounded-xl p-4 flex flex-col gap-2">
-        {previousMove && (
-          <div className="flex items-center gap-2">
-            {previousMove.classification !== AnalysisMoveClassification.None && (
-              <img
-                className="h-6"
-                src={classificationToGlyphUrl[previousMove.classification as AnalysisMoveClassification]}
-                alt="classification"
-              />
-            )}
-            <span className="font-bold">{toPieceNotation(previousMove.move.san, previousMove.move.color)}</span>
-            {previousMove.classification !== AnalysisMoveClassification.None && (
-              <span className="font-bold">{previousMove.classification}</span>
-            )}
+      {/*<div className="bg-gradient-to-br from-castled-secondary/30 to-castled-secondary rounded-xl p-4 flex flex-col gap-2">*/}
+      {/*  {previousMove && (*/}
+      {/*    <div className="flex items-center gap-2">*/}
+      {/*      {previousMove.classification !== AnalysisMoveClassification.None && (*/}
+      {/*        <img*/}
+      {/*          className="h-6"*/}
+      {/*          src={classificationToGlyphUrl[previousMove.classification as AnalysisMoveClassification]}*/}
+      {/*          alt="classification"*/}
+      {/*        />*/}
+      {/*      )}*/}
+      {/*      <span className="font-bold">{toPieceNotation(previousMove.move.san, previousMove.move.color)}</span>*/}
+      {/*      {previousMove.classification !== AnalysisMoveClassification.None && (*/}
+      {/*        <span className="font-bold">{previousMove.classification}</span>*/}
+      {/*      )}*/}
 
-            {previousMove.classification && moveIsBad[previousMove.classification] && (
-              <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(!displayLine)}>
-                <ZoomIn className="text-castled-accent" />
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
+      {/*      {previousMove.classification && moveIsBad[previousMove.classification] && (*/}
+      {/*        <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(!displayLine)}>*/}
+      {/*          <ZoomIn className="text-castled-accent" />*/}
+      {/*        </Button>*/}
+      {/*      )}*/}
+      {/*    </div>*/}
+      {/*  )}*/}
+      {/*</div>*/}
     </div>
   );
 };

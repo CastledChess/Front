@@ -98,7 +98,7 @@ export const MoveList = () => {
   }, []);
 
   return (
-    <div className="p-6 flex h-full flex-col gap-2">
+    <div className="lg:p-6 flex h-full flex-col gap-2">
       <span className="text-xs h-6">{opening && opening.name}</span>
       <div className="flex h-full flex-wrap gap-1 justify-start content-start overflow-y-scroll custom-scrollbar">
         {analysis?.moves.map((move, index) => (
