@@ -91,8 +91,8 @@ export const Theme = () => {
   };
 
   return (
-    <div className="h-full justify-center gap-6 flex p-10">
-      <div className="flex flex-col gap-3 w-64">
+    <div className="h-full md:justify-center justify-end gap-6 flex md:flex-row flex-col-reverse p-4 md:p-10">
+      <div className="flex flex-col gap-3 w-full md:w-64">
         <Label htmlFor="piece-theme">Piece theme</Label>
         <Popover open={pieceThemeOpen} onOpenChange={setPieceThemeOpen}>
           <PopoverTrigger id="piece-theme" asChild>
@@ -178,7 +178,7 @@ export const Theme = () => {
         </Select>
       </div>
 
-      <div className="aspect-square">
+      <div className="aspect-square md:h-auto h-[calc(100vw-2.5rem)] w-[calc(100vw-2.5rem)] md:w-auto">
         <Chessboard draggable={false} chess={chess} chessGround={chessGround} setChessGround={setChessGround} />
       </div>
     </div>

@@ -185,11 +185,11 @@ export const Navbar = () => {
                 </>
               )}
               <DropdownMenuGroup className="flex p-1 gap-1">
-                <Button variant="ghost" className="w-full">
-                  <Flag country="FR" role="button" size={18} onClick={() => changeLanguage('fr')} /> FR
+                <Button variant="ghost" className="w-full" onClick={() => changeLanguage('fr')}>
+                  <Flag country="FR" role="button" size={18} /> FR
                 </Button>
-                <Button variant="ghost" className="w-full">
-                  <Flag country="GB" role="button" size={18} onClick={() => changeLanguage('en')} /> UK
+                <Button variant="ghost" className="w-full" onClick={() => changeLanguage('en')}>
+                  <Flag country="GB" role="button" size={18} /> UK
                 </Button>
               </DropdownMenuGroup>
             </DropdownMenuContent>
