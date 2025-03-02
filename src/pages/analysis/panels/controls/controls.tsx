@@ -8,12 +8,12 @@ import { AnalysisMoveClassification } from '@/types/analysis.ts';
 import {
   classificationToColor,
   classificationToGlyph,
-  classificationToGlyphUrl,
+  // classificationToGlyphUrl,
   moveIsBad,
 } from '@/data/classifications.ts';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pause, Play, ZoomIn } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Pause, Play } from 'lucide-react';
 import { useMoveListState } from '@/store/move-list.ts';
-import { toPieceNotation } from '@/lib/format.ts';
+// import { toPieceNotation } from '@/lib/format.ts';
 
 /**
  * The `Controls` component provides a set of controls for navigating and interacting with a chess analysis.
