@@ -236,12 +236,12 @@ export const StartAnalysis = () => {
   }, []);
 
   return (
-    <div className="h-full flex justify-center p-28 pt-14">
+    <div className="h-full flex justify-center p-6 md:p-20 lg:p-28 pt-14">
       <div className="flex flex-col gap-6 w-[65rem] h-full">
-        <h1 className="text-3xl w-full font-bold my-2">{t('title')}</h1>
+        <h1 className="text-2xl md:text-4xl w-full font-bold my-2">{t('title')}</h1>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex-1 flex gap-3">
-            <div className="w-1/2 flex flex-col gap-3">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex-1 flex flex-col lg:flex-row gap-3">
+            <div className="w-full lg:w-1/2 flex flex-col gap-3">
               <Select
                 disabled={isLoading}
                 value={importMode}
@@ -295,7 +295,7 @@ export const StartAnalysis = () => {
               )}
             </div>
 
-            <div className="w-1/2 flex flex-col gap-3 h-full">
+            <div className="w-full lg:w-1/2 flex flex-col gap-3 h-full">
               <FormField
                 disabled={isLoading}
                 control={form.control}
@@ -319,7 +319,7 @@ export const StartAnalysis = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <div className="flex gap-6">
+                      <div className="flex gap-3 lg:gap-6">
                         <Select
                           disabled={isLoading}
                           value={field.value.value}
