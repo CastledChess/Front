@@ -156,7 +156,7 @@ export const Database = () => {
                   className="animate-fade-in hover:bg-white/10 cursor-default"
                   onPointerEnter={() => isBrowser && handleDisplayMoveArrow(move.san)}
                   onClick={() => (handleClearMoveArrow(), handleDisplayMoveArrow(move.san))}
-                  onPointerLeave={() => isBrowser && handleClearMoveArrow}
+                  onPointerLeave={() => isBrowser && handleClearMoveArrow()}
                 >
                   <td className="p-1 lg:pl-6 text-accent-foreground whitespace-nowrap w-1 font-light text-castled-gray text-xs">
                     {move.san}
