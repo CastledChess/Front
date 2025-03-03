@@ -37,6 +37,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog.tsx';
+import { useDeviceData } from 'react-device-detect';
+import { track } from '@vercel/analytics';
+import { useAuthStore } from '@/store/auth.ts';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -123,6 +126,7 @@ enum ImportMode {
  */
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
+  const user = useAuthStore((state) => state.user);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -148,10 +152,10 @@ export const StartAnalysis = () => {
     },
   });
 
+  const { browser, cpu, engine, os, ua } = useDeviceData(window.navigator.userAgent);
+
   const onSubmit = async (data: z.infer<typeof StartAnalysisFormSchema>) => {
     setIsLoading(true);
-
-    console.log(data);
 
     try {
       const analysis = await analyseGame(data);
@@ -160,6 +164,15 @@ export const StartAnalysis = () => {
       toast.success('Analysis Ready!');
 
       setAnalysis({ ...analysis, id: response.data.id });
+
+      track('Create Analysis', {
+        user: user?.email || 'Guest',
+        browser,
+        cpu,
+        engine,
+        os,
+        ua,
+      });
 
       navigate(`/analysis/${response.data.id}`);
     } catch (error) {

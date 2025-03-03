@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button.tsx';
 import { login } from '@/api/auth.ts';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { track } from '@vercel/analytics';
+import { useDeviceData } from 'react-device-detect';
 // import lichessIcon from '@/assets/icons/lichess.svg?url';
 // import chessComIcon from '@/assets/icons/chesscom.svg?url';
 
@@ -57,11 +59,20 @@ export const Login = () => {
   });
 
   const navigate = useNavigate();
+  const { browser, cpu, engine, os, ua } = useDeviceData(window.navigator.userAgent);
 
   const onSubmit = async (data: z.infer<typeof LoginSchema>) => {
     try {
       await login(data);
 
+      track('Signin', {
+        email: data.email,
+        browser,
+        cpu,
+        engine,
+        os,
+        ua,
+      });
       navigate('/');
     } catch (error) {
       console.error('Failed to login:', error);
