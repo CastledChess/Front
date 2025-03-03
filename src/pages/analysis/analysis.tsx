@@ -153,11 +153,11 @@ export const Analysis = () => {
     <div className="h-full w-full flex">
       <DndProvider backend={HTML5Backend}>
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={20} minSize={20} order={1}>
-            <Controls />
-          </ResizablePanel>
+          {/*<ResizablePanel defaultSize={20} minSize={20} order={1}>*/}
+          {/*  <Controls />*/}
+          {/*</ResizablePanel>*/}
 
-          <ResizableHandle withHandle />
+          {/*<ResizableHandle withHandle />*/}
 
           <ResizablePanel defaultSize={50} minSize={40} order={2}>
             <ChessboardPanel />

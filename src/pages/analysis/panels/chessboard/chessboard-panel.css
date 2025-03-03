@@ -4,10 +4,10 @@
 
 @container (min-width: 0px) {
   .chessboard-container {
-    width: calc(100cqh - 6rem);
+    width: calc(100cqh - 8rem);
   }
 
   .eval-bar-container {
-    height: min(calc(100cqw - 3.5rem), 100cqh - 6rem);
+    height: min(calc(100cqw - 4.5rem), 100cqh - 8rem);
   }
 }
