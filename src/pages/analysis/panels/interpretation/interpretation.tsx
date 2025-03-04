@@ -32,7 +32,7 @@ export const Interpretation = () => {
         return (
           <span className="flex gap-2 items-center flex-wrap">
             Supports the {pieceColorToColorName[role.toPiece.color]} {pieceSymbolToPieceName[role.toPiece.type]} on{' '}
-            <SquareHighlight className="bg-castled-accent/10 rounded" square={role.toSquare}>
+            <SquareHighlight className="bg-primary/10 rounded" square={role.toSquare}>
               {role.toSquare}
             </SquareHighlight>{' '}
             that is being {role.reason.type} by the {pieceColorToColorName[role.reason.piece.color]}{' '}
@@ -237,14 +237,14 @@ export const Interpretation = () => {
                     </Button>
                   </CollapsibleTrigger>
 
-                  <CollapsibleContent className="p-2 space-y-2 bg-castled-secondary border-l-4 border-foreground/10 rounded-l ml-2">
+                  <CollapsibleContent className="p-2 space-y-2 bg-secondary-bg border-l-4 border-foreground/10 rounded-l ml-2">
                     <ul>
                       {roles.map((role, index) => (
                         <li
                           key={role.toSquare + index}
                           onPointerLeave={handlePointerLeaveRole}
                           onPointerEnter={() => handlePointerEnterRole(role)}
-                          className="hover:bg-castled-primary/50 text-sm cursor-default flex"
+                          className="hover:bg-primary-bg/50 text-sm cursor-default flex"
                         >
                           {getPieceRoleSentence(role)}
                         </li>

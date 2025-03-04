@@ -167,7 +167,7 @@ export const Database = () => {
                   <td className="p-1 lg:pr-6">
                     <div className="flex w-full overflow-hidden rounded-xl border">
                       <MoveRepartition amount={move.whitePercent} className="bg-white text-background" />
-                      <MoveRepartition amount={move.drawPercent} className="bg-castled-accent text-background" />
+                      <MoveRepartition amount={move.drawPercent} className="bg-primary text-background" />
                       <MoveRepartition amount={move.blackPercent} className="bg-secondary text-foreground" />
                     </div>
                   </td>

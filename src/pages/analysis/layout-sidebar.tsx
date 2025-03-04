@@ -73,7 +73,7 @@ export const LayoutSidebar = ({ justify, which }: LayoutSidebarProps) => {
             'z-10 absolute rounded transition top-0 w-64 h-full',
             which.includes('Right') && 'right-full',
             which.includes('Left') && 'left-full',
-            isActive && ' bg-castled-accent/10',
+            isActive && ' bg-primary/10',
           )}
         />
       )}

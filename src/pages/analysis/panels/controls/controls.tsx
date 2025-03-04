@@ -216,7 +216,7 @@ export const Controls = () => {
         </Button>
       </div>
 
-      {/*<div className="bg-gradient-to-br from-castled-secondary/30 to-castled-secondary rounded-xl p-4 flex flex-col gap-2">*/}
+      {/*<div className="bg-gradient-to-br from-secondary-bg/30 to-secondary-bg rounded-xl p-4 flex flex-col gap-2">*/}
       {/*  {previousMove && (*/}
       {/*    <div className="flex items-center gap-2">*/}
       {/*      {previousMove.classification !== AnalysisMoveClassification.None && (*/}
@@ -233,7 +233,7 @@ export const Controls = () => {
 
       {/*      {previousMove.classification && moveIsBad[previousMove.classification] && (*/}
       {/*        <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(!displayLine)}>*/}
-      {/*          <ZoomIn className="text-castled-accent" />*/}
+      {/*          <ZoomIn className="text-primary" />*/}
       {/*        </Button>*/}
       {/*      )}*/}
       {/*    </div>*/}

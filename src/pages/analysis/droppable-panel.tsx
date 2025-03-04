@@ -59,7 +59,7 @@ export const DroppablePanel = ({
 
   return (
     <ResizablePanel {...props} className="h-full w-full">
-      <div ref={drop} className={cn('h-full w-full', isActive && 'bg-castled-accent/10')}>
+      <div ref={drop} className={cn('h-full w-full', isActive && 'bg-primary/10')}>
         {children}
       </div>
     </ResizablePanel>

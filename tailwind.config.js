@@ -15,16 +15,8 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
-        'castled-primary': '#1B1919',
-        'castled-secondary': '#272424',
-        'castled-tertiary': '#343536',
-        'castled-gray': '#D5D4CF',
-        'castled-btn-primary': '#ECECEC',
-        'castled-btn-orange': '#F68C41',
-        'castled-btn-purple': '#646ADA',
-        'castled-btn-red': '#EA0909',
-        'castled-accent': '#EC9E67',
-        'castled-input': '#494A4C',
+        'primary-bg': 'hsl(var(--primary-bg))',
+        'secondary-bg': 'hsl(var(--secondary-bg))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
