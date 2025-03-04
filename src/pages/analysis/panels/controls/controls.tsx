@@ -197,7 +197,7 @@ export const Controls = () => {
   }, [currentMove]);
 
   return (
-    <div className="flex flex-col gap-1 p-2 lg:py-2 lg:px-0 h-14">
+    <div className="flex flex-col w-full gap-1 p-2 lg:py-2 lg:px-0 h-14">
       <div className="flex w-full gap-1">
         <Button variant="secondary" className="w-full" onClick={handleSkipToBegin}>
           <ChevronsLeft />

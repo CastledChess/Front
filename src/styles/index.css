@@ -33,9 +33,9 @@
     --secondary-bg: 0 4% 90%;
   }
   .dark {
-    --background: 0, 4%, 10%; /* #1B1919 */
+    --background: 0, 4%, 10%;
     --foreground: 0 0% 98%;
-    --card: 0, 4%, 15%; /* #272424 */
+    --card: 0, 4%, 15%;
     --card-foreground: 0 0% 98%;
     --popover: 0, 4%, 10%;
     --popover-foreground: 0 0% 98%;
