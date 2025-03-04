@@ -107,10 +107,7 @@ export const MoveList = () => {
               ref={(el) => {
                 moveRefs.current[index] = el;
               }}
-              className={cn(
-                'flex gap-2 p-1 h-max',
-                currentMove === index + 1 && 'underline font-bold bg-castled-accent/15',
-              )}
+              className={cn('flex gap-2 p-1 h-max', currentMove === index + 1 && 'underline font-bold bg-primary/15')}
               variant="ghost"
               onFocus={(e) => e.target.blur()}
               onClick={() => handleSkipToMove(index + 1)}
@@ -297,7 +294,7 @@ const EngineLine = ({ moveIndex }: EngineLineProps) => {
               key={index}
               className={cn(
                 'flex gap-2 p-1 h-max',
-                currentLineMove === index + 1 && 'underline font-bold bg-castled-accent/15',
+                currentLineMove === index + 1 && 'underline font-bold bg-primary/15',
               )}
               variant="ghost"
               onClick={() => handleSkipToMove(index + 1)}

@@ -197,7 +197,7 @@ export const Controls = () => {
   }, [currentMove]);
 
   return (
-    <div className="flex flex-col gap-1 p-2 lg:py-2 lg:px-0 h-14">
+    <div className="flex flex-col w-full gap-1 p-2 lg:py-2 lg:px-0 h-14">
       <div className="flex w-full gap-1">
         <Button variant="secondary" className="w-full" onClick={handleSkipToBegin}>
           <ChevronsLeft />
@@ -216,7 +216,7 @@ export const Controls = () => {
         </Button>
       </div>
 
-      {/*<div className="bg-gradient-to-br from-castled-secondary/30 to-castled-secondary rounded-xl p-4 flex flex-col gap-2">*/}
+      {/*<div className="bg-gradient-to-br from-secondary-bg/30 to-secondary-bg rounded-xl p-4 flex flex-col gap-2">*/}
       {/*  {previousMove && (*/}
       {/*    <div className="flex items-center gap-2">*/}
       {/*      {previousMove.classification !== AnalysisMoveClassification.None && (*/}
@@ -233,7 +233,7 @@ export const Controls = () => {
 
       {/*      {previousMove.classification && moveIsBad[previousMove.classification] && (*/}
       {/*        <Button variant="outline" className="ml-auto" onClick={() => setDisplayLine(!displayLine)}>*/}
-      {/*          <ZoomIn className="text-castled-accent" />*/}
+      {/*          <ZoomIn className="text-primary" />*/}
       {/*        </Button>*/}
       {/*      )}*/}
       {/*    </div>*/}

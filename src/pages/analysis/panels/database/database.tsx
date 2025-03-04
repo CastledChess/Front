@@ -153,7 +153,7 @@ export const Database = () => {
             : databaseMoves?.map((move) => (
                 <tr
                   key={move.san}
-                  className="animate-fade-in hover:bg-white/10 cursor-default"
+                  className="animate-fade-in hover:bg-foreground/10 cursor-default"
                   onPointerEnter={() => isBrowser && handleDisplayMoveArrow(move.san)}
                   onClick={() => (handleClearMoveArrow(), handleDisplayMoveArrow(move.san))}
                   onPointerLeave={() => isBrowser && handleClearMoveArrow()}
@@ -166,9 +166,9 @@ export const Database = () => {
                   </td>
                   <td className="p-1 lg:pr-6">
                     <div className="flex w-full overflow-hidden rounded-xl border">
-                      <MoveRepartition amount={move.whitePercent} className="bg-white text-background" />
-                      <MoveRepartition amount={move.drawPercent} className="bg-castled-accent text-background" />
-                      <MoveRepartition amount={move.blackPercent} className="bg-secondary text-foreground" />
+                      <MoveRepartition amount={move.whitePercent} className="dark bg-white text-background" />
+                      <MoveRepartition amount={move.drawPercent} className="dark bg-primary text-background" />
+                      <MoveRepartition amount={move.blackPercent} className="dark bg-secondary text-foreground" />
                     </div>
                   </td>
                 </tr>

@@ -132,7 +132,7 @@ export const LayoutSidebarItem = ({ item, which }: LayoutSidebarItemProps) => {
       ref={ref}
       className={cn(
         'cursor-pointer border rounded w-8 h-8 flex justify-center p-0 items-center',
-        isSelected && 'bg-castled-accent/15 hover:bg-castled-accent/20 border-castled-accent border',
+        isSelected && 'bg-primary/15 hover:bg-primary/20 border-primary border',
       )}
     >
       <Icon icon={panelIcons[item]} className="text-foreground/70" />

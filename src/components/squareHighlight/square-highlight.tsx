@@ -27,7 +27,7 @@ export const SquareHighlight = ({ square, className, ...props }: SquareHighlight
     <div
       onMouseEnter={() => handlePointerEnterRole(square)}
       onMouseLeave={handlePointerLeaveRole}
-      className={cn('bg-castled-accent/10 p-1 rounded', className)}
+      className={cn('bg-primary/10 p-1 rounded', className)}
       {...props}
     />
   );

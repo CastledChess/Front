@@ -27,6 +27,9 @@ import { DropdownMenuGroup } from '@radix-ui/react-dropdown-menu';
 import { Button } from '@/components/ui/button.tsx';
 import { BrowserView, MobileView } from 'react-device-detect';
 import { Menu } from 'lucide-react';
+import { useTheme } from '@/components/theme-provider.tsx';
+import { Label } from '@/components/ui/label.tsx';
+import { Switch } from '@/components/ui/switch.tsx';
 
 const documentation: { title: string; href: string; description: string }[] = [
   {
@@ -56,6 +59,7 @@ export const Navbar = () => {
   const { t, i18n } = useTranslation('navbar');
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -67,9 +71,9 @@ export const Navbar = () => {
   };
 
   return (
-    <div className="w-full h-12 px-4 gap-6 flex justify-between items-center border-b bg-castled-primary text-castled-gray">
+    <div className="w-full h-12 px-4 gap-6 flex justify-between items-center border-b bg-background text-castled-gray">
       <Link to="/" className="h-full flex gap-2 font-bold items-center">
-        <img src="/logo.svg" alt="Castled Logo" className="h-6" />
+        <img src={theme === 'light' ? 'logo-light.svg' : '/logo.svg'} alt="Castled Logo" className="h-6" />
         Castled
       </Link>
 
@@ -91,7 +95,7 @@ export const Navbar = () => {
               </NavigationMenuLink>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuTrigger className="hover:no-underline hover:text-castled-accent">
+              <NavigationMenuTrigger className="hover:no-underline hover:text-primary">
                 {t('navbar.documentation')}
               </NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -101,12 +105,7 @@ export const Navbar = () => {
                     const description = t(component.description);
 
                     return (
-                      <ListItem
-                        className="hover:text-castled-accent"
-                        key={component.href}
-                        title={title}
-                        href={component.href}
-                      >
+                      <ListItem className="hover:text-primary" key={component.href} title={title} href={component.href}>
                         {description}
                       </ListItem>
                     );
@@ -141,7 +140,7 @@ export const Navbar = () => {
               {user && (
                 <BrowserView>
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-castled-secondary hover:text-castled-accent">
+                    <AvatarFallback className="bg-secondary-bg hover:text-primary">
                       {user.username[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -157,28 +156,24 @@ export const Navbar = () => {
                 <>
                   <MobileView>
                     <Link to="/">
-                      <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.dashboard')}</DropdownMenuItem>
+                      <DropdownMenuItem className="focus:text-primary">{t('navbar.dashboard')}</DropdownMenuItem>
                     </Link>
                     <Link to="/start-analysis">
-                      <DropdownMenuItem className="focus:text-castled-accent">{t('navbar.analysis')}</DropdownMenuItem>
+                      <DropdownMenuItem className="focus:text-primary">{t('navbar.analysis')}</DropdownMenuItem>
                     </Link>
                   </MobileView>
                   {/*<Link to="/profile">*/}
-                  {/*  <DropdownMenuItem className="focus:text-castled-accent">*/}
+                  {/*  <DropdownMenuItem className="focus:text-primary">*/}
                   {/*    {t('account-dropdown.profile')}*/}
                   {/*  </DropdownMenuItem>*/}
                   {/*</Link>*/}
                   <Link to="/theme">
-                    <DropdownMenuItem className="focus:text-castled-accent">
-                      {t('account-dropdown.theme')}
-                    </DropdownMenuItem>
+                    <DropdownMenuItem className="focus:text-primary">{t('account-dropdown.theme')}</DropdownMenuItem>
                   </Link>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="focus:text-castled-accent">
-                    {t('account-dropdown.support')}
-                  </DropdownMenuItem>
+                  <DropdownMenuItem className="focus:text-primary">{t('account-dropdown.support')}</DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="focus:text-castled-accent" onClick={handleLogout}>
+                  <DropdownMenuItem className="focus:text-primary" onClick={handleLogout}>
                     {t('account-dropdown.logout')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -191,6 +186,13 @@ export const Navbar = () => {
                 <Button variant="ghost" className="w-full" onClick={() => changeLanguage('en')}>
                   <Flag country="GB" role="button" size={18} /> UK
                 </Button>
+              </DropdownMenuGroup>
+              <DropdownMenuGroup className="flex p-2 justify-between items-center">
+                <Label>{theme.charAt(0).toUpperCase() + theme.slice(1)}</Label>
+                <Switch
+                  defaultChecked={theme === 'light'}
+                  onCheckedChange={(checked) => setTheme(checked ? 'light' : 'dark')}
+                />
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
