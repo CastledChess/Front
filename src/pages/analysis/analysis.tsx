@@ -5,7 +5,18 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Database } from '@/pages/analysis/panels/database/database.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
-import { useEffect } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useParams } from 'react-router-dom';
 import { useAnalysisStore } from '@/store/analysis.ts';
 import { getAnalysisById } from '@/api/analysis.ts';
@@ -14,11 +25,32 @@ import { ChessboardPanel } from '@/pages/analysis/panels/chessboard/chessboard-p
 import { Interpretation } from './panels/interpretation/interpretation';
 import { isMobile } from 'react-device-detect';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion.tsx';
-import { useLayoutStore } from '@/store/layout.ts';
+import { defaultLayout, useLayoutStore } from '@/store/layout.ts';
 import { Panel } from '@/types/layout.ts';
-import { Mosaic, MosaicWindow } from 'react-mosaic-component';
+import dropRight from 'lodash/dropRight';
+import {
+  Mosaic,
+  MosaicWindow,
+  createExpandUpdate,
+  MosaicPath,
+  updateTree,
+  MosaicNode,
+  getPathToCorner,
+  Corner,
+  getNodeAtPath,
+  MosaicParent,
+  MosaicDirection,
+  getOtherDirection,
+  createRemoveUpdate,
+  createHideUpdate,
+  getLeaves,
+  createBalancedTreeFromLeaves,
+} from 'react-mosaic-component';
+import { createPortal } from 'react-dom';
 import { Icon } from '@iconify/react';
 import { panelIcons, panels, panelTitles } from '@/data/layout.tsx';
+import { useTheme } from '@/components/theme-provider.tsx';
+
 import '@/styles/window-tiling.css';
 
 /**
@@ -55,6 +87,9 @@ export const Analysis = () => {
   const { layout, setLayout } = useLayoutStore();
   const { analysis, setAnalysis } = useAnalysisStore();
   const { id } = useParams();
+  const panelsPaths = useRef<Map<Panel, MosaicPath>>(new Map());
+  const hiddenPanels = useRef<Map<Panel, MosaicPath>>(new Map());
+  const [renderedInWindow, setRenderedInWindow] = useState<Map<Panel, MosaicPath>>(new Map());
 
   useEffect(() => {
     if (analysis?.id == id) return;
@@ -122,8 +157,91 @@ export const Analysis = () => {
     );
   }
 
+  const handleSeparateWindowClick = (id: Panel, path: MosaicPath) => {
+    const hideUpdate = createHideUpdate(path);
+
+    setRenderedInWindow((prev) => new Map(prev.set(id, path)));
+
+    setLayout((layout) => layout && (updateTree(layout, [hideUpdate]) as MosaicNode<Panel>));
+  };
+
+  const handleRemovePanel = (panel: Panel) => {
+    const path = panelsPaths.current.get(panel);
+
+    if (!path) return;
+
+    const hideUpdate = createRemoveUpdate(layout, path);
+
+    hiddenPanels.current.set(panel, path);
+
+    setLayout((layout) => layout && updateTree(layout, [hideUpdate]));
+  };
+
+  const handleCloseWindow = (id: Panel) => {
+    const path = renderedInWindow.get(id);
+
+    if (!path) return;
+
+    setRenderedInWindow((prev) => {
+      const next = new Map(prev);
+      next.delete(id);
+      return next;
+    });
+
+    const expandUpdate = createExpandUpdate(path, 50);
+
+    setLayout((layout) => layout && (updateTree(layout, [expandUpdate]) as MosaicNode<Panel>));
+  };
+
+  const handleResetLayout = () => {
+    setLayout(defaultLayout);
+  };
+
+  const addToTopRight = (id: Panel) => {
+    hiddenPanels.current.delete(id);
+
+    if (!layout) return setLayout(id);
+
+    const path = getPathToCorner(layout, Corner.TOP_RIGHT);
+    const parent = getNodeAtPath(layout, dropRight(path)) as unknown as MosaicParent<Panel>;
+    const destination = getNodeAtPath(layout, path) as MosaicNode<Panel>;
+    const direction: MosaicDirection = parent ? getOtherDirection(parent.direction) : 'row';
+
+    const first = direction === 'row' ? destination : id;
+    const second = direction === 'row' ? id : destination;
+
+    const newLayout = updateTree(layout, [
+      {
+        path,
+        spec: {
+          $set: {
+            direction,
+            first,
+            second,
+          },
+        },
+      },
+    ]);
+
+    setLayout(newLayout);
+  };
+
+  const balanceLayout = () => {
+    const leaves = getLeaves(layout);
+
+    setLayout(createBalancedTreeFromLeaves(leaves));
+  };
+
   return (
     <div className="h-full w-full flex">
+      {Array.from(renderedInWindow.entries()).map(([key, value]) =>
+        value ? (
+          <RenderInWindow onClose={() => handleCloseWindow(key)} key={key}>
+            {panels[key]}
+          </RenderInWindow>
+        ) : null,
+      )}
+
       <DndProvider backend={HTML5Backend}>
         <ResizablePanelGroup direction="horizontal">
           <ResizablePanel defaultSize={50} minSize={40} order={0}>
@@ -133,21 +251,70 @@ export const Analysis = () => {
           <ResizableHandle withHandle />
 
           <ResizablePanel defaultSize={50} minSize={40} order={0} className="bg-secondary-bg/30">
-            <Mosaic<Panel>
-              value={layout}
-              initialValue={layout}
-              onChange={setLayout}
-              renderTile={(id, path) => (
-                <MosaicWindow<Panel>
-                  path={path}
-                  renderPreview={() => <div />}
-                  renderToolbar={() => <PanelToolbar id={id} />}
-                  title={panelTitles[id]}
-                >
-                  {panels[id]}
-                </MosaicWindow>
-              )}
-            />
+            <div className="flex w-full shrink-0 p-[6px] pb-0">
+              <div className="flex gap-1 w-full bg-secondary-bg justify-end rounded-lg">
+                <Button variant="ghost" className="hover:bg-foreground/5 h-8 rounded" onClick={handleResetLayout}>
+                  <Icon icon="iconamoon:do-undo" />
+                  Reset
+                </Button>
+
+                <Button variant="ghost" className="hover:bg-foreground/5 h-8 rounded" onClick={balanceLayout}>
+                  <Icon icon="mynaui:layout" />
+                  Balance
+                </Button>
+
+                {hiddenPanels.current.size > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="hover:bg-foreground/5 h-8 rounded">
+                        <Icon icon="fluent:panel-left-48-filled" /> Panels
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end">
+                      <DropdownMenuGroup>
+                        {hiddenPanels.current
+                          .entries()
+                          .toArray()
+                          .map(([panel]) => {
+                            return (
+                              <DropdownMenuItem key={panel} onClick={() => addToTopRight(panel)}>
+                                {panelTitles[panel]}
+                              </DropdownMenuItem>
+                            );
+                          })}
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </div>
+            </div>
+            <div className="flex w-full flex-1 h-[calc(100%-3rem)]">
+              <Mosaic<Panel>
+                value={layout}
+                initialValue={layout}
+                onRelease={setLayout}
+                onChange={setLayout}
+                renderTile={(id, path) => (
+                  <MosaicWindow<Panel>
+                    path={path}
+                    ref={() => panelsPaths.current.set(id, path)}
+                    renderPreview={() => <div />}
+                    renderToolbar={() => (
+                      <div className="flex h-full items-center px-2 py-1 gap-2 rounded-t-lg w-full bg-secondary-bg">
+                        <PanelToolbar
+                          handleRemovePanel={handleRemovePanel}
+                          handleSeparateWindowClick={() => handleSeparateWindowClick(id, path)}
+                          id={id}
+                        />
+                      </div>
+                    )}
+                    title={panelTitles[id]}
+                  >
+                    {panels[id]}
+                  </MosaicWindow>
+                )}
+              />
+            </div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </DndProvider>
@@ -155,10 +322,83 @@ export const Analysis = () => {
   );
 };
 
-const PanelToolbar = ({ id }: { id: Panel }) => {
+const PanelToolbar = ({
+  id,
+  handleRemovePanel,
+  handleSeparateWindowClick,
+}: {
+  id: Panel;
+  handleRemovePanel: (id: Panel) => void;
+  handleSeparateWindowClick: () => void;
+}) => {
   return (
-    <div className="flex h-full items-center px-2 gap-4 rounded-t-lg w-full bg-secondary-bg">
-      <Icon icon={panelIcons[id]} /> {panelTitles[id]}
-    </div>
+    <>
+      <Icon className="text-foreground/70" icon={panelIcons[id]} />
+      <p>{panelTitles[id]}</p>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="ml-auto px-1 text-foreground/50 h-full">
+            <Icon icon="ph:dots-three-bold" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end">
+          <DropdownMenuLabel>{panelTitles[id]}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem onClick={handleSeparateWindowClick}>
+              Open in new window
+              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Button variant="ghost" className="px-1 text-foreground/50 h-full" onClick={() => handleRemovePanel(id)}>
+        <Icon icon="mdi:close" />
+      </Button>
+    </>
   );
+};
+
+const RenderInWindow = ({ children, onClose }: { children: ReactNode; onClose: () => void }) => {
+  const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  const newWindow = useRef<Window | null>(null);
+
+  function copyStyles(src: Document, dest: Document) {
+    Array.from(src.styleSheets).forEach((styleSheet) => {
+      const styleElement = styleSheet.ownerNode?.cloneNode(true);
+
+      dest.head.appendChild(styleElement!);
+    });
+    Array.from(src.fonts).forEach((font) => dest.fonts.add(font));
+  }
+
+  useEffect(() => {
+    setContainer(document.createElement('div'));
+  }, []);
+
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    if (container) {
+      newWindow.current = window.open('', '', 'width=600,height=400,left=200,top=200');
+      if (!newWindow.current) return;
+
+      newWindow.current.document.body.className = theme;
+      newWindow.current.document.body.appendChild(container);
+
+      const curWindow = newWindow.current;
+
+      copyStyles(document, curWindow.document);
+
+      newWindow.current.onbeforeunload = onClose;
+
+      return () => {
+        curWindow.close();
+      };
+    }
+  }, [container]);
+
+  return container && createPortal(children, container);
 };
