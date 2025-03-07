@@ -296,8 +296,8 @@
 }
 .mosaic.mosaic-blueprint-theme.mosaic-drop-target .drop-target-container .drop-target,
 .mosaic.mosaic-blueprint-theme .mosaic-drop-target .drop-target-container .drop-target {
-  background: rgba(138, 187, 255, 0.2);
-  border: 2px solid #4c90f0;
+  background: hsl(var(--primary), 0.2);
+  border: 2px solid hsl(var(--primary));
   transition: opacity 100ms;
   border-radius: 2px;
 }
