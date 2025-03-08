@@ -21,7 +21,7 @@ i18n
     defaultNS: 'common',
     lng: 'en',
     ns: ['common', 'analysis', 'register', 'login', 'history', 'moveList'],
-    debug: true,
+    // debug: true,
     // backend: {
     //   loadPath: 'i18n/locales/{{lng}}/{{ns}}.json',
     // },
