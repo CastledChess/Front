@@ -88,7 +88,7 @@ export const Interpretation = () => {
             const toPiece = c.get(toSquare);
             const fromPiece = c.get(fromSquare);
 
-            if (!toPiece) continue;
+            if (!toPiece || !fromPiece) continue;
 
             if (toPiece.color === color) {
               xRayedPieces.set(toSquare, { square: fromSquare, piece: fromPiece });
@@ -111,7 +111,7 @@ export const Interpretation = () => {
             const toPiece = c.get(toSquare);
             const fromPiece = c.get(fromSquare);
 
-            if (!toPiece) continue;
+            if (!toPiece || !fromPiece) continue;
 
             if (toPiece.color === color) {
               attackedPieces.set(toSquare, { square: fromSquare, piece: fromPiece });
@@ -139,6 +139,8 @@ export const Interpretation = () => {
           const toSquare = makeSquare(toSquareIndex);
           const toPiece = c.get(toSquare);
           const fromPiece = c.get(fromSquare);
+
+          if (!fromPiece || !toPiece) continue;
 
           if (!toPiece) pr.squareWeights[toSquare].controlledWhite += pieceValues[fromPiece.type];
           else {
