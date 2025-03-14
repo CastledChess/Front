@@ -5,6 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { getHistory } from '@/api/history.ts';
 import { useHistoryState } from '@/store/history.ts';
 import { Analysis } from '@/types/analysis.ts';
+import Joyride from 'react-joyride';
+import { CustomJoyrideTooltip } from '@/components/joyride/tooltip.tsx';
+import { dashboardSteps } from '@/data/tutorial';
 
 /**
  * Dashboard component that fetches and displays game history data.
@@ -40,6 +43,19 @@ export const Dashboard = () => {
         <p className="text-2xl md:text-4xl">{t('title')}</p>
         <DataTable isLoading={loading} columns={columns} data={analyses || []} />
       </div>
+
+      <Joyride
+        styles={{
+          options: {
+            arrowColor: 'hsl(var(--accent))',
+          },
+        }}
+        disableOverlayClose
+        disableCloseOnEsc
+        continuous
+        tooltipComponent={CustomJoyrideTooltip}
+        steps={dashboardSteps}
+      />
     </div>
   );
 };
