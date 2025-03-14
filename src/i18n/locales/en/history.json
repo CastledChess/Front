@@ -12,5 +12,15 @@
   "details": "View game analysis",
   "copyId": "Copy Game Details ID",
   "analysis": "Game Analysis",
-  "loading": "Loading game history..."
+  "loading": "Loading game history...",
+  "tutorialSteps": {
+    "welcome": {
+      "title": "Welcome to Castled",
+      "description": "This is the dashboard, where you can view and manage your analyses."
+    },
+    "navigateToNewAnalysis": {
+      "title": "Let's create a new Analysis",
+      "description": "Click on the \"New Analysis\" button to create a new analysis."
+    }
+  }
 }

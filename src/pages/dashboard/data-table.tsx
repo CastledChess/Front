@@ -17,6 +17,8 @@ import { Analysis } from '@/types/analysis.ts';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BrowserView } from 'react-device-detect';
+import { TutorialStep, useAuthStore } from '@/store/auth.ts';
+import { cn } from '@/lib/utils.ts';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -55,6 +57,7 @@ export function DataTable<TData extends Analysis>({
 }: DataTableProps<TData> & { isLoading?: boolean }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
+  const { hasSeenTutorial, tutorialStep, setTutorialStep } = useAuthStore();
   const { t } = useTranslation('history');
   const table = useReactTable({
     data,
@@ -72,7 +75,13 @@ export function DataTable<TData extends Analysis>({
 
   return (
     <>
-      <div className="rounded-md border overflow-y-auto custom-scrollbar h-full">
+      <div
+        className={cn(
+          'rounded-md overflow-y-auto custom-scrollbar h-full',
+          !hasSeenTutorial && tutorialStep === TutorialStep.WELCOME && 'border-2 border-primary z-20 animate-pulse',
+          !hasSeenTutorial && tutorialStep === TutorialStep.NAVIGATE_TO_NEW_ANALYSIS && 'z-20',
+        )}
+      >
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -136,9 +145,16 @@ export function DataTable<TData extends Analysis>({
 
             {!isLoading && table.getRowModel().rows?.length <= 0 && (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24  text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   <Link to="/start-analysis">
-                    <Button variant="outline">
+                    <Button
+                      variant="outline"
+                      onClick={() => setTutorialStep(TutorialStep.IMPORT_PGN)}
+                      className={cn(
+                        tutorialStep === TutorialStep.NAVIGATE_TO_NEW_ANALYSIS &&
+                          'border-2 animate-pulse border-primary',
+                      )}
+                    >
                       <Plus />
                       New Analysis
                     </Button>

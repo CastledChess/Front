@@ -1,6 +1,15 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+export enum TutorialStep {
+  WELCOME = 'welcome',
+  NAVIGATE_TO_NEW_ANALYSIS = 'navigateToNewAnalysis',
+  IMPORT_PGN = 'importPgn',
+  ANALYZE = 'startAnalysis',
+  VIEW_ANALYSIS = 'viewAnalysis',
+  VIEW_HISTORY = 'viewHistory',
+}
+
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
@@ -8,6 +17,10 @@ interface AuthState {
   setAccessToken: (accessToken: string) => void;
   setRefreshToken: (refreshToken: string) => void;
   setUser: (user: User) => void;
+  hasSeenTutorial: boolean;
+  tutorialStep: TutorialStep;
+  setTutorialStep: (tutorialStep: TutorialStep) => void;
+  setHasSeenTutorial: (hasSeenTutorial: boolean) => void;
   logout: () => void;
 }
 
@@ -22,11 +35,22 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       accessToken: null,
       refreshToken: null,
+      hasSeenTutorial: false,
       user: null,
+      tutorialStep: TutorialStep.WELCOME,
       setAccessToken: (accessToken: string) => set({ accessToken }),
       setRefreshToken: (refreshToken: string) => set({ refreshToken }),
       setUser: (user: User) => set({ user }),
-      logout: () => set({ accessToken: null, refreshToken: null, user: null }),
+      setHasSeenTutorial: (hasSeenTutorial: boolean) => set({ hasSeenTutorial }),
+      setTutorialStep: (tutorialStep: TutorialStep) => set({ tutorialStep }),
+      logout: () =>
+        set({
+          accessToken: null,
+          refreshToken: null,
+          user: null,
+          hasSeenTutorial: false,
+          tutorialStep: TutorialStep.WELCOME,
+        }),
     }),
     {
       name: 'auth',
