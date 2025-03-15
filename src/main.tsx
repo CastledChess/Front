@@ -10,9 +10,9 @@ export const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <Analytics />
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Analytics />
         <App />
       </ThemeProvider>
     </QueryClientProvider>

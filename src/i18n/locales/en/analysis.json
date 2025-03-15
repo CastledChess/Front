@@ -17,17 +17,7 @@
     "depthPerMove": "Depth per move",
     "depthPerMoveDescription": "The maximum depth the engine should search for each move.",
     "advancedOptions": "Advanced Options",
-    "advancedOptionsDescription": "Configure the analysis engine's settings.",
-    "tutorialSteps": {
-      "importPgn": {
-        "title": "Importez une partie",
-        "description": "Collez une partie PGN ou recherchez un joueur pour commencer l'analyse."
-      },
-      "startAnalysis": {
-        "title": "Lancez l'analyse",
-        "description": "Cliquez sur le bouton \"Go!\" pour lancer l'analyse."
-      }
-    }
+    "advancedOptionsDescription": "Configure the analysis engine's settings."
   },
   "flipBoard": "Flip board"
 }

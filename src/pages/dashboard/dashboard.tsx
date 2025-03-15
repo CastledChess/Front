@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { getHistory } from '@/api/history.ts';
 import { useHistoryState } from '@/store/history.ts';
 import { Analysis } from '@/types/analysis.ts';
-import Joyride from 'react-joyride';
-import { CustomJoyrideTooltip } from '@/components/joyride/tooltip.tsx';
-import { dashboardSteps } from '@/data/tutorial';
+import { TutorialStep, useAuthStore } from '@/store/auth.ts';
+import { useTour } from '@reactour/tour';
 
 /**
  * Dashboard component that fetches and displays game history data.
@@ -25,6 +24,8 @@ import { dashboardSteps } from '@/data/tutorial';
 export const Dashboard = () => {
   const { t } = useTranslation('history');
   const { analyses, setAnalyses } = useHistoryState();
+  const { tutorialStep } = useAuthStore();
+  const { isOpen, setIsOpen } = useTour();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,27 +36,18 @@ export const Dashboard = () => {
     }
 
     fetchData();
+
+    if (tutorialStep === TutorialStep.DASHBOARD && !isOpen) {
+      setIsOpen(true);
+    }
   }, []);
 
   return (
-    <div className="w-full h-full md:p-16 p-4 flex justify-center">
+    <div className="relative w-full h-full md:p-16 p-4 flex justify-center">
       <div className="container flex flex-col gap-4 overflow-y-auto">
         <p className="text-2xl md:text-4xl">{t('title')}</p>
         <DataTable isLoading={loading} columns={columns} data={analyses || []} />
       </div>
-
-      <Joyride
-        styles={{
-          options: {
-            arrowColor: 'hsl(var(--accent))',
-          },
-        }}
-        disableOverlayClose
-        disableCloseOnEsc
-        continuous
-        tooltipComponent={CustomJoyrideTooltip}
-        steps={dashboardSteps}
-      />
     </div>
   );
 };

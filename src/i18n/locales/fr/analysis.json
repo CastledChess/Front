@@ -17,17 +17,7 @@
     "depthPerMove": "Profondeur par coup",
     "depthPerMoveDescription": "La profondeur maximale que le moteur doit rechercher pour chaque coup.",
     "advancedOptions": "Options avancées",
-    "advancedOptionsDescription": "Configurer les paramètres du moteur d'analyse.",
-    "tutorialSteps": {
-      "importPgn": {
-        "title": "Importer une partie",
-        "description": "Collez une partie PGN ou recherchez un joueur pour commencer l'analyse."
-      },
-      "analyze": {
-        "title": "Lancer l'analyse",
-        "description": "Cliquez sur le bouton \"Go!\" pour lancer l'analyse."
-      }
-    }
+    "advancedOptionsDescription": "Configurer les paramètres du moteur d'analyse."
   },
   "flipBoard": "Retourner l'échiquier"
 }

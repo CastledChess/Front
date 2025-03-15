@@ -17,7 +17,7 @@ import { Switch } from '@/components/ui/switch.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Analysis } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
 import { analyseMovesLocal, classifyMoves, Engine, Engines, getCachedEngines } from '@/lib/analysis.ts';
@@ -31,10 +31,8 @@ import { LichessorgSelect } from '@/pages/start-analysis/lichessorg-select.tsx';
 import { createAnalysis } from '@/api/analysis';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -42,30 +40,7 @@ import {
 import { useDeviceData } from 'react-device-detect';
 import { track } from '@vercel/analytics';
 import { TutorialStep, useAuthStore } from '@/store/auth.ts';
-import { TutorialStepProps } from '@/types/tutorial.ts';
-import { cn } from '@/lib/utils.ts';
-
-const DEMO_PGN = `[Event "Tal - Larsen Candidates Semifinal"]
-[Site "Bled YUG"]
-[Date "1965.08.08"]
-[Round "10"]
-[White "Mikhail Tal"]
-[Black "Bent Larsen"]
-[Result "1-0"]
-[Variant "Standard"]
-[ECO "B82"]
-[Opening "Sicilian Defense: Scheveningen Variation, Tal Variation"]
-[Annotator "https://lichess.org/@/ManteDario89"]
-[StudyName "Tal's Immortal Game"]
-[ChapterName "Mikhail Tal - Bent Larsen"]
-
-1. e4 c5 2. Nf3 Nc6 3. d4 cxd4 4. Nxd4 e6 5. Nc3 d6 6. Be3 Nf6 7. f4 Be7 8. Qf3 O-O 9. O-O-O Qc7 10. Ndb5 Qb8 11. g4 a6 12. Nd4 Nxd4 13. Bxd4 b5 14. g5 Nd7 15. Bd3 b4 16. Nd5 { ! } 16... exd5 17. exd5 { The
-piece sacrifice is a positional one, since it has been used to
-erect an invisible barrier on the e-file. A number of squares
-on it (e5 and e6) are controlled by white pawns, and a white
-rook will soon be moved to e1. -- Iakov Damsky } 17... f5 (17... g6 18. Rde1 Bd8 19. Qh3 Ne5 20. fxe5 (20. Qh6 Bb6 21. fxe5 Bxd4 22. Re4 Bf2 23. e6 fxe6 24. dxe6 d5 25. Re2 Qa7 26. Bxg6 Be3+)) 18. Rde1 Rf7 19. h4 Bb7 20. Bxf5 Rxf5 21. Rxe7 Ne5 22. Qe4 Qf8 23. fxe5 Rf4 24. Qe3 Rf3 25. Qe2 Qxe7 26. Qxf3 dxe5 27. Re1 Rd8 28. Rxe5 Qd6 29. Qf4 { ! With this simple tactic 29 ...Bxd5 30. Re8+ White
-keeps his two extra pawns. The finish is straightforward. --
-Damsky } 29... Rf8 30. Qe4 b3 31. axb3 Rf1+ 32. Kd2 Qb4+ 33. c3 Qd6 34. Bc5 Qxc5 35. Re8+ Rf8 36. Qe6+ Kh8 37. Qf7 { 1-0 Black resigns. } 1-0`;
+import { useTour } from '@reactour/tour';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -152,7 +127,8 @@ enum ImportMode {
  */
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
-  const { user, tutorialStep, setTutorialStep, setHasSeenTutorial, hasSeenTutorial } = useAuthStore();
+  const { user, tutorialStep } = useAuthStore();
+  const { isOpen, setIsOpen } = useTour();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -162,7 +138,6 @@ export const StartAnalysis = () => {
   const [importMode, setImportMode] = useState<ImportMode>(ImportMode.PGN);
 
   const { t } = useTranslation('analysis', { keyPrefix: 'newAnalysis' });
-  const tutorialSteps = t('tutorialSteps', { returnObjects: true }) as Record<string, TutorialStepProps>;
 
   const form = useForm<z.infer<typeof StartAnalysisFormSchema>>({
     resolver: zodResolver(StartAnalysisFormSchema),
@@ -275,38 +250,19 @@ export const StartAnalysis = () => {
     checkCachedEngines();
   }, []);
 
+  useLayoutEffect(() => {
+    if (tutorialStep === TutorialStep.START_ANALYSIS && !isOpen) {
+      setIsOpen(true);
+    }
+  }, []);
+
   return (
     <div className="h-full flex justify-center p-6 md:p-20 lg:p-28 pt-14">
-      {!hasSeenTutorial && <div className="bg-background opacity-70 z-10 absolute top-0 left-0 w-screen h-screen" />}
-      {!hasSeenTutorial && (
-        <Dialog open modal={false}>
-          <DialogContent className="top-4 left-4 translate-y-0 translate-x-0 overflow-hidden">
-            <DialogHeader>
-              <DialogTitle>{tutorialSteps[tutorialStep].title}</DialogTitle>
-              <DialogDescription>{tutorialSteps[tutorialStep].description}</DialogDescription>
-            </DialogHeader>
-
-            <DialogFooter className="!justify-start">
-              <DialogClose asChild>
-                <Button onClick={() => setHasSeenTutorial(true)} variant="outline">
-                  Skip tutorial
-                </Button>
-              </DialogClose>
-              {tutorialStep === TutorialStep.IMPORT_PGN && (
-                <Button onClick={() => (form.setValue('pgn', DEMO_PGN), setTutorialStep(TutorialStep.ANALYZE))}>
-                  Import Demo PGN
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
-
       <div className="flex flex-col gap-6 w-[65rem] h-full">
         <h1 className="text-2xl md:text-4xl w-full font-bold my-2">{t('title')}</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex-1 flex flex-col lg:flex-row gap-3">
-            <div className="w-full lg:w-1/2 flex flex-col gap-3">
+            <div className="tutorial-import w-full lg:w-1/2 flex flex-col gap-3">
               <Select
                 disabled={isLoading}
                 value={importMode}
@@ -349,12 +305,7 @@ export const StartAnalysis = () => {
                           placeholder={PGN_PLACEHOLDER}
                           spellCheck="false"
                           id="pgn"
-                          className={cn(
-                            'flex-1 h-full resize-none custom-scrollbar',
-                            !hasSeenTutorial &&
-                              tutorialStep === TutorialStep.IMPORT_PGN &&
-                              'z-20 animate-pulse border-2 border-primary',
-                          )}
+                          className="flex-1 h-full resize-none custom-scrollbar"
                           {...field}
                         />
                       </FormControl>
@@ -373,7 +324,7 @@ export const StartAnalysis = () => {
                 render={({ field }) => (
                   <FormItem
                     aria-disabled={isLoading}
-                    className="flex flex-row items-center justify-between rounded-xl bg-gradient-to-br from-secondary-bg/30 to-secondary-bg border p-3 shadow-sm"
+                    className="tutorial-classify flex flex-row items-center justify-between rounded-xl bg-gradient-to-br from-secondary-bg/30 to-secondary-bg border p-3 shadow-sm"
                   >
                     <div className="space-y-0.5">
                       <FormLabel>{t('classifyMoves')}</FormLabel>
@@ -390,7 +341,7 @@ export const StartAnalysis = () => {
                 control={form.control}
                 name="engine"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="tutorial-engine">
                     <FormControl>
                       <div className="flex gap-3 lg:gap-6">
                         <Select
@@ -433,7 +384,12 @@ export const StartAnalysis = () => {
                         </Select>
 
                         {!isEngineCached(selectedEngine) && (
-                          <LoaderButton isLoading={isDownloading} type="button" onClick={downloadSelectedEngine}>
+                          <LoaderButton
+                            isLoading={isDownloading}
+                            className="tutorial-engine-dl"
+                            type="button"
+                            onClick={downloadSelectedEngine}
+                          >
                             <DownloadCloud />
                           </LoaderButton>
                         )}
@@ -608,11 +564,7 @@ export const StartAnalysis = () => {
 
                 {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
                 <LoaderButton
-                  className={cn(
-                    !hasSeenTutorial &&
-                      tutorialStep === TutorialStep.ANALYZE &&
-                      'z-20 animate-pulse border-2 border-primary',
-                  )}
+                  className="tutorial-go"
                   disabled={!isEngineCached(selectedEngine)}
                   isLoading={isLoading}
                   type="submit"

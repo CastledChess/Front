@@ -20,6 +20,9 @@ import '@/styles/autofill.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
+import { TourProvider } from '@reactour/tour';
+import { analysisSteps, dashboardSteps, startAnalysisSteps } from '@/data/tutorial.ts';
+import { Content } from '@/components/reactour/content.tsx';
 
 function App() {
   const user = useAuthStore((state) => state.user);
@@ -43,7 +46,17 @@ function App() {
               path="/start-analysis"
               element={
                 <ProtectedRoute allow={!!user} redirect="/login">
-                  <StartAnalysis />
+                  <TourProvider
+                    key="start-analysis"
+                    onClickMask={() => null}
+                    disableKeyboardNavigation
+                    disableInteraction
+                    styles={{ popover: (base) => ({ ...base, padding: 0, backgroundColor: 'transparent' }) }}
+                    ContentComponent={Content}
+                    steps={startAnalysisSteps}
+                  >
+                    <StartAnalysis />
+                  </TourProvider>
                 </ProtectedRoute>
               }
             />
@@ -51,7 +64,17 @@ function App() {
               path="/analysis/:id"
               element={
                 <ProtectedRoute allow={!!user} redirect="/login">
-                  <Analysis />
+                  <TourProvider
+                    key="analysis"
+                    onClickMask={() => null}
+                    disableKeyboardNavigation
+                    styles={{ popover: (base) => ({ ...base, padding: 0, backgroundColor: 'transparent' }) }}
+                    ContentComponent={Content}
+                    padding={0}
+                    steps={analysisSteps}
+                  >
+                    <Analysis />
+                  </TourProvider>
                 </ProtectedRoute>
               }
             />
@@ -67,7 +90,17 @@ function App() {
               path="/"
               element={
                 <ProtectedRoute allow={!!user} redirect="/login">
-                  <Dashboard />
+                  <TourProvider
+                    key="dashboard"
+                    onClickMask={() => null}
+                    disableKeyboardNavigation
+                    disableInteraction
+                    styles={{ popover: (base) => ({ ...base, padding: 0, backgroundColor: 'transparent' }) }}
+                    ContentComponent={Content}
+                    steps={dashboardSteps}
+                  >
+                    <Dashboard />
+                  </TourProvider>
                 </ProtectedRoute>
               }
             />

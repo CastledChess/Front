@@ -12,16 +12,5 @@
   "details": "Voir l'analyse",
   "copyId": "Copier l'ID de la partie",
   "analysis": "Analyse de la partie",
-  "loading": "Chargement de l'historique des parties...",
-  "tutorialSteps": {
-    "welcome": {
-      "title": "Bienvenue sur Castled",
-      "description": "Ceci est le tableau de bord, où vous pouvez consulter et gérer vos analyses."
-    },
-
-    "navigateToNewAnalysis": {
-      "title": "Créons une nouvelle analyse",
-      "description": "Cliquez sur le bouton \"Nouvelle analyse\" pour créer une nouvelle analyse."
-    }
-  }
+  "loading": "Chargement de l'historique des parties..."
 }
