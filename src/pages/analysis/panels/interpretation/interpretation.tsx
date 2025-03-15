@@ -215,7 +215,7 @@ export const Interpretation = () => {
   const handlePointerLeaveRole = () => chessGround?.setAutoShapes(customAutoShapes.current);
 
   return (
-    <div className="flex bg-primary-bg flex-col h-full gap-6 p-0 lg:p-6 bg-pressure-6">
+    <div className="tutorial-interpretation flex bg-primary-bg flex-col h-full gap-6 p-0 lg:p-6 bg-pressure-6">
       {(!previousMove ||
         (pieceRoles[currentMove - 1] && Object.entries(pieceRoles[currentMove - 1]?.roles)?.length <= 0)) && (
         <div className="flex items-center justify-center h-full text-castled-gray">

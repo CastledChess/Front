@@ -72,7 +72,7 @@ export function DataTable<TData extends Analysis>({
 
   return (
     <>
-      <div className="rounded-md border overflow-y-auto custom-scrollbar h-full">
+      <div className="dashboard-table rounded-md border overflow-y-auto custom-scrollbar h-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -136,7 +136,7 @@ export function DataTable<TData extends Analysis>({
 
             {!isLoading && table.getRowModel().rows?.length <= 0 && (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24  text-center">
+                <TableCell colSpan={columns.length} className="start-analysis h-24 text-center">
                   <Link to="/start-analysis">
                     <Button variant="outline">
                       <Plus />

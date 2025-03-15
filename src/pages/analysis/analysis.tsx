@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Database } from '@/pages/analysis/panels/database/database.tsx';
 import { MoveList } from '@/pages/analysis/panels/moveList/move-list.tsx';
 import { EvalHistory } from '@/pages/analysis/panels/evalHistory/eval-history.tsx';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -52,6 +52,8 @@ import { panelIcons, panels, panelTitles } from '@/data/layout.tsx';
 import { useTheme } from '@/components/theme-provider.tsx';
 
 import '@/styles/window-tiling.css';
+import { TutorialStep, useAuthStore } from '@/store/auth.ts';
+import { useTour } from '@reactour/tour';
 
 /**
  * The `Analysis` component is responsible for rendering the analysis page.
@@ -86,7 +88,9 @@ import '@/styles/window-tiling.css';
 export const Analysis = () => {
   const { layout, setLayout } = useLayoutStore();
   const { analysis, setAnalysis } = useAnalysisStore();
+  const { tutorialStep } = useAuthStore();
   const { id } = useParams();
+  const { isOpen, setIsOpen } = useTour();
   const panelsPaths = useRef<Map<Panel, MosaicPath>>(new Map());
   const hiddenPanels = useRef<Map<Panel, MosaicPath>>(new Map());
   const [renderedInWindow, setRenderedInWindow] = useState<Map<Panel, MosaicPath>>(new Map());
@@ -109,6 +113,12 @@ export const Analysis = () => {
   }, [id, setAnalysis]);
 
   if (!analysis) return null;
+
+  useLayoutEffect(() => {
+    if (tutorialStep === TutorialStep.ANALYSIS && !isOpen) {
+      setIsOpen(true);
+    }
+  }, []);
 
   if (isMobile) {
     return (
