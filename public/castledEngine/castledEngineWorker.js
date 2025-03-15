@@ -1,4 +1,4 @@
-import init, { init_wasm, main_wasm } from '@/../public/castledEngine/CastledEngine';
+import init, { init_wasm, main_wasm } from './CastledEngine.js';
 
 let isReady = false;
 
@@ -8,13 +8,13 @@ init().then(() => {
   executeCommandStack();
 });
 
-const commandStack: string[] = [];
+const commandStack = [];
 
 // /**
 //  * Handles incoming messages and finds the opening name based on the provided PGN.
 //  * @param {MessageEvent} message - The message event containing the PGN data.
 //  */
-self.onmessage = (message: MessageEvent<string>) => {
+self.onmessage = (message) => {
   if (!isReady) {
     return commandStack.push(message.data);
   }
