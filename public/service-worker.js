@@ -12,7 +12,7 @@ self.addEventListener('fetch', async (event) => {
     'stockfish-16.1-single.wasm',
     'stockfish-16.1-lite.wasm',
     'stockfish-16.1-lite-single.wasm',
-    'CastledEngine_bg.wasm',
+    'castledEngine/CastledEngine_bg.wasm',
   ];
 
   if (new RegExp(wasmUrls.join('|')).test(url.pathname)) {
