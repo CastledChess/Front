@@ -3,5 +3,24 @@
   "close": "Fermer",
   "ok": "Ok",
   "next": "Suivant",
-  "skip": "Passer le Tutoriel"
+  "skip": "Passer le Tutoriel",
+  "dashboard": {
+    "table": "Bienvenue sur Castled! Ceci est le tableau de l'historique des parties. Vous pouvez voir et gérer chaque analyse que vous avez faite.",
+    "startAnalysis": "Analysons une partie! Cliquez sur le bouton \"Nouvelle Analyse\" pour commencer une nouvelle analyse."
+  },
+  "startAnalysis": {
+    "import": "Importez une partie de chess.com, lichess.org ou simplement copiez et collez un PGN dans la zone de texte ci-dessous.",
+    "engine": "Sélectionnez un moteur pour analyser la partie",
+    "engineDownload": "Une fois que vous avez sélectionné un moteur, vous devez le télécharger, les moteurs volumineux peuvent prendre un certain temps à télécharger.",
+    "go": "Cliquez sur \"Go\" pour démarrer l'analyse"
+  },
+  "analysis": {
+    "board": "Ceci est l'échiquier.",
+    "controls": "Vous pouvez parcourir les coups joués pendant la partie en utilisant ces contrôles.",
+    "evalBar": "Ceci est la barre d'évaluation. Elle montre l'évaluation du moteur de la position actuelle.",
+    "moveList": "Ceci est le panneau de la liste des coups. Il affiche les coups joués pendant la partie. Vous pouvez cliquer sur un coup pour sauter à cette position.",
+    "database": "Ceci est le panneau de la base de données. Il affiche le ratio Victoire/Nulle/Défaite pour chaque coup dans la position actuelle basé sur ~1.5 million de parties. En survolant un coup, une flèche s'affichera sur l'échiquier pour vous aider à le visualiser.",
+    "evalHistory": "Ceci est le panneau de l'historique d'évaluation. Il affiche l'évolution de l'évaluation du moteur au fil du temps.",
+    "interpretation": "Enfin, ceci est le panneau d'interprétation. Il affiche des informations supplémentaires sur la position actuelle qui pourraient être utiles pour les débutants."
+  }
 }

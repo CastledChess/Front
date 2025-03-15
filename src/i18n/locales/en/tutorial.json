@@ -3,5 +3,24 @@
   "close": "Close",
   "ok": "Ok",
   "next": "Next",
-  "skip": "Skip Tutorial"
+  "skip": "Skip Tutorial",
+  "dashboard": {
+    "table": "Welcome to Castled! This is the game history table. Where you can view and manage every analysis you have made.",
+    "startAnalysis": "Let's analyze a game! Click on the \"New Analysis\" button to start a new analysis."
+  },
+  "startAnalysis": {
+    "import": "Import a game from chess.com, lichess.org or simply copy and pase a PGN into the text area below.",
+    "engine": "Select an engine to analyze the game",
+    "engineDownload": "Once you selected an engine, you need to download it, large engines may take some time to download.",
+    "go": "Click \"Go\" to start the analysis"
+  },
+  "analysis": {
+    "board": "This is the chessboard (duh).",
+    "controls": "You can walk through the moves played during the game using these controls.",
+    "evalBar": "This is the evaluation bar. It shows the engine evaluation of the current position.",
+    "moveList": "This is the move list panel. It displays the moves played during the game. You can click on a move to jump to that position.",
+    "database": "This is the database panel. It displays the ratio of Win/Draw/Loss for each move in the current position based on ~1.5 million games. Hovering over a move will display an arrow on the chessboard to help you visualize it.",
+    "evalHistory": "This is the evaluation history panel. It displays the evolution of the engine evaluation over time.",
+    "interpretation": "Finally, this is the interpretation panel. It displays additional information about the current position that might be useful for beginners."
+  }
 }
