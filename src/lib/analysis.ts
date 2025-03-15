@@ -54,7 +54,7 @@ export const Engines: Engine[] = [
     name: 'Castled Engine Single-Threaded',
     value: 'castledEngine/CastledEngine.js',
     workerURL: new URL('../workers/engine.ts', import.meta.url),
-    cache: 'CastledEngine_bg.wasm',
+    cache: 'castledEngine/CastledEngine_bg.wasm',
   },
 ];
 
