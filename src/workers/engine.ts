@@ -1,4 +1,4 @@
-import init, { init_wasm, main_wasm } from '../../public/castledEngine/CastledEngine';
+import init, { init_wasm, main_wasm } from '@/../public/castledEngine/CastledEngine';
 
 let isReady = false;
 
