@@ -2,8 +2,8 @@ import { z } from 'zod';
 import { AnalysisMove, AnalysisMoveClassification, InfoResult } from '@/types/analysis.ts';
 import { AnalysisMethod, StartAnalysisFormSchema } from '@/schema/analysis.ts';
 import { Move } from 'chess.js';
-import { StockfishService } from '@/services/stockfish/stockfish.service.ts';
-import { UciParserService } from '@/services/stockfish/uci-parser.service.ts';
+import { EngineService } from '@/services/engine/engine.service.ts';
+import { UciParserService } from '@/services/engine/uci-parser.service.ts';
 import { isCached } from '@/services/cache/cache.service.ts';
 
 export type AnalyseMovesLocalParams = {
@@ -16,6 +16,7 @@ export type Engine = {
   isMultiThreaded: boolean;
   name: string;
   value: string;
+  workerURL: string | URL;
   cache: string;
 };
 
@@ -24,25 +25,36 @@ export const Engines: Engine[] = [
     isMultiThreaded: true,
     name: 'Stockfish 16.1 Large Multi-Threaded',
     value: 'stockfish-16.1.js',
+    workerURL: 'stockfish-16.1.js',
     cache: 'stockfish-16.1.wasm',
   },
   {
     isMultiThreaded: false,
     name: 'Stockfish 16.1 Large Single-Threaded',
     value: 'stockfish-16.1-single.js',
+    workerURL: 'stockfish-16.1-single.js',
     cache: 'stockfish-16.1-single.wasm',
   },
   {
     isMultiThreaded: true,
     name: 'Stockfish 16.1 Lite Multi-Threaded',
     value: 'stockfish-16.1-lite.js',
+    workerURL: 'stockfish-16.1-lite.js',
     cache: 'stockfish-16.1-lite.wasm',
   },
   {
     isMultiThreaded: false,
     name: 'Stockfish 16.1 Lite Single-Threaded',
     value: 'stockfish-16.1-lite-single.js',
+    workerURL: 'stockfish-16.1-lite-single.js',
     cache: 'stockfish-16.1-lite-single.wasm',
+  },
+  {
+    isMultiThreaded: false,
+    name: 'Castled Engine Single-Threaded',
+    value: 'castledEngine/CastledEngine.js',
+    workerURL: new URL('../workers/engine.ts', import.meta.url),
+    cache: 'CastledEngine_bg.wasm',
   },
 ];
 
@@ -72,7 +84,7 @@ export const analyseMovesLocal = ({
   data,
   reportProgress,
 }: AnalyseMovesLocalParams): Promise<AnalysisMove>[] => {
-  const stockfish = new StockfishService({
+  const stockfish = new EngineService({
     engine: data.engine,
     threads: data.threads,
     hashSize: data.analysisSettings.hashSize,
