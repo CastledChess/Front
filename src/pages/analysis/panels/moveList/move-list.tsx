@@ -101,7 +101,7 @@ export const MoveList = () => {
   const move = analysis?.moves[currentMove - 1];
 
   return (
-    <div className="lg:p-6 bg-primary-bg flex h-full flex-col gap-2">
+    <div className="tutorial-move-list lg:p-6 bg-primary-bg flex h-full flex-col gap-2">
       <div className="text-xs items-center h-12 flex justify-between">
         {opening && opening.name}
 

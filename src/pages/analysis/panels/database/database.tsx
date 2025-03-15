@@ -119,7 +119,7 @@ export const Database = () => {
   };
 
   return (
-    <div className="flex h-full overflow-y-scroll custom-scrollbar bg-primary-bg flex-col w-full">
+    <div className="tutorial-database flex h-full overflow-y-scroll custom-scrollbar bg-primary-bg flex-col w-full">
       <table className="w-full">
         <thead>
           <tr className="text-sm text-castled-gray">
