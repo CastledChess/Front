@@ -4,11 +4,15 @@ import openingsJson from '@/assets/data/openings/all.json';
 
 const openings: Record<string, Opening> = openingsJson;
 
+type Message = {
+  pgn: string;
+};
+
 /**
  * Handles incoming messages and finds the opening name based on the provided PGN.
  * @param {MessageEvent} message - The message event containing the PGN data.
  */
-self.onmessage = (message) => findOpeningName(message.data.pgn);
+self.onmessage = (message: MessageEvent<Message>) => findOpeningName(message.data.pgn);
 
 /**
  * Finds the name of the opening based on the provided PGN string.

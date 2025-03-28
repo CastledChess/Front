@@ -17,6 +17,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'chessground/types';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ZoomIn, ZoomOut } from 'lucide-react';
 
 /**
  * MoveList component renders a list of chess moves and allows users to navigate through them.
@@ -58,7 +59,7 @@ import { useTranslation } from 'react-i18next';
  */
 export const MoveList = () => {
   const { analysis, chess, chessGround, currentMove, setCurrentMove } = useAnalysisStore();
-  const { displayLine } = useMoveListState();
+  const { displayLine, setDisplayLine } = useMoveListState();
   const [opening, setOpening] = useState<Opening | undefined>(undefined);
   const moveRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -97,9 +98,20 @@ export const MoveList = () => {
     chessGround?.redrawAll();
   }, []);
 
+  const move = analysis?.moves[currentMove - 1];
+
   return (
-    <div className="lg:p-6 flex h-full flex-col gap-2">
-      <span className="text-xs h-6">{opening && opening.name}</span>
+    <div className="tutorial-move-list lg:p-6 bg-primary-bg flex h-full flex-col gap-2">
+      <div className="text-xs items-center h-12 flex justify-between">
+        {opening && opening.name}
+
+        {move && move.classification && moveIsBad[move.classification] && (
+          <Button onClick={() => setDisplayLine(!displayLine)} variant="secondary" size="sm" className="h-8">
+            {displayLine ? <ZoomOut /> : <ZoomIn />}
+            {displayLine ? 'Hide' : 'Show'} Engine Line
+          </Button>
+        )}
+      </div>
       <div className="flex h-full flex-wrap gap-1 justify-start content-start overflow-y-scroll custom-scrollbar">
         {analysis?.moves.map((move, index) => (
           <React.Fragment key={index}>

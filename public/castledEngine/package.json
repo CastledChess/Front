@@ -1,0 +1,25 @@
+{
+  "name": "castled_engine",
+  "type": "module",
+  "collaborators": [
+    "Ludovic Debever ludovicdebever0@gmail.com",
+    "Eliott Reigner",
+    "Mahdi Aribi"
+  ],
+  "description": "The Castled org chess engine",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CastledChess/engine"
+  },
+  "files": [
+    "CastledEngine_bg.wasm",
+    "CastledEngine.js",
+    "CastledEngine.d.ts"
+  ],
+  "main": "CastledEngine.js",
+  "types": "CastledEngine.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
