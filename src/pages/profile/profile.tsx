@@ -116,27 +116,26 @@ export const Profile = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      <div className="relative flex flex-col items-center p-4 rounded-lg">
+      <div className="relative flex flex-col items-center p-4 w-52 rounded-lg">
         {/*
          * This Block is for the Avatar Image and the edit button
          */}
-        <Avatar className="flex justify-center self-center w-full max-w-md h-full mb-5 relative">
-          <AvatarImage
-            className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
+        <Avatar className="flex justify-center self-center w-full max-w-md h-full relative">
+          <AvatarImage className="border-on rounded-full w-40"
             src="src/assets/icons/profile_picture.jpg"
           />
           <label
             htmlFor="fileInput"
             className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary cursor-pointer"
           >
-            <SquarePen />
+            <SquarePen className='w-10 pl-4'/>
           </label>
           <input id="fileInput" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </Avatar>
       </div>
 
-      <Card className="w-full max-w-md p-4">
-        <h1 className="text-primary text-4xl my-8 mx-14 text-center">{user?.username}</h1>
+      <div className="w-full max-w-md p-4">
+        <h1 className="text-white text-4xl mb-8 mx-14 text-center">{user?.username}</h1>
         <div className="my-4 mx-14">
           {/*
            * This block is for the form fields when user is not in edit mode
@@ -236,7 +235,7 @@ export const Profile = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center mt-8 text-white space-y-2 sm:space-y-0 sm:space-x-8">
             <Button
               type="button"
-              className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+              className="w-full sm:w-24 h-12 flex bg-castled-gray hover:bg-[#F68C41] flex-col items-center gap-0"
               onClick={handleEditToggle}
             >
               {isEditing ? <PencilOff /> : <Pencil />}
@@ -249,7 +248,7 @@ export const Profile = () => {
             {isEditing && (
               <Button
                 type="button"
-                className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+                className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-[#2c6bd0] flex flex-col items-center gap-0"
                 onClick={form.handleSubmit(onSubmit)}
               >
                 <Save />
@@ -263,7 +262,7 @@ export const Profile = () => {
               <>
                 <Button
                   type="button"
-                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0"
+                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-[#c03131] flex flex-col items-center gap-0"
                 >
                   <Trash />
                   {t('Delete')}
@@ -272,7 +271,7 @@ export const Profile = () => {
             )}
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
