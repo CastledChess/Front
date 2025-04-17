@@ -23,6 +23,7 @@ import '@/styles/autofill.css';
 import '@/styles/font.css';
 import '@/styles/index.css';
 import '@/styles/scrollbar.css';
+import { Oauth } from './pages/oauth';
 
 function App() {
   const { user, setTutorialStep } = useAuthStore();
@@ -106,6 +107,7 @@ function App() {
             {/* Authentication */}
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/oauth" element={<Oauth />} />
 
             {/* Connected */}
             <Route
