@@ -17,7 +17,7 @@ import { Switch } from '@/components/ui/switch.tsx';
 import { useNavigate } from 'react-router-dom';
 import { Analysis } from '@/types/analysis.ts';
 import { useAnalysisStore } from '@/store/analysis.ts';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { Slider } from '@/components/ui/slider.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
 import { analyseMovesLocal, classifyMoves, Engine, Engines, getCachedEngines } from '@/lib/analysis.ts';
@@ -39,7 +39,8 @@ import {
 } from '@/components/ui/dialog.tsx';
 import { useDeviceData } from 'react-device-detect';
 import { track } from '@vercel/analytics';
-import { useAuthStore } from '@/store/auth.ts';
+import { TutorialStep, useAuthStore } from '@/store/auth.ts';
+import { useTour } from '@reactour/tour';
 
 const PGN_PLACEHOLDER = `[Event "F/S Return Match"]
 [Site "Belgrade, Serbia JUG"]
@@ -126,7 +127,8 @@ enum ImportMode {
  */
 export const StartAnalysis = () => {
   const { setAnalysis, chess } = useAnalysisStore();
-  const user = useAuthStore((state) => state.user);
+  const { user, tutorialStep } = useAuthStore();
+  const { isOpen, setIsOpen } = useTour();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -248,13 +250,19 @@ export const StartAnalysis = () => {
     checkCachedEngines();
   }, []);
 
+  useLayoutEffect(() => {
+    if (tutorialStep === TutorialStep.START_ANALYSIS && !isOpen) {
+      setIsOpen(true);
+    }
+  }, []);
+
   return (
     <div className="h-full flex justify-center p-6 md:p-20 lg:p-28 pt-14">
       <div className="flex flex-col gap-6 w-[65rem] h-full">
         <h1 className="text-2xl md:text-4xl w-full font-bold my-2">{t('title')}</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex-1 flex flex-col lg:flex-row gap-3">
-            <div className="w-full lg:w-1/2 flex flex-col gap-3">
+            <div className="tutorial-import w-full lg:w-1/2 flex flex-col gap-3">
               <Select
                 disabled={isLoading}
                 value={importMode}
@@ -314,7 +322,10 @@ export const StartAnalysis = () => {
                 control={form.control}
                 name="classifyMoves"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-xl bg-gradient-to-br from-secondary-bg/30 to-secondary-bg border p-3 shadow-sm">
+                  <FormItem
+                    aria-disabled={isLoading}
+                    className="tutorial-classify flex flex-row items-center justify-between rounded-xl bg-gradient-to-br from-secondary-bg/30 to-secondary-bg border p-3 shadow-sm"
+                  >
                     <div className="space-y-0.5">
                       <FormLabel>{t('classifyMoves')}</FormLabel>
                       <FormDescription>{t('classifyMovesDescription')}</FormDescription>
@@ -330,7 +341,7 @@ export const StartAnalysis = () => {
                 control={form.control}
                 name="engine"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="tutorial-engine">
                     <FormControl>
                       <div className="flex gap-3 lg:gap-6">
                         <Select
@@ -373,7 +384,12 @@ export const StartAnalysis = () => {
                         </Select>
 
                         {!isEngineCached(selectedEngine) && (
-                          <LoaderButton isLoading={isDownloading} type="button" onClick={downloadSelectedEngine}>
+                          <LoaderButton
+                            isLoading={isDownloading}
+                            className="tutorial-engine-dl"
+                            type="button"
+                            onClick={downloadSelectedEngine}
+                          >
                             <DownloadCloud />
                           </LoaderButton>
                         )}
@@ -547,7 +563,12 @@ export const StartAnalysis = () => {
                 </Dialog>
 
                 {isLoading && <Progress value={(progress.value / progress.max) * 100} />}
-                <LoaderButton disabled={!isEngineCached(selectedEngine)} isLoading={isLoading} type="submit">
+                <LoaderButton
+                  className="tutorial-go"
+                  disabled={!isEngineCached(selectedEngine)}
+                  isLoading={isLoading}
+                  type="submit"
+                >
                   {t('startAnalysis')}
                 </LoaderButton>
               </div>

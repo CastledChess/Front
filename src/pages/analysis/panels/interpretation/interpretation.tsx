@@ -88,7 +88,7 @@ export const Interpretation = () => {
             const toPiece = c.get(toSquare);
             const fromPiece = c.get(fromSquare);
 
-            if (!toPiece) continue;
+            if (!toPiece || !fromPiece) continue;
 
             if (toPiece.color === color) {
               xRayedPieces.set(toSquare, { square: fromSquare, piece: fromPiece });
@@ -111,7 +111,7 @@ export const Interpretation = () => {
             const toPiece = c.get(toSquare);
             const fromPiece = c.get(fromSquare);
 
-            if (!toPiece) continue;
+            if (!toPiece || !fromPiece) continue;
 
             if (toPiece.color === color) {
               attackedPieces.set(toSquare, { square: fromSquare, piece: fromPiece });
@@ -139,6 +139,8 @@ export const Interpretation = () => {
           const toSquare = makeSquare(toSquareIndex);
           const toPiece = c.get(toSquare);
           const fromPiece = c.get(fromSquare);
+
+          if (!fromPiece || !toPiece) continue;
 
           if (!toPiece) pr.squareWeights[toSquare].controlledWhite += pieceValues[fromPiece.type];
           else {
@@ -213,7 +215,7 @@ export const Interpretation = () => {
   const handlePointerLeaveRole = () => chessGround?.setAutoShapes(customAutoShapes.current);
 
   return (
-    <div className="flex bg-primary-bg flex-col h-full gap-6 p-0 lg:p-6 bg-pressure-6">
+    <div className="tutorial-interpretation flex bg-primary-bg flex-col h-full gap-6 p-0 lg:p-6 bg-pressure-6">
       {(!previousMove ||
         (pieceRoles[currentMove - 1] && Object.entries(pieceRoles[currentMove - 1]?.roles)?.length <= 0)) && (
         <div className="flex items-center justify-center h-full text-castled-gray">

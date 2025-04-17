@@ -21,6 +21,7 @@ export const StartAnalysisFormSchema = z.object({
     isMultiThreaded: z.boolean(),
     name: z.string(),
     value: z.string(),
+    workerURL: z.string().or(z.instanceof(URL)),
     cache: z.string(),
   }),
   threads: z

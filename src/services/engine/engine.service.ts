@@ -1,6 +1,6 @@
 import { Engine, Engines } from '@/lib/analysis.ts';
 
-export type StockfishServiceOptions = {
+export type EngineServiceOptions = {
   enableLogs?: boolean;
   engine?: Engine;
   threads?: number;
@@ -8,21 +8,23 @@ export type StockfishServiceOptions = {
 };
 
 /**
- * A service to interact with the Stockfish chess engine.
+ * A service to interact with the chess engine.
  */
-export class StockfishService {
+export class EngineService {
   private commandQueue: { command: string; callback?: (data: string) => void }[] = [];
   private worker: Worker;
   private isWorking: boolean = false;
   private isReady: boolean = false;
 
   /**
-   * Creates an instance of StockfishService.
+   * Creates an instance of EngineService.
    *
-   * @param {StockfishServiceOptions} options - Configuration options for the service.
+   * @param {EngineServiceOptions} options - Configuration options for the service.
    */
-  constructor({ enableLogs = false, engine = Engines[0], threads = 1, hashSize = 1 }: StockfishServiceOptions = {}) {
-    this.worker = new Worker(engine?.value);
+  constructor({ enableLogs = false, engine = Engines[0], threads = 1, hashSize = 1 }: EngineServiceOptions = {}) {
+    this.worker = new Worker(engine?.workerURL, {
+      type: 'module',
+    });
 
     if (enableLogs) this.worker.addEventListener('message', (message) => console.log(message.data));
     this.worker.onmessage = (message: MessageEvent) => {
@@ -72,7 +74,7 @@ export class StockfishService {
       return;
     }
 
-    this.worker.onmessage = (message: MessageEvent) => {
+    this.worker.onmessage = (message: MessageEvent<string>) => {
       if (!command.callback) {
         this.startWork();
         return;
