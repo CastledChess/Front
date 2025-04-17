@@ -162,11 +162,9 @@ export const Navbar = () => {
                       <DropdownMenuItem className="focus:text-primary">{t('navbar.analysis')}</DropdownMenuItem>
                     </Link>
                   </MobileView>
-                  {/*<Link to="/profile">*/}
-                  {/*  <DropdownMenuItem className="focus:text-primary">*/}
-                  {/*    {t('account-dropdown.profile')}*/}
-                  {/*  </DropdownMenuItem>*/}
-                  {/*</Link>*/}
+                  <Link to="/profile">
+                    <DropdownMenuItem className="focus:text-primary">{t('account-dropdown.profile')}</DropdownMenuItem>
+                  </Link>
                   <Link to="/theme">
                     <DropdownMenuItem className="focus:text-primary">{t('account-dropdown.theme')}</DropdownMenuItem>
                   </Link>

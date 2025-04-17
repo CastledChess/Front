@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/auth.ts';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Avatar, AvatarImage } from '@radix-ui/react-avatar';
-import { Pencil, PencilOff, SquarePen, LogOut, Trash, Save } from 'lucide-react';
+import { Pencil, PencilOff, SquarePen, Trash, Save } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProfileSchema } from '@/schema/profile.ts';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form.tsx';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button.tsx';
 import { Input } from '@/components/ui/input';
+import { updatePassword } from '@/api/user';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Profile component renders the user's profile page.
@@ -60,29 +60,46 @@ import { Input } from '@/components/ui/input';
  */
 export const Profile = () => {
   const { t } = useTranslation('profile');
-  const { logout, user } = useAuthStore((state) => state);
-  const navigate = useNavigate();
+  const { user } = useAuthStore((state) => state);
   const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('User:', user);
+  }, [user]);
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
       email: user?.email,
+      username: user?.username,
       password: '',
       currentPassword: '',
-      newPassword: '',
       confirmPassword: '',
     },
   });
 
   const onSubmit = async (data: z.infer<typeof ProfileSchema>) => {
-    console.log(data);
-    setIsEditing(false);
-  };
+    console.log('Modification', data);
+    try {
+      if (!data.currentPassword || !data.password || !data.confirmPassword) {
+        console.error('Please fill all the fields');
+        return;
+      }
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+      if (data.email !== user?.email || data.username !== user?.username) {
+        // update email and username
+        console.log('Email and username updated successfully');
+      }
+
+      await updatePassword(data.currentPassword, data.password, data.confirmPassword);
+      console.log('Password updated successfully');
+      form.reset();
+      navigate('/profile');
+    } catch (error) {
+      console.error('Error updating password:', error);
+    }
+    setIsEditing(false);
   };
 
   const handleEditToggle = () => {
@@ -98,31 +115,36 @@ export const Profile = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-full">
-      <div className="relative flex flex-col items-center p-4 rounded-lg">
-        <Avatar className="flex justify-center self-center w-full max-w-md h-full mb-5 relative">
-          <AvatarImage
-            className="border-on rounded-full w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64"
+      <div className="relative flex flex-col items-center p-4 w-52 rounded-lg">
+        {/*
+         * This Block is for the Avatar Image and the edit button
+         */}
+        <Avatar className="flex justify-center self-center w-full max-w-md h-full relative">
+          <AvatarImage className="border-on rounded-full w-40"
             src="src/assets/icons/profile_picture.jpg"
           />
           <label
             htmlFor="fileInput"
             className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary cursor-pointer"
           >
-            <SquarePen />
+            <SquarePen className='w-10 pl-4'/>
           </label>
           <input id="fileInput" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </Avatar>
       </div>
 
-      <Card className="w-full max-w-md p-4">
-        <h1 className="text-primary text-4xl my-8 mx-14 text-center">{user?.username}</h1>
+      <div className="w-full max-w-md p-4">
+        <h1 className="text-white text-4xl mb-8 mx-14 text-center">{user?.username}</h1>
         <div className="my-4 mx-14">
+          {/*
+           * This block is for the form fields when user is not in edit mode
+           */}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-3">
               <FormField
                 control={form.control}
                 name="email"
-                disabled={!isEditing}
+                disabled={true}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -133,8 +155,26 @@ export const Profile = () => {
                 )}
               />
 
+              {/*
+               * This block is for password fields when user is in edit mode
+               */}
               {isEditing && (
                 <>
+                  {/* ajouter une field pour le username */}
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    disabled={true}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input autoComplete="username" placeholder={user?.username} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormField
                     control={form.control}
                     name="currentPassword"
@@ -154,7 +194,7 @@ export const Profile = () => {
                   />
                   <FormField
                     control={form.control}
-                    name="newPassword"
+                    name="password"
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
@@ -194,38 +234,34 @@ export const Profile = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center mt-8 text-white space-y-2 sm:space-y-0 sm:space-x-8">
             <Button
               type="button"
-              className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+              className="w-full sm:w-24 h-12 flex bg-castled-gray hover:bg-[#F68C41] flex-col items-center gap-0"
               onClick={handleEditToggle}
             >
               {isEditing ? <PencilOff /> : <Pencil />}
               {isEditing ? t('Cancel') : t('Modify')}
             </Button>
 
+            {/*
+             * This block is for Save button when user is in edit mode
+             */}
             {isEditing && (
               <Button
                 type="button"
-                className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-orange flex flex-col items-center gap-0"
+                className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-[#2c6bd0] flex flex-col items-center gap-0"
                 onClick={form.handleSubmit(onSubmit)}
               >
                 <Save />
                 {t('Save')}
               </Button>
             )}
-
+            {/*
+             * This block is for Delete account when user is not in edit mode
+             */}
             {!isEditing && (
               <>
                 <Button
                   type="button"
-                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-purple flex flex-col items-center gap-0"
-                  onClick={handleLogout}
-                >
-                  <LogOut />
-                  {t('Logout')}
-                </Button>
-
-                <Button
-                  type="button"
-                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-castled-btn-red flex flex-col items-center gap-0"
+                  className="w-full sm:w-24 h-12 bg-castled-gray hover:bg-[#c03131] flex flex-col items-center gap-0"
                 >
                   <Trash />
                   {t('Delete')}
@@ -234,7 +270,7 @@ export const Profile = () => {
             )}
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   );
 };
