@@ -1,21 +1,17 @@
 import { useAuthStore } from '@/store/auth';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const Oauth = () => {
   const { setUser, setAccessToken, setRefreshToken } = useAuthStore();
   const navigate = useNavigate();
-
-  function getCookie(key: string) {
-    var b = document.cookie.match('(^|;)\\s*' + key + '\\s*=\\s*([^;]+)');
-    return b ? b.pop() : '';
-  }
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    const access = getCookie('lichess_access_token') as string;
-    const refresh = getCookie('lichess_refresh_token') as string;
-    const user = getCookie('lichess_user') as string;
+    const access = searchParams.get('access') as string;
+    const refresh = searchParams.get('refresh') as string;
+    const user = searchParams.get('user') as string;
 
     setUser(JSON.parse(decodeURIComponent(user)));
     setAccessToken(access);

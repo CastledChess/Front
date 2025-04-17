@@ -120,14 +120,12 @@ export const Profile = () => {
          * This Block is for the Avatar Image and the edit button
          */}
         <Avatar className="flex justify-center self-center w-full max-w-md h-full relative">
-          <AvatarImage className="border-on rounded-full w-40"
-            src="src/assets/icons/profile_picture.jpg"
-          />
+          <AvatarImage className="border-on rounded-full w-40" src="src/assets/icons/profile_picture.jpg" />
           <label
             htmlFor="fileInput"
             className="absolute bottom-0 right-0 bg-transparent text-castled-btn-primary cursor-pointer"
           >
-            <SquarePen className='w-10 pl-4'/>
+            <SquarePen className="w-10 pl-4" />
           </label>
           <input id="fileInput" type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
         </Avatar>
