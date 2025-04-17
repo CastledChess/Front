@@ -12,8 +12,7 @@ import { track } from '@vercel/analytics';
 import { useDeviceData } from 'react-device-detect';
 import { Label } from '@/components/ui/label.tsx';
 import { SmoothCorners } from 'react-smooth-corners';
-// import lichessIcon from '@/assets/icons/lichess.svg?url';
-// import chessComIcon from '@/assets/icons/chesscom.svg?url';
+import lichessIcon from '@/assets/icons/lichess.svg?url';
 
 /**
  * Register component renders a registration form for new users.
@@ -102,18 +101,15 @@ export const Register = () => {
             <h1 className="text-3xl">{t('register')}</h1>
             <p className="text-foreground/70">Register a new account to analyse your chess games</p>
           </span>
-
           {/*<div className="flex mt-10 space-x-4 w-full">*/}
           {/*  <Button variant="secondary" className="w-full">*/}
           {/*    <img src={lichessIcon} alt="Lichess" className="h-6" />*/}
           {/*    <span>Lichess</span>*/}
           {/*  </Button>*/}
-
           {/*  <Button variant="secondary" className="w-full">*/}
           {/*    <img src={chessComIcon} alt="Chess.com" className="h-6" />*/}
           {/*  </Button>*/}
           {/*</div>*/}
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
               <FormField
@@ -215,8 +211,15 @@ export const Register = () => {
                 {t('register')}
               </Button>
 
+              <Link to={`${import.meta.env.VITE_API_URL}/api/v1/auth/lichess/login`}>
+                <Button variant="secondary" type="button" className="h-14 w-full text-lg">
+                  <img src={lichessIcon} alt="Lichess" className="h-6" />
+                  {t('register')} with Lichess
+                </Button>
+              </Link>
+
               <div className="text-sm w-full text-center">
-                {t('haveAnAccount')}{' '}
+                {t('haveAnAccount')}
                 <Link to="/login" className="underline hover:text-[#EC9E67]">
                   {t('login')}
                 </Link>

@@ -12,7 +12,7 @@ import { track } from '@vercel/analytics';
 import { useDeviceData } from 'react-device-detect';
 import { SmoothCorners } from 'react-smooth-corners';
 import { Label } from '@/components/ui/label.tsx';
-// import lichessIcon from '@/assets/icons/lichess.svg?url';
+import lichessIcon from '@/assets/icons/lichess.svg?url';
 // import chessComIcon from '@/assets/icons/chesscom.svg?url';
 
 /**
@@ -171,6 +171,13 @@ export const Login = () => {
               >
                 {t('login')}
               </Button>
+
+              <Link to={`${import.meta.env.VITE_API_URL}/api/v1/auth/lichess/login`}>
+                <Button variant="secondary" type="button" className="h-14 w-full text-lg">
+                  <img src={lichessIcon} alt="Lichess" className="h-6" />
+                  {t('login')} with Lichess
+                </Button>
+              </Link>
 
               <div className="text-sm w-full text-center">
                 {t('noAccount')}{' '}
